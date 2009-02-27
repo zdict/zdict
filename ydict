@@ -10,7 +10,7 @@ green="\33[32m"
 yellow="\33[33;1m"
 blue="\33[34;1m"
 org="\33[0m"
-light="\33[0:1m"
+light="\33[0;1m"
 map=str(" æa:   ɑ       ʊɔɝəɚʌeɛŋ ʃʒ θð   iɪuopbtdkfvszmnhlrwj`,g ḷṃṇ").decode("UTF-8")
 class MyHTMLParser(HTMLParser):
     show=0
