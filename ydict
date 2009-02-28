@@ -24,6 +24,8 @@ class MyHTMLParser(HTMLParser):
     chimode=0
     pron=""
     result=[]
+    def __init__(self):
+        self.result=[]
     def handle_starttag(self, tag, attrs):
         if tag == "div" and len(attrs)!=0:
                 if attrs[0][1]=="pexplain":
@@ -108,7 +110,6 @@ def dict(word):
         data=data.replace("</b>",org+indigo)
         p=MyHTMLParser()
         p.reset()
-        p.result=[]
         p.feed(data)
         for s in p.result:
                 output+=s
