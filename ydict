@@ -25,7 +25,16 @@ class MyHTMLParser(HTMLParser):
     pron=""
     result=[]
     def __init__(self):
+        pass
         self.result=[]
+    def handle_startendtag(self, tag, attrs):
+        if tag == "br" and self.chimode == 1:
+                self.show=1
+                self.prefix="    "+org
+        elif tag == "br" and self.kkmode == 1:
+                self.result.append(self.pron.encode("UTF-8")+"]\n")
+                self.pron=""
+                self.result.append("DJ:[")
     def handle_starttag(self, tag, attrs):
         if tag == "div" and len(attrs)!=0:
                 if attrs[0][1]=="pexplain":
@@ -48,6 +57,7 @@ class MyHTMLParser(HTMLParser):
                         self.pron=""
                 elif attrs[0][1]=="chinese-explain pexplain":
                         self.chimode=1
+                        #self.show=1
                         self.prefix="    "+green
                 elif attrs[0][1]=="pcixin":
                         self.show=1
@@ -56,13 +66,6 @@ class MyHTMLParser(HTMLParser):
                self.pron+=map[int(attrs[0][1][40:43])]
         elif tag == "em" and attrs[0][1] == "warning":
                 self.error=1
-        elif tag == "br" and self.chimode == 1:
-                self.show=1
-                self.prefix="    "+org
-        elif tag == "br" and self.kkmode == 1:
-                self.result.append(self.pron.encode("UTF-8")+"]\n")
-                self.pron=""
-                self.result.append("DJ:[")
         elif tag == "li" and self.chimode ==1:
                 self.show=1
         elif tag == "a" and self.error ==1:
@@ -93,10 +96,6 @@ class MyHTMLParser(HTMLParser):
         if tag == "img":
                 imgmode=0
                 
-
-def showkk(attrs):
-        for i in attrs:
-                map[int(i[1][40:43])]
 def dict(word):
         output=""
         print ">"+light+word+org
@@ -109,7 +108,7 @@ def dict(word):
         index=string.index(data1,"sc\'")
         data=data1[0:index]
         data=data.replace("&#39;",'\'')
-        #data=data.replace("<br>","  ")
+        data=data.replace("<br>","<br/>")
         data=data.replace("<b>",lindigo)
         data=data.replace("</b>",org+indigo)
         p=MyHTMLParser()
