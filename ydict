@@ -39,6 +39,7 @@ class MyHTMLParser(HTMLParser):
                         self.show=1
                         self.prefix="    "+green
                 elif attrs[0][1]=="chinese":
+                        self.chimode=1
                         self.show=1
                         self.prefix="    "+org
                 elif attrs[0][1]=="ptitle":
@@ -47,7 +48,7 @@ class MyHTMLParser(HTMLParser):
                         self.pron=""
                 elif attrs[0][1]=="chinese-explain pexplain":
                         self.chimode=1
-                        self.prefix="    "+indigo
+                        self.prefix="    "+green
                 elif attrs[0][1]=="pcixin":
                         self.show=1
                         self.prefix=red
@@ -55,6 +56,9 @@ class MyHTMLParser(HTMLParser):
                self.pron+=map[int(attrs[0][1][40:43])]
         elif tag == "em" and attrs[0][1] == "warning":
                 self.error=1
+        elif tag == "br" and self.chimode == 1:
+                self.show=1
+                self.prefix="    "+org
         elif tag == "br" and self.kkmode == 1:
                 self.result.append(self.pron.encode("UTF-8")+"]\n")
                 self.pron=""
@@ -105,7 +109,7 @@ def dict(word):
         index=string.index(data1,"sc\'")
         data=data1[0:index]
         data=data.replace("&#39;",'\'')
-        data=data.replace("<br>","  ")
+        #data=data.replace("<br>","  ")
         data=data.replace("<b>",lindigo)
         data=data.replace("</b>",org+indigo)
         p=MyHTMLParser()
