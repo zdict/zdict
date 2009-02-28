@@ -36,12 +36,16 @@ class MyHTMLParser(HTMLParser):
                 elif attrs[0][1]=="pchi":
                         self.show=1
                         self.prefix="    "+green
+                elif attrs[0][1]=="chinese":
+                        self.show=1
+                        self.prefix="    "+org
                 elif attrs[0][1]=="ptitle":
                         self.kkmode=1
                         self.result.append(blue+"KK:[")
                         self.pron=""
                 elif attrs[0][1]=="chinese-explain pexplain":
                         self.chimode=1
+                        self.prefix="    "+indigo
                 elif attrs[0][1]=="pcixin":
                         self.show=1
                         self.prefix=red
@@ -78,7 +82,7 @@ class MyHTMLParser(HTMLParser):
                         self.kkmode=0
                         self.result.append(self.pron.encode("UTF-8")+"]"+org+"\n")
                 elif self.chimode==1:
-                        chimode=0
+                        self.chimode=0
 
         if tag == "img":
                 imgmode=0
@@ -89,7 +93,7 @@ def showkk(attrs):
                 map[int(i[1][40:43])]
 def dict(word):
         output=""
-        print light+word+org
+        print ">"+light+word+org
         h1=httplib.HTTPConnection("tw.dictionary.yahoo.com")
         headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
         params = urllib.urlencode({'p': word ,'ei' : 'UTF-8'})
@@ -99,9 +103,12 @@ def dict(word):
         index=string.index(data1,"sc\'")
         data=data1[0:index]
         data=data.replace("&#39;",'\'')
+        data=data.replace("<br>","  ")
         data=data.replace("<b>",lindigo)
-        data=data.replace("</b>",org)
+        data=data.replace("</b>",org+indigo)
         p=MyHTMLParser()
+        p.reset()
+        p.result=[]
         p.feed(data)
         for s in p.result:
                 output+=s
