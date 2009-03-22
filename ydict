@@ -2,8 +2,11 @@
 # coding=UTF-8
 # Chen Wen <chenpc@cs.nctu.edu.tw>
 # Web Site http://code.google.com/p/ydict/
+# Blog : http://chenpc.csie.in
 import httplib, urllib,string,sys
 from HTMLParser import HTMLParser
+from optparse import OptionParser
+
 
 red="\33[31;1m"
 lindigo="\33[36;1m"
@@ -14,6 +17,7 @@ blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
 map=str(" æa:   ɑ       ʊɔɝəɚʌeɛŋ ʃʒ θð   iɪuopbtdkfvszmnhlrwj`,g ḷṃṇ").decode("UTF-8")
+m_pron=True
 class MyHTMLParser(HTMLParser):
     show=0
     prefix=""
@@ -53,7 +57,7 @@ class MyHTMLParser(HTMLParser):
                         self.chimode=1
                         self.show=1
                         self.prefix="    "+org
-                elif attrs[0][1]=="ptitle":
+                elif attrs[0][1]=="ptitle" and m_pron==True:
                         self.kkmode=1
                         self.result.append(blue+"KK:[")
                         self.pron=""
@@ -119,11 +123,20 @@ def dict(word):
         for s in p.result:
                 output+=s
         print output
-        
-while(1):
-        try:
-                word=raw_input("<PyDict> ")
-        except KeyboardInterrupt:
-                print ""
+if __name__ == '__main__':
+    parser = OptionParser()
+    parser.add_option("-s", "--step", dest="step", help="one step mode.",default=False,action="store_true")
+    parser.add_option("-p", "--pron", dest="pron", help="disable pronounce.",default=True,action="store_false")
+    (options, args) = parser.parse_args()
+    m_pron=options.pron
+
+    while(1):
+            try:
+                    word=raw_input("<PyDict> ")
+            except KeyboardInterrupt:
+                    print ""
+                    exit()
+            dict(word)
+            if options.step == True:
                 exit()
-        dict(word)
+
