@@ -101,6 +101,7 @@ class MyHTMLParser(HTMLParser):
         if tag == "img":
                 imgmode=0
 def htmlspcahrs(content):
+    content=content.replace("&amp;","\&")
     content=content.replace("$#39;","\'")
     content=content.replace("'","\'")
     content=content.replace("&quot;","\"")
