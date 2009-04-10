@@ -63,7 +63,6 @@ class MyHTMLParser(HTMLParser):
                         self.pron=""
                 elif attrs[0][1]=="chinese-explain pexplain":
                         self.chimode=1
-                        #self.show=1
                         self.prefix="    "+green
                 elif attrs[0][1]=="pcixin":
                         self.show=1
@@ -101,7 +100,16 @@ class MyHTMLParser(HTMLParser):
 
         if tag == "img":
                 imgmode=0
-                
+def htmlspcahrs(content):
+    content=content.replace("$#39;","\'")
+    content=content.replace("'","\'")
+    content=content.replace("&quot;","\"")
+    content=content.replace("&gt",">")
+    content=content.replace("&lt","<")
+    content=content.replace("<br>","<br/>")
+    content=content.replace("<b>",lindigo)
+    content=content.replace("</b>",org+indigo)
+    return content
 def dict(word):
         output=""
         print ">"+light+word+org
@@ -113,10 +121,7 @@ def dict(word):
         data1 = r1.read()
         index=string.index(data1,"sc\'")
         data=data1[0:index]
-        data=data.replace("&#39;",'\'')
-        data=data.replace("<br>","<br/>")
-        data=data.replace("<b>",lindigo)
-        data=data.replace("</b>",org+indigo)
+        data=htmlspcahrs(data)
         p=MyHTMLParser()
         p.reset()
         p.feed(data)
