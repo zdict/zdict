@@ -9,7 +9,7 @@ from optparse import OptionParser
 import locale
 from codecs import EncodedFile
 
-version="ydict 0.9"
+version="ydict 1.0"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -32,6 +32,7 @@ class MyHTMLParser(HTMLParser):
     chimode=0
     pron=""
     result=[]
+    spellchk=[]
     def __init__(self):
         pass
         self.result=[]
@@ -78,8 +79,10 @@ class MyHTMLParser(HTMLParser):
         elif tag == "a" and self.error ==1:
                 if len(attrs) == 1 and attrs[0][1]!="/azindex":
                         self.redirect=1
+                        self.error=0
                 else:
                         self.result.append(yellow+"Not Found!"+org+"\n")
+                        self.error=0
                 
 
     def handle_data(self,data):
@@ -88,7 +91,7 @@ class MyHTMLParser(HTMLParser):
                 self.show=0
         if self.redirect == 1:
                 self.result.append("Spell Check: ["+yellow+data+org+"]\n")
-                dict(data)
+                self.result.append(dict(data))
                 self.redirect=0
 
     def handle_endtag(self, tag):
