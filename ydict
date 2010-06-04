@@ -9,7 +9,7 @@ from optparse import OptionParser
 import locale
 from codecs import EncodedFile
 
-version="ydict 1.0"
+version="ydict 1.0.1"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -18,103 +18,71 @@ yellow="\33[33;1m"
 blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
-map=str(" æa:   ɑ       ʊɔɝəɚʌeɛŋ ʃʒ θð   iɪuopbtdkfvszmnhlrwj`,g ḷṃṇ").decode("UTF-8")
-m_pron=True
+
 class MyHTMLParser(HTMLParser):
-    show=0
-    prefix=""
-    postfix=org
-    entry=1
-    error=0
     redirect=0
-    kkmode=0
-    imgmode=0
-    chimode=0
-    pron=""
-    result=[]
-    spellchk=[]
+    pron=True
     def __init__(self):
-        pass
+        self.show=0
+        self.prefix=""
+        self.postfix=org
+        self.entry=1
+        self.kkmode=0
         self.result=[]
-    def handle_startendtag(self, tag, attrs):
-        if tag == "br" and self.chimode == 1:
-                self.show=1
-                self.prefix="    "+org
-        elif tag == "br" and self.kkmode == 1:
-                self.result.append(self.pron.encode("UTF-8")+"]\n")
-                self.pron=""
-                self.result.append("DJ:[")
+
     def handle_starttag(self, tag, attrs):
-        if tag == "div" and len(attrs)!=0:
-                if attrs[0][1]=="pexplain":
+	if self.redirect == 1 and tag == "strong":
+		self.show=1
+		self.prefix="Spell Check: ["+yellow
+		self.postfix=org+"]"
+	
+        elif tag == "span" and len(attrs)==0:
+                if self.kkmode==1:
                         self.show=1
-                        self.prefix="  "+str(self.entry)+"."
-                        self.entry+=1
-                elif attrs[0][1]=="peng":
+                        self.prefix=""
+        elif tag == "div" and len(attrs)==0:
+                if self.kkmode==1:
                         self.show=1
-                        self.prefix="    "+indigo
-                elif attrs[0][1]=="pchi":
-                        self.show=1
-                        self.prefix="    "+green
-                elif attrs[0][1]=="chinese":
-                        self.chimode=1
-                        self.show=1
-                        self.prefix="    "+org
-                elif attrs[0][1]=="ptitle" and m_pron==True:
+                        self.prefix=""
+        elif tag == "div" and len(attrs)!=0:
+                if attrs[0][1]=="pronunciation" and self.pron==True:
                         self.kkmode=1
-                        self.result.append(blue+"KK:[")
-                        self.pron=""
-                elif attrs[0][1]=="chinese-explain pexplain":
-                        self.chimode=1
-                        self.prefix="    "+green
-                elif attrs[0][1]=="pcixin":
-                        self.show=1
-                        self.prefix=red
-        elif tag == "img" and self.kkmode==1:
-               self.pron+=map[int(attrs[0][1][40:43])]
-        elif tag == "em" and attrs[0][1] == "warning":
-                self.error=1
-        elif tag == "li" and self.chimode ==1:
-                self.show=1
-        elif tag == "a" and self.error ==1:
-                if len(attrs) == 1 and attrs[0][1]!="/azindex":
-                        self.redirect=1
-                        self.error=0
-                else:
-                        self.result.append(yellow+"Not Found!"+org+"\n")
-                        self.error=0
-                
+                        self.result.append(blue)
+                elif attrs[0][1]=="caption":
+			self.show=1
+			self.prefix=red
+	elif tag == "p" and len(attrs)!=0:
+		if attrs[0][1] == "example":
+			self.show=1
+			self.prefix="    "+indigo
+		elif attrs[0][1] == "interpret":
+			self.show=1
+			self.prefix="  "+str(self.entry)+"."
+			self.entry+=1
 
     def handle_data(self,data):
         if self.show == 1:
                 self.result.append(self.prefix+data+self.postfix+"\n")
                 self.show=0
-        if self.redirect == 1:
-                self.result.append("Spell Check: ["+yellow+data+org+"]\n")
-                self.result.append(dict(data))
-                self.redirect=0
 
     def handle_endtag(self, tag):
         if tag == "div":
                 if self.kkmode ==1:
                         self.kkmode=0
-                        self.result.append(self.pron.encode("UTF-8")+"]"+org+"\n")
-                elif self.chimode==1:
-                        self.chimode=0
-
-        if tag == "img":
-                imgmode=0
+                        self.result.append(org)
 def htmlspcahrs(content):
     content=content.replace("&amp;","&")
     content=content.replace("&#39;","\'")
     content=content.replace("&quot;","\"")
     content=content.replace("&gt",">")
     content=content.replace("&lt","<")
-    content=content.replace("<br>","<br/>")
+    content=content.replace("<span>","")
+    content=content.replace("</span>","")
     content=content.replace("<b>",lindigo)
     content=content.replace("</b>",org+indigo)
+    content=content.replace("\n","\n    "+green)
     return content
-def dict(word):
+def dict(word,pron):
         output=""
         print ">"+light+word+org
         h1=httplib.HTTPConnection("tw.dictionary.yahoo.com")
@@ -123,11 +91,24 @@ def dict(word):
         h1.request("POST", "/search",params, headers)
         r1=h1.getresponse()
         data1 = r1.read()
-        index=string.index(data1,"sc\'")
-        data=data1[0:index]
-        data=htmlspcahrs(data)
+
         p=MyHTMLParser()
+	p.redirect=0
+	p.pron=pron
+	try:
+		index1=string.index(data1,"您是不是要查")
+		index2=string.index(data1,"adbn_BE")
+		p.redirect=1
+	except ValueError:
+		try:
+			index1=string.index(data1,"字典搜尋")
+			index2=string.index(data1,"知識+")
+		except ValueError:
+			return yellow+"Not Found!"+org+"\n"
+		
+        data=data1[index1:index2]
         p.reset()
+        data=htmlspcahrs(data)
         p.feed(data)
         for s in p.result:
                 output+=s
@@ -160,7 +141,7 @@ if __name__ == '__main__':
         m_pron=False
     
     if options.oneword:
-        result=dict(options.oneword)
+        result=dict(options.oneword,m_pron)
         result=unicode(result,'utf8')
         result=result.encode(enc)
         print result
@@ -175,7 +156,7 @@ if __name__ == '__main__':
             except EOFError:
                     print ""
                     exit()
-            result=dict(word)
+            result=dict(word,m_pron)
             result=unicode(result,'utf8')
             result=result.encode(enc)
             print result
