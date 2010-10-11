@@ -10,7 +10,7 @@ import locale
 from codecs import EncodedFile
 import dbm,os
 
-version="ydict 1.0.5"
+version="ydict 1.0.6"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
