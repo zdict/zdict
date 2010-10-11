@@ -8,6 +8,7 @@ from HTMLParser import HTMLParser
 from optparse import OptionParser
 import locale
 from codecs import EncodedFile
+import dbm,os
 
 version="ydict 1.0.5"
 red="\33[31;1m"
@@ -18,10 +19,15 @@ yellow="\33[33;1m"
 blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
+if os.access(os.getenv("HOME")+"/.ydict.db.dir", os.F_OK):
+    db=dbm.open(os.getenv("HOME")+"/.ydict.db", 'c')
+    db.close()
+
 
 class MyHTMLParser(HTMLParser):
     redirect=0
     pron=True
+    gword=""
     def __init__(self):
         self.show=0
         self.prefix=""
@@ -47,16 +53,16 @@ class MyHTMLParser(HTMLParser):
                         self.prefix=""
         elif tag == "div" and len(attrs)!=0:
             if attrs[0][1]=="pronunciation" and self.pron==True:
-                self.kkmode=self.kkmode+1
-                if self.kkmode == 1:
-                    self.result.append(blue)
+                self.kkmode=1
+                self.result.append(self.gword)
+                self.result.append(blue)
             elif attrs[0][1]=="caption":
                 self.show=1
                 self.prefix=red
             elif attrs[0][1]=="description":
                 if self.desc != 0:
                     self.show=1
-                    self.prefix="[其他] "+org
+                    self.prefix="  "+org
                 
                 self.desc+=1
         elif tag == "p" and len(attrs)!=0:
@@ -70,14 +76,14 @@ class MyHTMLParser(HTMLParser):
 
     def handle_data(self,data):
         if self.show == 1:
-                self.result.append(self.prefix+data+self.postfix+"\n")
-                self.show=0
+            self.result.append(self.prefix+data+self.postfix+"\n")
+            self.show=0
+            self.prefix=""
+            self.postfix=""
 
     def handle_endtag(self, tag):
         if tag == "div":
-                if self.kkmode ==1:
-                        self.kkmode=2
-                        self.result.append(org)
+            self.result.append(org)
 def htmlspcahrs(content):
     content=content.replace("&amp;","&")
     content=content.replace("&#39;","\'")
@@ -90,37 +96,47 @@ def htmlspcahrs(content):
     content=content.replace("</b>",org+indigo)
     content=content.replace("\n","\n    "+green)
     return content
-def dict(word,pron):
-        output=""
-        print ">"+light+word+org
-        h1=httplib.HTTPConnection("tw.dictionary.yahoo.com")
-        headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain"}
-        params = urllib.urlencode({'p': word ,'ei' : 'UTF-8'})
-        h1.request("POST", "/search",params, headers)
-        r1=h1.getresponse()
-        data1 = r1.read()
 
-        p=MyHTMLParser()
-	p.redirect=0
-	p.pron=pron
-	try:
-		index1=string.index(data1,"您是不是要查")
-		index2=string.index(data1,"adbn_BE")
-		p.redirect=1
-	except ValueError:
-		try:
-			index1=string.index(data1,"字典搜尋")
-			index2=string.index(data1,"Online Resources")
-		except ValueError:
-			return yellow+"Not Found!"+org+"\n"
-		
-        data=data1[index1:index2]
-        p.reset()
-        data=htmlspcahrs(data)
-        p.feed(data)
-        for s in p.result:
-                output+=s
-        return output
+
+def http_postconn(word):
+    yahoourl="tw.dictionary.yahoo.com"
+    params = urllib.urlencode({'p': word ,'ei' : 'UTF-8'})
+    return urllib.urlopen("http://%s/search" % yahoourl, params)
+
+def dict(word,pron):
+    output=""
+    r1=http_postconn(word)
+    data1 = r1.read()
+    p=MyHTMLParser()
+    p.gword="["+light+word+org+"]\n"
+    p.redirect=0
+    p.pron=pron
+    data1=data1[:16+string.index(data1,"Online Resources")]
+	
+    try:
+        index1=string.index(data1,"您是不是要查")
+        p.redirect=1
+    except ValueError:
+        try:
+            index1=string.index(data1,"很抱歉，字典找不到您要的資料喔！")
+            return yellow+"Not Found!"+org+"\n"
+        except ValueError:
+            index1=string.index(data1,"字典搜尋")
+    
+    try:
+        index3=string.index(data1,"以下為 <strong>")
+        index4=string.index(data1,"</strong> 在字典中的結果")
+        print yellow+"以下為 "+light+data1[index3+18:index4]+yellow+" 在字典中的結果"+org
+    except ValueError:
+        pass
+        
+    data=data1[index1:]
+    p.reset()
+    data=htmlspcahrs(data)
+    p.feed(data)
+    for s in p.result:
+        output+=s
+    return output
             
 if __name__ == '__main__':
     parser = OptionParser()
@@ -156,19 +172,20 @@ if __name__ == '__main__':
         exit()
 
     while(1):
-            try:
-                    word=raw_input("<PyDict> ")
-            except KeyboardInterrupt:
-                    print ""
-                    exit()
-            except EOFError:
-                    print ""
-                    exit()
-            result=dict(word,m_pron)
-            result=unicode(result,'utf8')
-            result=result.encode(enc)
-            print result
+        try:
+            word=raw_input("<PyDict> ")
+        except KeyboardInterrupt:
+            print ""
+            exit()
+        except EOFError:
+            print ""
+            exit()
 
-            if options.step == True:
-                exit()
+        result=dict(word,m_pron)
+        result=unicode(result,'utf8')
+        result=result.encode(enc)
+        print result
+
+        if options.step == True:
+            exit()
 
