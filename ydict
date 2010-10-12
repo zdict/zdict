@@ -111,7 +111,11 @@ def dict(word,pron):
     p.gword="["+light+word+org+"]\n"
     p.redirect=0
     p.pron=pron
-    data1=data1[:16+string.index(data1,"Online Resources")]
+    try:
+        data1=data1[:16+string.index(data1,"Online Resources")]
+    except ValueError:
+        return output
+
 	
     try:
         index1=string.index(data1,"您是不是要查")
