@@ -71,7 +71,7 @@ class MyHTMLParser(HTMLParser):
                 self.prefix="    "+indigo
             elif attrs[0][1] == "interpret":
                 self.show=1
-                self.prefix="  "+str(self.entry)+"."
+                self.prefix="  "+org+str(self.entry)+"."
                 self.entry+=1
 
     def handle_data(self,data):
