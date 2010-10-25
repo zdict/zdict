@@ -27,13 +27,11 @@ if os.access(os.getenv("HOME")+"/.ydict.db.dir", os.F_OK):
 class MyHTMLParser(HTMLParser):
     redirect=0
     pron=True
-    gword=""
     def __init__(self):
         self.show=0
         self.prefix=""
         self.postfix=org
         self.entry=1
-        self.kkmode=0
         self.desc=0
         self.result=[]
 
@@ -44,21 +42,23 @@ class MyHTMLParser(HTMLParser):
             self.postfix=org+"]"
         
         elif tag == "span" and len(attrs)==0:
-            if self.kkmode==1:
+            if self.pron == True:
                         self.show=1
                         self.prefix=""
         elif tag == "div" and len(attrs)==0:
-            if self.kkmode==1:
+            if self.pron == True:
                         self.show=1
                         self.prefix=""
         elif tag == "div" and len(attrs)!=0:
             if attrs[0][1]=="pronunciation" and self.pron==True:
-                self.kkmode=1
-                self.result.append(self.gword)
                 self.result.append(blue)
             elif attrs[0][1]=="caption":
                 self.show=1
                 self.prefix=red
+            elif attrs[0][1]=="theme clr":
+                self.show=1
+                self.prefix="["+light
+                self.postfix=org+"]"
             elif attrs[0][1]=="description":
                 if self.desc != 0:
                     self.show=1
@@ -84,6 +84,7 @@ class MyHTMLParser(HTMLParser):
     def handle_endtag(self, tag):
         if tag == "div":
             self.result.append(org)
+
 def htmlspcahrs(content):
     content=content.replace("&amp;","&")
     content=content.replace("&#39;","\'")
@@ -108,7 +109,6 @@ def dict(word,pron):
     r1=http_postconn(word)
     data1 = r1.read()
     p=MyHTMLParser()
-    p.gword="["+light+word+org+"]\n"
     p.redirect=0
     p.pron=pron
     try:
