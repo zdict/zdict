@@ -8,9 +8,9 @@ from HTMLParser import HTMLParser
 from optparse import OptionParser
 import locale
 from codecs import EncodedFile
-import dbm,os
+import shelve,os
 
-version="ydict 1.0.6"
+version="ydict 1.0.8"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -19,9 +19,10 @@ yellow="\33[33;1m"
 blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
-if os.access(os.getenv("HOME")+"/.ydict.db.dir", os.F_OK):
-    db=dbm.open(os.getenv("HOME")+"/.ydict.db", 'c')
-    db.close()
+learn=0
+if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
+	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	learn=1
 
 
 class MyHTMLParser(HTMLParser):
@@ -34,6 +35,8 @@ class MyHTMLParser(HTMLParser):
         self.entry=1
         self.desc=0
         self.result=[]
+	self.learn=learn
+	self.learnword=0
 
     def handle_starttag(self, tag, attrs):
         if self.redirect == 1 and tag == "strong":
@@ -57,6 +60,7 @@ class MyHTMLParser(HTMLParser):
                 self.prefix=red
             elif attrs[0][1]=="theme clr":
                 self.show=1
+		self.learnword=1
                 self.prefix="["+light
                 self.postfix=org+"]"
             elif attrs[0][1]=="description":
@@ -80,6 +84,11 @@ class MyHTMLParser(HTMLParser):
             self.show=0
             self.prefix=""
             self.postfix=""
+	    if(self.learn == 1 and self.learnword == 1):
+	    	if(db.has_key(data) == 0):
+			db[data]=0
+		db[data]=db[data]+1
+		self.learnword=0
 
     def handle_endtag(self, tag):
         if tag == "div":
@@ -150,10 +159,12 @@ if __name__ == '__main__':
     parser.add_option("-b", "--big5", dest="big5", help="force big5 encoding.",default=False,action="store_true")
     parser.add_option("-w", "--word", dest="oneword", type="string" , help="only one word.",action="store")
     parser.add_option("-v", "--version", dest="version", help="show version.",default=False,action="store_true")
+    parser.add_option("-d", "--database", dest="database", help="initial database.",default=False,action="store_true")
 
     (options, args) = parser.parse_args()
     m_pron=options.pron
     (lang , enc)=locale.getdefaultlocale()
+    	
     if options.version == True:
         print version
         exit()
@@ -161,6 +172,10 @@ if __name__ == '__main__':
         enc="utf8"
     elif options.big5 == True:
         enc="big5"
+    if options.database == True:
+    	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	db.close()
+	exit()
 
     if options.utf8 == options.big5 ==True:
         print "Can not select utf-8 and big5 at the same time"
