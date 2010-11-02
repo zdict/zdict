@@ -37,6 +37,7 @@ class MyHTMLParser(HTMLParser):
         self.result=[]
 	self.learn=learn
 	self.learnword=0
+	self.chinese=0
 
     def handle_starttag(self, tag, attrs):
         if self.redirect == 1 and tag == "strong":
@@ -60,7 +61,8 @@ class MyHTMLParser(HTMLParser):
                 self.prefix=red
             elif attrs[0][1]=="theme clr":
                 self.show=1
-		self.learnword=1
+		if self.chinese == 0:
+			self.learnword=1
                 self.prefix="["+light
                 self.postfix=org+"]"
             elif attrs[0][1]=="description":
@@ -119,6 +121,7 @@ def dict(word,pron):
     data1 = r1.read()
     p=MyHTMLParser()
     p.redirect=0
+    p.chinese=0
     p.pron=pron
     try:
         data1=data1[:16+string.index(data1,"Online Resources")]
@@ -142,6 +145,13 @@ def dict(word,pron):
         print yellow+"以下為 "+light+data1[index3+18:index4]+yellow+" 在字典中的結果"+org
     except ValueError:
         pass
+    try:
+        string.index(data1,"拼音")
+        string.index(data1,"注音")
+	p.chinese=1
+    except ValueError:
+    	pass
+
         
     data=data1[index1:]
     p.reset()
