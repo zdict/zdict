@@ -9,8 +9,9 @@ from optparse import OptionParser
 import locale
 from codecs import EncodedFile
 import shelve,os
+import random
 
-version="ydict 1.0.8"
+version="ydict 1.0.9"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -23,8 +24,60 @@ learn=0
 if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
 	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	learn=1
+def result(count, total):
+	if total == 0:
+		print ""
+		exit()
+	print "\nScore: ",int(count),"/",int(total),"(",count/total,")"
+	exit()
 
+def seckey(x):
+        return x[1]
 
+def wordlearn():
+	wordlist = list(db.iteritems())
+	wordlist.sort(key=seckey)
+	size=len(wordlist)
+	totalcount = 0.0
+	right = 0.0
+	if size == 1:
+		print "Can not learn from only one word in list."
+		exit()
+	while True:
+			
+		k=wordlist[int(random.triangular(0, size-1, 0))][0]
+		k=k.lower()
+		print dict(k,1).replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
+		try:
+			word=raw_input("Input :")
+		except KeyboardInterrupt:
+			result(right,totalcount)
+		if word == k.lower():
+			print "Bingo!"
+			right+=1
+			db[k]+=1
+			if db[k] >= 100:
+				db[k]=100
+		else:
+			db[k]-=3
+			if db[k] < 0:
+				db[k]=0
+			print "WRONG! Correct answer is : ",k
+			try:
+				raw_input("Press Enter to contiune......")
+			except KeyboardInterrupt:
+				result(right,totalcount)
+		db.sync()
+		totalcount+=1
+		if totalcount % (int(size/4)+1) == 0:
+			wordlist=list(db.iteritems())
+			wordlist.sort(key=seckey)
+def wordlist():
+	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	wordlist = list(db.iteritems())
+	wordlist.sort(key=seckey)
+	for k,v in wordlist:
+		print k,v
 class MyHTMLParser(HTMLParser):
 	redirect=0
 	pron=True
@@ -86,9 +139,8 @@ class MyHTMLParser(HTMLParser):
 			self.prefix=""
 			self.postfix=""
 		if(self.learn == 1 and self.learnword == 1):
-			if(db.has_key(data) == 0):
-				db[data]=0
-			db[data]=db[data]+1
+			if(db.has_key(data.lower()) == 0):
+				db[data.lower()]=0
 			self.learnword=0
 
 	def handle_endtag(self, tag):
@@ -169,6 +221,8 @@ if __name__ == '__main__':
 	parser.add_option("-w", "--word", dest="oneword", type="string" , help="only one word.",action="store")
 	parser.add_option("-v", "--version", dest="version", help="show version.",default=False,action="store_true")
 	parser.add_option("-d", "--database", dest="database", help="initial database.",default=False,action="store_true")
+	parser.add_option("-l", "--learn", dest="learnmode", help="start learning mode.",default=False,action="store_true")
+	parser.add_option("-a", "--list", dest="listall", help="list all word in list.",default=False,action="store_true")
 
 	(options, args) = parser.parse_args()
 	m_pron=options.pron
@@ -197,6 +251,11 @@ if __name__ == '__main__':
 		result=unicode(result,'utf8')
 		result=result.encode(enc)
 		print result
+		exit()
+	if options.learnmode:
+		wordlearn()
+	elif options.listall:
+		wordlist()
 		exit()
 
 	while(1):
