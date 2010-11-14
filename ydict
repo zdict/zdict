@@ -24,6 +24,15 @@ learn=0
 if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
 	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	learn=1
+
+def importfile(file):
+	fp = open(file)
+	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	for line in fp:
+		newword=line.split(" ")[0]
+		if db.has_key(newword) == 0:
+			db[newword]=0
+	print "File imported!"
 def result(count, total):
 	if total == 0:
 		print ""
@@ -139,7 +148,7 @@ class MyHTMLParser(HTMLParser):
 			self.prefix=""
 			self.postfix=""
 		if(self.learn == 1 and self.learnword == 1):
-			if(db.has_key(data.lower()) == 0):
+			if(db.has_key(data.lower()) == 0 and data.lower().isalpha() ):
 				db[data.lower()]=0
 			self.learnword=0
 
@@ -223,10 +232,15 @@ if __name__ == '__main__':
 	parser.add_option("-d", "--database", dest="database", help="initial database.",default=False,action="store_true")
 	parser.add_option("-l", "--learn", dest="learnmode", help="start learning mode.",default=False,action="store_true")
 	parser.add_option("-a", "--list", dest="listall", help="list all word in list.",default=False,action="store_true")
+	parser.add_option("-i", "--import", dest="importfile", type="string", help="import a word list",default=False,action="store")
 
 	(options, args) = parser.parse_args()
 	m_pron=options.pron
 	(lang , enc)=locale.getdefaultlocale()
+
+	if options.importfile:
+		importfile(options.importfile)
+		exit()
 		
 	if options.version == True:
 		print version
