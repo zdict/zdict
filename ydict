@@ -122,7 +122,7 @@ class MyHTMLParser(HTMLParser):
 				if self.desc != 0:
 					self.show=1
 					self.prefix="  "+org
-					self.desc+=1
+				self.desc+=1
 		elif tag == "p" and len(attrs)!=0:
 			if attrs[0][1] == "example":
 				self.show=1
