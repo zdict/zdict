@@ -40,8 +40,8 @@ def wordlearn():
 	size=len(wordlist)
 	totalcount = 0.0
 	right = 0.0
-	if size == 1:
-		print "Can not learn from only one word in list."
+	if size <= 1:
+		print "There must be at least two words needed in the list."
 		exit()
 	while True:
 			
