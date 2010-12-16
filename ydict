@@ -177,6 +177,9 @@ def http_postconn(word):
 
 def dict(word,pron):
 	output=""
+	word=word.strip()
+	if len(word) <= 0:
+		return output
 	r1=http_postconn(word)
 	data1 = r1.read()
 	p=MyHTMLParser()
@@ -184,7 +187,8 @@ def dict(word,pron):
 	p.chinese=0
 	p.pron=pron
 	try:
-		data1=data1[:16+string.index(data1,"Online Resources")]
+		#data1=data1[:16+string.index(data1,"Online Resources")]
+		data1=data1[:16+string.index(data1,'<div id="adbn_BE" class="ad">')]
 	except ValueError:
 		return output
 
