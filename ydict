@@ -27,7 +27,7 @@ if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
 
 def importfile(file):
 	fp = open(file)
-	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	#db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	for line in fp:
 		newword=line.split(" ")[0]
 		if db.has_key(newword) == 0:
@@ -44,7 +44,7 @@ def seckey(x):
         return x[1]
 
 def wordlearn():
-	wordlist = list(db.iteritems())
+	wordlist = db.items()
 	wordlist.sort(key=seckey)
 	size=len(wordlist)
 	totalcount = 0.0
@@ -76,14 +76,13 @@ def wordlearn():
 				raw_input("Press Enter to contiune......")
 			except KeyboardInterrupt:
 				result(right,totalcount)
-		db.sync()
 		totalcount+=1
 		if totalcount % (int(size/4)+1) == 0:
-			wordlist=list(db.iteritems())
+			wordlist=db.items()
 			wordlist.sort(key=seckey)
 def wordlist():
-	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
-	wordlist = list(db.iteritems())
+	#db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	wordlist = db.items()
 	wordlist.sort(key=seckey)
 	for k,v in wordlist:
 		print k,v
