@@ -17,10 +17,12 @@ import random
 import ConfigParser
 from multiprocessing import Process, JoinableQueue
 #Google API
-import gdata.spreadsheet.service
-import gdata.service
-import gdata.spreadsheet
-
+try:
+	import gdata.spreadsheet.service
+	import gdata.service
+	import gdata.spreadsheet
+except ImportError:
+	pass
 
 version="ydict 1.1.0"
 red="\33[31;1m"
@@ -32,6 +34,7 @@ blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
 learn=0
+database=0
 
 class godb():
 	def __init__(self, email, password, spreadsheet, worksheet):
@@ -134,13 +137,16 @@ if os.access(os.getenv("HOME")+"/.ydictrc", os.F_OK):
 		worksheet = config.get('ydict', 'worksheet')
 		db = godb(username, password, spreadsheet, worksheet)
 		learn = 1
+		database = 1
 		
 	elif dbname == "local":
 		if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
 			db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 			learn = 1
+			database = 1
 def cleanup():
-	db.sync()
+	if database:
+		db.sync()
 	exit()
 
 def importfile(file):
