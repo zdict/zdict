@@ -3,6 +3,10 @@
 # Chen Wen <chenpc@cs.nctu.edu.tw>
 # Web Site http://code.google.com/p/ydict/
 # Blog : http://chenpc.csie.in
+
+import getopt
+import sys
+import string
 import httplib, urllib,string,sys
 from HTMLParser import HTMLParser
 from optparse import OptionParser
@@ -10,8 +14,15 @@ import locale
 from codecs import EncodedFile
 import shelve,os
 import random
+import ConfigParser
+from multiprocessing import Process, JoinableQueue
+#Google API
+import gdata.spreadsheet.service
+import gdata.service
+import gdata.spreadsheet
 
-version="ydict 1.0.9"
+
+version="ydict 1.1.0"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -21,9 +32,116 @@ blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
 learn=0
-if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
-	db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
-	learn=1
+
+class godb():
+	def __init__(self, email, password, spreadsheet, worksheet):
+		self.gd_client = gdata.spreadsheet.service.SpreadsheetsService()
+		self.gd_client.email = email
+		self.gd_client.password = password
+		self.gd_client.source = 'Spreadsheets GData Sample'
+		self.gd_client.ProgrammaticLogin()
+		self.curr_key = ''
+		self.curr_wksht_id = ''
+		self.list_feed = None
+		self.word = dict()
+		self.wordlist = list()
+		self.curr_key = self.SearchForSpreadsheet(spreadsheet)
+		self.curr_wksht_id = self.SearchForWorksheet(self.curr_key, worksheet)	
+		self.CellGetAction(self.curr_key, self.curr_wksht_id)
+		self.q = JoinableQueue()
+		self.p = Process(target=self.wb, args=(self.q,))
+		self.p.start()
+
+	def wb(self, q):
+		while(1) :
+			(k, v, index)=q.get()
+
+			entry = self.gd_client.UpdateCell( row=str(index), col=1,
+			inputValue=str(k),
+			key=self.curr_key, wksht_id=self.curr_wksht_id)
+
+			entry = self.gd_client.UpdateCell( row=str(index), col=2,
+			inputValue=str(v),
+			key=self.curr_key, wksht_id=self.curr_wksht_id)
+
+			q.task_done()
+
+	def __getitem__(self, key):
+		return self.wordlist[self.word[key]-1]
+
+	def __setitem__(self, key, value):
+		if self.word.has_key(key):
+			self.wordlist[self.word[key]-1] = value
+		else:
+			self.wordlist.append(value)
+			self.word[key] = len(self.wordlist)
+		self.q.put([key, value, self.word[key]])
+
+	def has_key(self, key):
+		return self.word.has_key(key)
+
+	def items(self):
+		ret = list()
+		for (k, v) in self.word.iteritems():
+			ret.append((k, self.wordlist[v-1]))
+		return ret
+	def __del__(self):
+		self.sync()
+
+	def sync(self):
+		if not self.q.empty():
+			print "Saving to Google Spreadsheet"
+		self.q.join()
+		self.p.terminate()
+
+	def CellGetAction(self, key, wksht_id):
+		# Get the list feed
+		feed = self.gd_client.GetCellsFeed(key, wksht_id)
+		self.GetFeed(feed)
+
+	def GetFeed(self, feed):
+		for i, entry in enumerate(feed.entry):
+			if isinstance(feed, gdata.spreadsheet.SpreadsheetsCellsFeed):
+				if not entry.cell.text.isdigit():
+					self.word[entry.cell.text] = string.atoi(entry.cell.row)
+					self.wordlist.append(0)
+				else:
+					self.wordlist[string.atoi(entry.cell.row)-1] = string.atoi(entry.cell.inputValue)
+	def SearchForWorksheet(self, key, name):
+		# Get the list of worksheets
+		feed = self.gd_client.GetWorksheetsFeed(key)
+		for i, entry in enumerate(feed.entry):
+			if entry.title.text == name:
+				curr = entry
+		return curr.id.text.rsplit('/', 1)[1]
+	def SearchForSpreadsheet(self, name):
+		# Get the list of spreadsheets
+		feed = self.gd_client.GetSpreadsheetsFeed()
+		for i, entry in enumerate(feed.entry):
+			if entry.title.text == name:
+				curr = entry
+		return curr.id.text.rsplit('/', 1)[1]
+
+
+if os.access(os.getenv("HOME")+"/.ydictrc", os.F_OK):
+	config = ConfigParser.ConfigParser()
+	config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
+	dbname = config.get('ydict', 'database')
+	if dbname == "google":
+		username = config.get('ydict', 'username')
+		password = config.get('ydict', 'password')
+		spreadsheet = config.get('ydict', 'spreadsheet')
+		worksheet = config.get('ydict', 'worksheet')
+		db = godb(username, password, spreadsheet, worksheet)
+		learn = 1
+		
+	elif dbname == "local":
+		if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
+			db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+			learn = 1
+def cleanup():
+	db.sync()
+	exit()
 
 def importfile(file):
 	fp = open(file)
@@ -52,15 +170,12 @@ def wordlearn():
 	if size <= 1:
 		print "There must be at least two words needed in the list."
 		exit()
-	while True:
+	while(1) :
 			
 		k=wordlist[int(random.triangular(0, size-1, 0))][0]
 		k=k.lower()
 		print dict(k,1).replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
-		try:
-			word=raw_input("Input :")
-		except KeyboardInterrupt:
-			result(right,totalcount)
+		word=raw_input("Input :")
 		if word == k.lower():
 			print "Bingo!"
 			right+=1
@@ -148,7 +263,7 @@ class MyHTMLParser(HTMLParser):
 			self.postfix=""
 		if(self.learn == 1 and self.learnword == 1):
 			if(db.has_key(data.lower()) == 0 and data.lower().isalpha() ):
-				db[data.lower()]=0
+				db[data.lower()] = 0
 			self.learnword=0
 
 	def handle_endtag(self, tag):
@@ -223,7 +338,8 @@ def dict(word,pron):
 	for s in p.result:
 		output+=s
 	return output
-			
+
+
 if __name__ == '__main__':
 	parser = OptionParser()
 	parser.add_option("-s", "--step", dest="step", help="one step mode.",default=False,action="store_true")
@@ -243,23 +359,19 @@ if __name__ == '__main__':
 
 	if options.importfile:
 		importfile(options.importfile)
-		exit()
+		cleanup()
 		
 	if options.version == True:
 		print version
-		exit()
+		cleanup()
 	if options.utf8 == True:
 		enc="utf8"
 	elif options.big5 == True:
 		enc="big5"
-	if options.database == True:
-		db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
-		db.close()
-		exit()
 
 	if options.utf8 == options.big5 ==True:
 		print "Can not select utf-8 and big5 at the same time"
-		exit()
+		cleanup()
 	if enc == 'big5':
 		m_pron=False
 	
@@ -268,22 +380,30 @@ if __name__ == '__main__':
 		result=unicode(result,'utf8')
 		result=result.encode(enc)
 		print result
-		exit()
+		cleanup()
 	if options.learnmode:
-		wordlearn()
+		try:
+			wordlearn()
+		except KeyboardInterrupt:
+			print ""
+			cleanup()
+		except EOFError:
+			print ""
+			cleanup()
+		cleanup()
 	elif options.listall:
 		wordlist()
-		exit()
+		cleanup()
 
 	while(1):
 		try:
 			word=raw_input("<PyDict> ")
 		except KeyboardInterrupt:
 			print ""
-			exit()
+			cleanup()
 		except EOFError:
 			print ""
-			exit()
+			cleanup()
 
 		result=dict(word,m_pron)
 		result=unicode(result,'utf8')
@@ -291,5 +411,5 @@ if __name__ == '__main__':
 		print result
 
 		if options.step == True:
-			exit()
+			cleanup()
 
