@@ -175,6 +175,10 @@ def result(count, total):
 
 def seckey(x):
         return x[1]
+def speek(k):
+	filename = voicedata+"/"+k[0]+"/"+k+".wav"
+	if os.access(filename, os.F_OK):
+		os.system(playback+" "+filename+" 2&> /dev/null &")
 
 def answers(iq, oq):
 	while(1):
@@ -204,9 +208,7 @@ def wordlearn():
 			lookup.put(k)
 		(k, result) = answer.get()
 		print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
-		filename = voicedata+"/"+k[0]+"/"+k+".wav"
-		if os.access(filename, os.F_OK):
-			os.system(playback+" "+filename+" 2&> /dev/null &")
+		speek(k)
 		word=raw_input("Input :")
 		if word == k.lower():
 			print "Bingo!"
@@ -299,6 +301,7 @@ class MyHTMLParser(HTMLParser):
 			if(db.has_key(data.lower()) == 0 and data.lower().isalpha() ):
 				db[data.lower()] = 0
 			self.learnword=0
+			speek(data.lower())
 
 	def handle_endtag(self, tag):
 		if tag == "div":
