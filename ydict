@@ -35,6 +35,8 @@ org="\33[0m"
 light="\33[0;1m"
 learn=0
 database=0
+voicedata = ""
+playback = ""
 
 class godb():
 	def __init__(self, email, password, spreadsheet, worksheet):
@@ -144,6 +146,13 @@ if os.access(os.getenv("HOME")+"/.ydictrc", os.F_OK):
 			db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 			learn = 1
 			database = 1
+	try:
+		voicedata = config.get('ydict', 'voicedata')
+		playback = config.get('ydict', 'playback')
+	except :
+		pass
+	
+		
 def cleanup():
 	if database:
 		db.sync()
@@ -195,9 +204,9 @@ def wordlearn():
 			lookup.put(k)
 		(k, result) = answer.get()
 		print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
-		filename = os.getenv("HOME")+"/Documents/voice/"+k[0]+"/"+k+".wav"
+		filename = voicedata+"/"+k[0]+"/"+k+".wav"
 		if os.access(filename, os.F_OK):
-			os.system("aplay "+filename+" 2&> /dev/null &")
+			os.system(playback+" "+filename+" 2&> /dev/null &")
 		word=raw_input("Input :")
 		if word == k.lower():
 			print "Bingo!"
