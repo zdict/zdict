@@ -15,7 +15,7 @@ from codecs import EncodedFile
 import shelve,os
 import random
 import ConfigParser
-from multiprocessing import Process, JoinableQueue, Queue, Pool
+from multiprocessing import Process, Queue, Pool
 
 
 version="ydict 1.1.0"
@@ -120,10 +120,22 @@ def wordlearn():
 			k=k.lower()
 			lookup.put(k)
 		(k, result) = answer.get()
+		if not db.has_key(k):
+			continue
 		print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
 		speek(k)
 		word = raw_input("Input :")
-		if word == k.lower():
+		if word == "d":
+				del db[k]
+				print "delete word",k				
+				wordlist=db.items()
+				wordlist.sort(key=seckey)
+				size=len(wordlist)
+				if size <= 1:
+					print "There must be at least two words needed in the list."
+					exit()					
+				
+		elif word == k.lower():
 			print "Bingo!"
 			right+=1
 			db[k]+=1
@@ -138,19 +150,7 @@ def wordlearn():
 				word = raw_input("Press Enter to contiune......")
 			except KeyboardInterrupt:
 				result(right,totalcount)
-			if word == "d":
-				del db[k]
-				wordlist=db.items()
-				wordlist.sort(key=seckey)
-				size=len(wordlist)
-				if size <= 1:
-					print "There must be at least two words needed in the list."
-					exit()
-				while(not lookup.empty):
-					print "pop"
-					lookup.get_nowait()
-				while(not answer.empty):
-					answer.get_nowait()
+			
 
 		totalcount+=1
 		if totalcount % (int(size/4)+1) == 0:
