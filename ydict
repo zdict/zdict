@@ -347,6 +347,8 @@ if __name__ == '__main__':
 		enc="utf8"
 	elif options.big5 == True:
 		enc="big5"
+	else:
+		enc="utf8"
 
 	if options.utf8 == options.big5 ==True:
 		print "Can not select utf-8 and big5 at the same time"
@@ -356,10 +358,20 @@ if __name__ == '__main__':
 	
 	if options.oneword:
 		(result, k) = dict(options.oneword,m_pron)
+		speek(k)
 		result=unicode(result,'utf8')
 		result=result.encode(enc)
 		print result
 		cleanup()
+		
+	if len(args) >= 1:
+		for w in args:
+			(result, k)=dict(w,m_pron)
+			result=unicode(result,'utf8')
+			result=result.encode(enc)
+			print result
+		cleanup()
+		
 	if options.learnmode:
 		try:
 			wordlearn()
