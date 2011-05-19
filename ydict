@@ -16,13 +16,7 @@ import shelve,os
 import random
 import ConfigParser
 from multiprocessing import Process, JoinableQueue, Queue, Pool
-#Google API
-try:
-	import gdata.spreadsheet.service
-	import gdata.service
-	import gdata.spreadsheet
-except ImportError:
-	pass
+
 
 version="ydict 1.1.0"
 red="\33[31;1m"
@@ -38,119 +32,19 @@ database=0
 voicedata = ""
 playback = ""
 
-class godb():
-	def __init__(self, email, password, spreadsheet, worksheet):
-		self.gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-		self.gd_client.email = email
-		self.gd_client.password = password
-		self.gd_client.source = 'Spreadsheets GData Sample'
-		self.gd_client.ProgrammaticLogin()
-		self.curr_key = ''
-		self.curr_wksht_id = ''
-		self.list_feed = None
-		self.word = dict()
-		self.wordlist = list()
-		self.curr_key = self.SearchForSpreadsheet(spreadsheet)
-		self.curr_wksht_id = self.SearchForWorksheet(self.curr_key, worksheet)	
-		self.CellGetAction(self.curr_key, self.curr_wksht_id)
-		self.saving = False
-		self.q = JoinableQueue()
-		self.p = Process(target=self.wb, args=(self.q, self.saving))
-		self.p.daemon = True
-		self.p.start()
-		
-	def wb(self, q, saving):
-		while(1) :
-			(k, v, index)=q.get()
-			entry = self.gd_client.UpdateCell( row=str(index), col=1,
-			inputValue=str(k),
-			key=self.curr_key, wksht_id=self.curr_wksht_id)
-
-			entry = self.gd_client.UpdateCell( row=str(index), col=2,
-			inputValue=str(v),
-			key=self.curr_key, wksht_id=self.curr_wksht_id)
-			q.task_done()
 
 
-	def __getitem__(self, key):
-		return self.wordlist[self.word[key]-1]
-
-	def __setitem__(self, key, value):
-		if self.word.has_key(key):
-			self.wordlist[self.word[key]-1] = value
-		else:
-			self.wordlist.append(value)
-			self.word[key] = len(self.wordlist)
-		self.q.put([key, value, self.word[key]])
-
-	def has_key(self, key):
-		return self.word.has_key(key)
-
-	def items(self):
-		ret = list()
-		for (k, v) in self.word.iteritems():
-			ret.append((k, self.wordlist[v-1]))
-		return ret
-	def __del__(self):
-		self.sync()
-
-	def sync(self):
-		self.saving = True
-		self.q.join()
-		self.p.terminate()
-
-	def CellGetAction(self, key, wksht_id):
-		# Get the list feed
-		feed = self.gd_client.GetCellsFeed(key, wksht_id)
-		self.GetFeed(feed)
-
-	def GetFeed(self, feed):
-		for i, entry in enumerate(feed.entry):
-			if isinstance(feed, gdata.spreadsheet.SpreadsheetsCellsFeed):
-				if not entry.cell.text.isdigit():
-					self.word[entry.cell.text] = string.atoi(entry.cell.row)
-					self.wordlist.append(0)
-				else:
-					self.wordlist[string.atoi(entry.cell.row)-1] = string.atoi(entry.cell.inputValue)
-	def SearchForWorksheet(self, key, name):
-		# Get the list of worksheets
-		feed = self.gd_client.GetWorksheetsFeed(key)
-		for i, entry in enumerate(feed.entry):
-			if entry.title.text == name:
-				curr = entry
-		return curr.id.text.rsplit('/', 1)[1]
-	def SearchForSpreadsheet(self, name):
-		# Get the list of spreadsheets
-		feed = self.gd_client.GetSpreadsheetsFeed()
-		for i, entry in enumerate(feed.entry):
-			if entry.title.text == name:
-				curr = entry
-		return curr.id.text.rsplit('/', 1)[1]
-
-
-if os.access(os.getenv("HOME")+"/.ydictrc", os.F_OK):
+if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
+	db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+	learn = 1
+	database = 1
+try:
 	config = ConfigParser.ConfigParser()
 	config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
-	dbname = config.get('ydict', 'database')
-	if dbname == "google":
-		username = config.get('ydict', 'username')
-		password = config.get('ydict', 'password')
-		spreadsheet = config.get('ydict', 'spreadsheet')
-		worksheet = config.get('ydict', 'worksheet')
-		db = godb(username, password, spreadsheet, worksheet)
-		learn = 1
-		database = 1
-		
-	elif dbname == "local":
-		if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
-			db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
-			learn = 1
-			database = 1
-	try:
-		voicedata = config.get('ydict', 'voicedata')
-		playback = config.get('ydict', 'playback')
-	except :
-		pass
+	voicedata = config.get('ydict', 'voicedata')
+	playback = config.get('ydict', 'playback')
+except :
+	pass
 	
 		
 def cleanup():
@@ -163,6 +57,7 @@ def importfile(file):
 	#db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	for line in fp:
 		newword=line.split(" ")[0]
+		newword=newword.split("\n")[0]
 		if db.has_key(newword) == 0:
 			db[newword]=0
 	print "File imported!"
@@ -175,16 +70,34 @@ def result(count, total):
 
 def seckey(x):
         return x[1]
+       
+def savefile(k, url):
+	if voicedata == "":
+		return
+	filename = voicedata+"/"+k[0]+"/"+k+".mp3"
+	if not os.access(filename, os.F_OK):		
+		if not os.access(voicedata+"/"+k[0], os.F_OK):
+			os.system("mkdir "+voicedata+"/"+k[0])
+		os.system("rm -f "+voicedata+"/voice.tmp")
+		os.system("wget -q "+url+" -O "+voicedata+"/voice.tmp");
+		os.system("mv "+voicedata+"/voice.tmp "+filename)
+		
 def speek(k):
-	filename = voicedata+"/"+k[0]+"/"+k+".wav"
-	if os.access(filename, os.F_OK):
+	
+	if voicedata == "" or playback == "":
+		return
+	
+	filename = voicedata+"/"+k[0]+"/"+k+".mp3"	
+	if not os.access(filename, os.F_OK):
+		dict(k, m_pron)
+	else:				
 		os.system(playback+" "+filename+" 2&> /dev/null &")
 
 def answers(iq, oq):
 	while(1):
-		k = iq.get()
-		result = dict(k, 1)
-		oq.put([k, result])
+		key = iq.get()
+		(result,k) = dict(key, 1)
+		oq.put([key, result])
 def wordlearn():
 	wordlist = db.items()
 	wordlist.sort(key=seckey)
@@ -209,7 +122,7 @@ def wordlearn():
 		(k, result) = answer.get()
 		print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
 		speek(k)
-		word=raw_input("Input :")
+		word = raw_input("Input :")
 		if word == k.lower():
 			print "Bingo!"
 			right+=1
@@ -222,9 +135,23 @@ def wordlearn():
 				db[k]=0
 			print "WRONG! Correct answer is : ",k
 			try:
-				raw_input("Press Enter to contiune......")
+				word = raw_input("Press Enter to contiune......")
 			except KeyboardInterrupt:
 				result(right,totalcount)
+			if word == "d":
+				del db[k]
+				wordlist=db.items()
+				wordlist.sort(key=seckey)
+				size=len(wordlist)
+				if size <= 1:
+					print "There must be at least two words needed in the list."
+					exit()
+				while(not lookup.empty):
+					print "pop"
+					lookup.get_nowait()
+				while(not answer.empty):
+					answer.get_nowait()
+
 		totalcount+=1
 		if totalcount % (int(size/4)+1) == 0:
 			print "re-sort"
@@ -250,6 +177,7 @@ class MyHTMLParser(HTMLParser):
 		self.learn=learn
 		self.learnword=0
 		self.chinese=0
+		self.mp3url=""
 
 	def handle_starttag(self, tag, attrs):
 		if self.redirect == 1 and tag == "strong":
@@ -297,11 +225,14 @@ class MyHTMLParser(HTMLParser):
 			self.show=0
 			self.prefix=""
 			self.postfix=""
+			self.key = data.lower()
 		if(self.learn == 1 and self.learnword == 1):
-			if(db.has_key(data.lower()) == 0 and data.lower().isalpha() ):
-				db[data.lower()] = 0
+			if(db.has_key(self.key) == 0 and self.key.isalpha() ):
+				db[self.key] = 0
 			self.learnword=0
-			speek(data.lower())
+			savefile(self.key, self.mp3url)
+			
+			#self.result.insert(0, data.lower()+"\n")			
 
 	def handle_endtag(self, tag):
 		if tag == "div":
@@ -337,6 +268,15 @@ def dict(word,pron):
 	p.redirect=0
 	p.chinese=0
 	p.pron=pron
+	
+	try:		
+		index5 = string.index(data1, '{"audio":"')		
+		index6 = string.index(data1,'"}};var noFlashPlayerMessage')		
+		p.mp3url = data1[index5+10:index6]
+	except ValueError:
+		p.mp3url = ""
+		pass
+	
 	try:
 		#data1=data1[:16+string.index(data1,"Online Resources")]
 		data1=data1[:16+string.index(data1,'<div id="adbn_BE" class="ad">')]
@@ -366,6 +306,8 @@ def dict(word,pron):
 		p.chinese=1
 	except ValueError:
 		pass
+	
+	
 
 		
 	data=data1[index1:]
@@ -374,7 +316,7 @@ def dict(word,pron):
 	p.feed(data)
 	for s in p.result:
 		output+=s
-	return output
+	return output, p.key
 
 
 if __name__ == '__main__':
@@ -413,7 +355,7 @@ if __name__ == '__main__':
 		m_pron=False
 	
 	if options.oneword:
-		result=dict(options.oneword,m_pron)
+		(result, k) = dict(options.oneword,m_pron)
 		result=unicode(result,'utf8')
 		result=result.encode(enc)
 		print result
@@ -447,7 +389,8 @@ if __name__ == '__main__':
 			print ""
 			cleanup()
 
-		result=dict(word,m_pron)
+		(result,k)=dict(word,m_pron)
+		speek(k)		
 		result=unicode(result,'utf8')
 		result=result.encode(enc)
 		print result
