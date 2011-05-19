@@ -153,8 +153,7 @@ def wordlearn():
 			
 
 		totalcount+=1
-		if totalcount % (int(size/4)+1) == 0:
-			print "re-sort"
+		if totalcount % (int(size/4)+1) == 0:			
 			wordlist=db.items()
 			wordlist.sort(key=seckey)
 def wordlist():
@@ -282,8 +281,7 @@ def dict(word,pron):
 		data1=data1[:16+string.index(data1,'<div id="adbn_BE" class="ad">')]
 	except ValueError:
 		return output
-
-	
+		
 	try:
 		index1=string.index(data1,"您是不是要查")
 		p.redirect=1
@@ -306,9 +304,6 @@ def dict(word,pron):
 		p.chinese=1
 	except ValueError:
 		pass
-	
-	
-
 		
 	data=data1[index1:]
 	p.reset()
@@ -389,8 +384,7 @@ if __name__ == '__main__':
 	        db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	        db.close()
 	        exit()
-
-
+	        
 	while(1):
 		try:
 			word=raw_input("<PyDict> ")
@@ -409,4 +403,3 @@ if __name__ == '__main__':
 
 		if options.step == True:
 			cleanup()
-
