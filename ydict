@@ -28,6 +28,7 @@ blue="\33[34;1m"
 org="\33[0m"
 light="\33[0;1m"
 learn=0
+browsemode=False
 database=0
 voicedata = ""
 playback = ""
@@ -98,6 +99,48 @@ def answers(iq, oq):
 		key = iq.get()
 		(result,k) = dict(key, 1)
 		oq.put([key, result])
+		
+		
+def browse():
+	wordlist = db.items()
+	wordlist.sort(key=seckey)
+	size=len(wordlist)
+	totalcount = 0.0
+	right = 0.0
+	lookup = Queue(maxsize = 5)
+	answer = Queue(maxsize = 5)
+	lookuper = Process( target=answers, args=(lookup, answer) )
+	lookuper.daemon = True
+	lookuper.start()
+
+	if size <= 1:
+		print "There must be at least two words needed in the list."
+		exit()
+
+	while(1) :
+		while(not lookup.full()):
+			k=wordlist[int(random.triangular(0, size-1, 0))][0]
+			k=k.lower()
+			lookup.put(k)
+		(k, result) = answer.get()
+		if not db.has_key(k):
+			continue
+		print result
+		speek(k)				
+		
+		try:
+			word = raw_input("(d) Delete, (enter) Continue: ")
+			if word == "d":
+				del db[k]								
+				wordlist=db.items()
+				wordlist.sort(key=seckey)
+				size=len(wordlist)
+				if size <= 1:
+					print "There must be at least two words needed in the list."
+					exit()					
+		except KeyboardInterrupt:
+			result(right,totalcount)			
+		
 def wordlearn():
 	wordlist = db.items()
 	wordlist.sort(key=seckey)
@@ -122,20 +165,14 @@ def wordlearn():
 		(k, result) = answer.get()
 		if not db.has_key(k):
 			continue
-		print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
+		if browsemode == False:
+			print result.replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
+		else:
+			print result
 		speek(k)
-		word = raw_input("Input :")
-		if word == "d":
-				del db[k]
-				print "delete word",k				
-				wordlist=db.items()
-				wordlist.sort(key=seckey)
-				size=len(wordlist)
-				if size <= 1:
-					print "There must be at least two words needed in the list."
-					exit()					
+		word = raw_input("Input :")				
 				
-		elif word == k.lower():
+		if word == k.lower():
 			print "Bingo!"
 			right+=1
 			db[k]+=1
@@ -147,7 +184,15 @@ def wordlearn():
 				db[k]=0
 			print "WRONG! Correct answer is : ",k
 			try:
-				word = raw_input("Press Enter to contiune......")
+				word = raw_input("(d) Delete, (enter) Continue: ")
+				if word == "d":
+					del db[k]								
+					wordlist=db.items()
+					wordlist.sort(key=seckey)
+					size=len(wordlist)
+					if size <= 1:
+						print "There must be at least two words needed in the list."
+						exit()					
 			except KeyboardInterrupt:
 				result(right,totalcount)
 			
@@ -315,7 +360,7 @@ def dict(word,pron):
 
 
 if __name__ == '__main__':
-	parser = OptionParser()
+	parser = OptionParser(usage = "Usage: ydict [options] word1 word2 ......")
 	parser.add_option("-s", "--step", dest="step", help="one step mode.",default=False,action="store_true")
 	parser.add_option("-p", "--pron", dest="pron", help="disable pronounce.",default=True,action="store_false")
 	parser.add_option("-u", "--utf8", dest="utf8", help="force utf-8 encoding.",default=False,action="store_true")
@@ -324,6 +369,7 @@ if __name__ == '__main__':
 	parser.add_option("-v", "--version", dest="version", help="show version.",default=False,action="store_true")
 	parser.add_option("-d", "--database", dest="database", help="initial database.",default=False,action="store_true")
 	parser.add_option("-l", "--learn", dest="learnmode", help="start learning mode.",default=False,action="store_true")
+	parser.add_option("-B", "--browse", dest="browsemode", help="start browse mode.",default=False,action="store_true")
 	parser.add_option("-a", "--list", dest="listall", help="list all word in list.",default=False,action="store_true")
 	parser.add_option("-i", "--import", dest="importfile", type="string", help="import a word list",default=False,action="store")
 
@@ -344,6 +390,16 @@ if __name__ == '__main__':
 		enc="big5"
 	else:
 		enc="utf8"
+		
+	if options.browsemode == True:
+		try:
+			browse()
+		except KeyboardInterrupt:
+			print ""
+			cleanup()
+		except EOFError:
+			print ""
+			cleanup()
 
 	if options.utf8 == options.big5 ==True:
 		print "Can not select utf-8 and big5 at the same time"
