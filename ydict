@@ -305,7 +305,7 @@ def dict(word,pron):
 	output=""
 	word=word.strip()
 	if len(word) <= 0:
-		return output
+		return output, ""
 	r1=http_postconn(word)
 	data1 = r1.read()
 	p=MyHTMLParser()
@@ -325,7 +325,7 @@ def dict(word,pron):
 		#data1=data1[:16+string.index(data1,"Online Resources")]
 		data1=data1[:16+string.index(data1,'<div id="adbn_BE" class="ad">')]
 	except ValueError:
-		return output
+		return output, word
 		
 	try:
 		index1=string.index(data1,"您是不是要查")
@@ -333,7 +333,7 @@ def dict(word,pron):
 	except ValueError:
 		try:
 			index1=string.index(data1,"很抱歉，字典找不到您要的資料喔！")
-			return yellow+"Not Found!"+org+"\n"
+			return yellow+"Not Found!"+org+"\n", word
 		except ValueError:
 			index1=string.index(data1,"字典搜尋")
 	
