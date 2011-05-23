@@ -84,11 +84,10 @@ def savefile(k, url):
 		os.system("mv "+voicedata+"/voice.tmp "+filename)
 		
 def speek(k):
-	
 	if voicedata == "" or playback == "":
 		return
 	
-	filename = voicedata+"/"+k[0]+"/"+k+".mp3"	
+	filename = voicedata+"/"+k[0]+"/"+k+".mp3"
 	if not os.access(filename, os.F_OK):
 		dict(k, m_pron)
 	else:				
@@ -202,7 +201,6 @@ def wordlearn():
 			wordlist=db.items()
 			wordlist.sort(key=seckey)
 def wordlist():
-	#db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	wordlist = db.items()
 	wordlist.sort(key=seckey)
 	for k,v in wordlist:
@@ -270,8 +268,8 @@ class MyHTMLParser(HTMLParser):
 			self.show=0
 			self.prefix=""
 			self.postfix=""
-			self.key = data.lower()
 		if(self.learn == 1 and self.learnword == 1):
+			self.key = data.lower()
 			if(db.has_key(self.key) == 0 and self.key.isalpha() ):
 				db[self.key] = 0
 			self.learnword=0
@@ -419,6 +417,7 @@ if __name__ == '__main__':
 	if len(args) >= 1:
 		for w in args:
 			(result, k)=dict(w,m_pron)
+			speek(k)
 			result=unicode(result,'utf8')
 			result=result.encode(enc)
 			print result
