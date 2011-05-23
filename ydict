@@ -18,7 +18,7 @@ import ConfigParser
 from multiprocessing import Process, Queue, Pool
 
 
-version="ydict 1.2.0"
+version="ydict 1.2.2"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
