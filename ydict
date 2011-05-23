@@ -222,6 +222,7 @@ class MyHTMLParser(HTMLParser):
 		self.learnword=0
 		self.chinese=0
 		self.mp3url=""
+		self.key=""
 
 	def handle_starttag(self, tag, attrs):
 		if self.redirect == 1 and tag == "strong":
