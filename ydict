@@ -32,6 +32,7 @@ browsemode=False
 database=0
 voicedata = ""
 playback = ""
+prefetch = ""
 
 
 
@@ -44,8 +45,12 @@ try:
 	config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
 	voicedata = config.get('ydict', 'voicedata')
 	playback = config.get('ydict', 'playback')
+	prefetch = config.get('ydict', 'prefetch')
 except :
 	pass
+
+if prefetch == "":
+	prefetch = "5"
 	
 		
 def cleanup():
@@ -84,14 +89,14 @@ def savefile(k, url):
 		os.system("mv "+voicedata+"/voice.tmp "+filename)
 		
 def speek(k):
-	if voicedata == "" or playback == "":
+	if voicedata == "" or playback == "" or k == "":
 		return
 	
 	filename = voicedata+"/"+k[0]+"/"+k+".mp3"
 	if not os.access(filename, os.F_OK):
 		dict(k, m_pron)
 	else:				
-		os.system(playback+" "+filename+" 2&> /dev/null &")
+		os.system(playback+" "+filename+" >/dev/null 2>&1 &")
 
 def answers(iq, oq):
 	while(1):
@@ -102,12 +107,11 @@ def answers(iq, oq):
 		
 def browse():
 	wordlist = db.items()
-	wordlist.sort(key=seckey)
 	size=len(wordlist)
 	totalcount = 0.0
 	right = 0.0
-	lookup = Queue(maxsize = 5)
-	answer = Queue(maxsize = 5)
+	lookup = Queue(maxsize = string.atoi(prefetch))
+	answer = Queue(maxsize = string.atoi(prefetch))
 	lookuper = Process( target=answers, args=(lookup, answer) )
 	lookuper.daemon = True
 	lookuper.start()
@@ -115,10 +119,13 @@ def browse():
 	if size <= 1:
 		print "There must be at least two words needed in the list."
 		exit()
-
+	i = 0
 	while(1) :
 		while(not lookup.full()):
-			k=wordlist[int(random.triangular(0, size-1, 0))][0]
+			k=wordlist[i][0]
+			i = i + 1
+			if i >= size:
+				i = 0
 			k=k.lower()
 			lookup.put(k)
 		(k, result) = answer.get()
@@ -132,7 +139,6 @@ def browse():
 			if word == "d":
 				del db[k]								
 				wordlist=db.items()
-				wordlist.sort(key=seckey)
 				size=len(wordlist)
 				if size <= 1:
 					print "There must be at least two words needed in the list."
@@ -332,6 +338,7 @@ def dict(word,pron):
 	except ValueError:
 		try:
 			index1=string.index(data1,"很抱歉，字典找不到您要的資料喔！")
+			del db[word]
 			return yellow+"Not Found!"+org+"\n", word
 		except ValueError:
 			index1=string.index(data1,"字典搜尋")
