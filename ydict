@@ -18,7 +18,7 @@ import ConfigParser
 from multiprocessing import Process, Queue, Pool
 
 
-version="ydict 1.2.3"
+version="ydict 1.2.4"
 red="\33[31;1m"
 lindigo="\33[36;1m"
 indigo="\33[36m"
@@ -60,7 +60,6 @@ def cleanup():
 
 def importfile(file):
 	fp = open(file)
-	#db=shelve.open(os.getenv("HOME")+"/.ydict.db","c")
 	for line in fp:
 		newword=line.split(" ")[0]
 		newword=newword.split("\n")[0]
@@ -280,8 +279,6 @@ class MyHTMLParser(HTMLParser):
 				db[self.key] = 0
 			self.learnword=0
 			savefile(self.key, self.mp3url)
-			
-			#self.result.insert(0, data.lower()+"\n")			
 
 	def handle_endtag(self, tag):
 		if tag == "div":
@@ -327,8 +324,7 @@ def dict(word,pron):
 		pass
 	
 	try:
-		#data1=data1[:16+string.index(data1,"Online Resources")]
-		data1=data1[:16+string.index(data1,'<div id="adbn_BE" class="ad">')]
+		data1=data1[:string.index(data1,'<h4>Online Resources</h4>')]
 	except ValueError:
 		return output, word
 		
@@ -338,7 +334,8 @@ def dict(word,pron):
 	except ValueError:
 		try:
 			index1=string.index(data1,"很抱歉，字典找不到您要的資料喔！")
-			del db[word]
+			if db.has_key(word):
+				del db[word]
 			return yellow+"Not Found!"+org+"\n", word
 		except ValueError:
 			index1=string.index(data1,"字典搜尋")
@@ -372,6 +369,7 @@ if __name__ == '__main__':
 	parser.add_option("-u", "--utf8", dest="utf8", help="force utf-8 encoding.",default=False,action="store_true")
 	parser.add_option("-b", "--big5", dest="big5", help="force big5 encoding.",default=False,action="store_true")
 	parser.add_option("-w", "--word", dest="oneword", type="string" , help="only one word.",action="store")
+	parser.add_option("-c", "--nocolor", dest="nocolor", help="force no color code",default=False, action="store_true")
 	parser.add_option("-v", "--version", dest="version", help="show version.",default=False,action="store_true")
 	parser.add_option("-d", "--database", dest="database", help="initial database.",default=False,action="store_true")
 	parser.add_option("-l", "--learn", dest="learnmode", help="start learning mode.",default=False,action="store_true")
@@ -382,6 +380,16 @@ if __name__ == '__main__':
 	(options, args) = parser.parse_args()
 	m_pron=options.pron
 	(lang , enc)=locale.getdefaultlocale()
+
+	if options.nocolor:
+		red=""
+		lindigo=""
+		indigo=""
+		green=""
+		yellow=""
+		blue=""
+		org=""
+		light=""
 
 	if options.importfile:
 		importfile(options.importfile)
