@@ -79,23 +79,23 @@ def seckey(x):
 def savefile(k, url):
 	if voicedata == "":
 		return
-	filename = voicedata+"/"+k[0]+"/"+"\""+k+".mp3\""
+	filename = "'"+voicedata+"/"+k[0]+"/"+k+".mp3'"
 	if not os.access(filename, os.F_OK):		
 		if not os.access(voicedata+"/"+k[0], os.F_OK):
 			os.system("mkdir "+voicedata+"/"+k[0])
 		os.system("rm -f "+voicedata+"/voice.tmp")
-		os.system("wget -q "+url+" -O "+voicedata+"/voice.tmp");
-		os.system("mv "+voicedata+"/voice.tmp "+filename)
+		os.system("wget -q "+url+" -O "+filename+"voice.tmp");
+		os.system("mv "+filename+"voice.tmp "+filename)
 		
 def speek(k):
 	if voicedata == "" or playback == "" or k == "":
 		return
 	
-	filename = voicedata+"/"+k[0]+"/"+"\""+k+".mp3\""
+	filename = voicedata+"/"+k[0]+"/"+""+k+".mp3"
 	if not os.access(filename, os.F_OK):
 		dict(k, m_pron)
 	else:				
-		os.system(playback+" "+filename+" >/dev/null 2>&1 &")
+		os.system(playback+" '"+filename+"' >/dev/null 2>&1 &")
 
 def answers(iq, oq):
 	while(1):
