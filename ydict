@@ -36,10 +36,10 @@ prefetch = ""
 
 
 
-if os.access(os.getenv("HOME")+"/.ydict.db", os.F_OK):
-	db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
-	learn = 1
-	database = 1
+db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+learn = 1
+database = 1
+
 try:
 	config = ConfigParser.ConfigParser()
 	config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
