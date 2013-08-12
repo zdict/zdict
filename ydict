@@ -68,18 +68,6 @@ def seckey(x):
         return x[1]
 
 # XXX don't use system
-def savefile(k, url):
-	if voicedata == "":
-		return
-	filename = "'"+voicedata+"/"+k[0]+"/"+k+".mp3'"
-	if not os.access(filename, os.F_OK):		
-		if not os.access(voicedata+"/"+k[0], os.F_OK):
-			os.system("mkdir "+voicedata+"/"+k[0])
-		os.system("rm -f "+voicedata+"/voice.tmp")
-		os.system("wget -q "+url+" -O "+filename+"voice.tmp");
-		os.system("mv "+filename+"voice.tmp "+filename)
-
-# XXX don't use system
 def speak(result):
 	if playback == "" or result == None:
 		return
@@ -238,11 +226,6 @@ def cprint(data, color, newline=1, indent=0, num=0):
 		elif data.text != None:
 			return (idn + nu + color + data.text + org + nl)
 	return None
-
-def highlightkey(data, key):
-	if data != None:
-		data = data.replace(key, lindigo + key + org + indigo)
-	return data
 
 class explan_word:
 	def show(self):
