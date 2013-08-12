@@ -319,7 +319,8 @@ def dict(word, more_exp):
 		explan_entry.explanation = explanation_ol_list
 		explan_list.append(explan_entry)
 	exp_word.explan_list = explan_list
-	db[exp_word.key.text] = 1
+	if not isinstance(exp_word.key.text, unicode):
+		db[exp_word.key.text] = 1
 	return exp_word
 
 if __name__ == '__main__':
