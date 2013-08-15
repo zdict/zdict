@@ -357,7 +357,6 @@ if __name__ == '__main__':
 			if result == None:
 				print cprint("[" + w + "] Not found", yellow, 0)
 				continue
-			k = result.key.text
 			speak(result)
 			print result.show()
 		cleanup()
@@ -387,5 +386,8 @@ if __name__ == '__main__':
 			cleanup()
 
 		result = dict(word, options.more_exp)
+		if result == None:
+			print cprint("[" + word + "] Not found", yellow, 0)
+			continue
 		speak(result)		
 		print result.show()
