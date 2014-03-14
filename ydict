@@ -194,6 +194,7 @@ def wordlist():
 def htmlspcahrs(content):
 	content=content.replace("&","")
 	content=content.replace("#39;","\'")
+	content=content.replace("quot;","\"")
 	return content
 
 
@@ -245,17 +246,23 @@ class explan_word:
 			res.append(cprint("", org, 1))
 			i = 1
 			for explanation_ol_entry in explan_entry.explanation:
-				res.append(cprint(explanation_ol_entry.explanation, org, 1, 2, i))
+				res.append(cprint("", org, 0, 2, i))
+				for explanation in explanation_ol_entry.explanation.iter():
+					res.append(cprint(explanation, org, 0))
+					res.append(cprint(explanation.tail, org, 0))
+				res.append(cprint("", org))
+				
 				if explanation_ol_entry.example_sentence != None:
-					res.append(cprint(explanation_ol_entry.example_sentence, indigo, 0, 4))
-					bold = explanation_ol_entry.example_sentence.find('./b')
-					if bold != None:
-						res.append(cprint(bold.text, lindigo, 0))
-						res.append(cprint(bold.tail, lindigo, 0))
+					res.append(cprint("    ", indigo, 0, 0))
+					for text in explanation_ol_entry.example_sentence.iter():
+						if text.tag == 'b':
+							res.append(cprint(text.text, lindigo, 0))
+							res.append(cprint(text.tail, indigo, 0))
+						else:
+							res.append(cprint(text, indigo, 0, 0))
 					res.append(cprint("", org, 1))
 				res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
 				i += 1
-			res.append(cprint("", org, 1))
 		for line in res:
 			if line != None:
 				ret = ret + line # XXX bad code
@@ -265,20 +272,26 @@ def dict(word, more_exp):
 	output = ""
 	word = word.strip()
 	if len(word) <= 0:
-		return output, ""
+		return None
 	r1 = http_postconn(word)
 	data1 = r1.read()
 	try :
 		if more_exp == True:
-			summary = data1[data1.index('<ol><li class="result_cluster_first res">'):]
-			summary = summary[:summary.index('</div><div class="res sc sc-knowledge">')]
+			#summary = data1[data1.index('<ol><li class="result_cluster_first res">'):]
+			summary = data1[data1.index('<div id="left">'):]
+	#		summary = summary[:summary.index('</div><div class="res sc sc-knowledge">')]
+			summary = summary[:summary.index('<div id="right">')]
 		else:
-			summary = data1[data1.index('<li class="result_cluster_first res">'):]
-			summary = summary[:summary.index('<li class="result_cluster res">')]
+			summary = data1[data1.index('<div id="left">'):]
+			#summary = summary[:summary.index('<li class="result_cluster res">')]
+			summary = summary[:summary.index('<div id="right">')]
+			#summary = summary[:summary.index('</a></samp></div></li></ul></li>')+32]
 	except ValueError:
 		return None
+
+	print summary
 	summary = htmlspcahrs(summary)
-	root = ET.fromstring(summary)
+	root = ET.XML(summary)
 	exp_word = explan_word()
 	exp_word.key = root.find(".//*/span[@class='yschttl']")
 	exp_word.kk = root.find(".//*/span[@class='proun_value'][2]")
@@ -389,5 +402,6 @@ if __name__ == '__main__':
 		if result == None:
 			print cprint("[" + word + "] Not found", yellow, 0)
 			continue
-		speak(result)		
-		print result.show()
+		else:
+			speak(result)
+			print result.show()
