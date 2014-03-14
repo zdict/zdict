@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=UTF-8
 # Chen Wen <chenpc@cs.nctu.edu.tw>
-# Web Site http://code.google.com/p/ydict/
+# Web Site https://github.com/chenpc/ydict
 # Blog : http://chenpc.csie.in
 
 import getopt
