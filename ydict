@@ -276,20 +276,11 @@ def dict(word, more_exp):
 	r1 = http_postconn(word)
 	data1 = r1.read()
 	try :
-		if more_exp == True:
-			#summary = data1[data1.index('<ol><li class="result_cluster_first res">'):]
-			summary = data1[data1.index('<div id="left">'):]
-	#		summary = summary[:summary.index('</div><div class="res sc sc-knowledge">')]
-			summary = summary[:summary.index('<div id="right">')]
-		else:
-			summary = data1[data1.index('<div id="left">'):]
-			#summary = summary[:summary.index('<li class="result_cluster res">')]
-			summary = summary[:summary.index('<div id="right">')]
-			#summary = summary[:summary.index('</a></samp></div></li></ul></li>')+32]
+		summary = data1[data1.index('<div id="left">'):]
+		summary = summary[:summary.index('<div id="right">')]
 	except ValueError:
 		return None
 
-	print summary
 	summary = htmlspcahrs(summary)
 	root = ET.XML(summary)
 	exp_word = explan_word()
@@ -298,9 +289,13 @@ def dict(word, more_exp):
 	exp_word.dj = root.find(".//*/span[@class='proun_value'][4]")
 	exp_word.mp3 = root.find(".//*/span[@class='source'][@data-type='audio/mpeg']")
 	exp_word.ogg = root.find(".//*/span[@class='source'][@data-type='audio/ogg']")
+	if more_exp:
+		search_exp = ".//*/li[@class='explanation_pos_wrapper']"
+	else:
+		search_exp = ".//*/li[@class='result_cluster_first res']/*/li[@class='explanation_pos_wrapper']"
 
 	explan_list = list()
-	for explan in root.findall(".//*/li[@class='explanation_pos_wrapper']"):
+	for explan in root.findall(search_exp):
 		explanation_ol_list = list()
 		explan_entry = explan_node()
 		explan_entry.pos_abbr = explan.find("./h5/span[@class='pos_abbr']")
