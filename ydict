@@ -201,7 +201,7 @@ def htmlspcahrs(content):
 def http_postconn(word):
 	yahoourl="tw.dictionary.yahoo.com"
 	params = urllib.urlencode({'p': word})
-	return urllib.urlopen("http://%s/dctionary?%s" % (yahoourl, params))
+	return urllib.urlopen("https://%s/dictionary?%s" % (yahoourl, params))
 
 
 class explan_node:
