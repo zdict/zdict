@@ -1,22 +1,25 @@
-#!/usr/bin/env python
-# coding=UTF-8
-# Chen Wen <chenpc@cs.nctu.edu.tw>
-# Web Site https://github.com/chenpc/ydict
-# Blog : http://chenpc.csie.in
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*- 
+# Shun-Yi Jheng <shunyi@cs.nctu.edu.tw>
+# Web Site https://github.com/M157q/ydict
 
 import getopt
 import sys
 import string
-import httplib, urllib, string, sys
-from optparse import OptionParser
+import http.client
+import urllib.request, urllib.parse, urllib.error
+import string
+import sys
 import locale
-from codecs import EncodedFile
-import shelve, os
+import shelve
+import os
 import random
-import ConfigParser
-from multiprocessing import Process, Queue, Pool
+import configparser
 import xml.etree.ElementTree as ET
 
+from codecs import EncodedFile
+from optparse import OptionParser
+from multiprocessing import Process, Queue, Pool
 
 version="ydict 1.3.4"
 playback = ""
@@ -53,15 +56,15 @@ def importfile(file):
     for line in fp:
         newword=line.split(" ")[0]
         newword=newword.split("\n")[0]
-        if db.has_key(newword) == 0:
+        if (newword in db) == 0:
             db[newword]=0
-    print "File imported!"
+    print("File imported!")
 
 def result(count, total):
     if total == 0:
-        print ""
+        print("")
         exit()
-    print "\nScore: ",int(count),"/",int(total),"(",count/total,")"
+    print("\nScore: ",int(count),"/",int(total),"(",count/total,")")
     exit()
 
 def seckey(x):
@@ -83,7 +86,7 @@ def answers(iq, oq):
         oq.put(result)
         
 def browse():
-    wordlist = db.items()
+    wordlist = list(db.items())
     size=len(wordlist)
     totalcount = 0.0
     right = 0.0
@@ -94,7 +97,7 @@ def browse():
     lookuper.start()
 
     if size <= 1:
-        print "There must be at least two words needed in the list."
+        print("There must be at least two words needed in the list.")
         exit()
     i = 0
     while(1) :
@@ -107,25 +110,25 @@ def browse():
             lookup.put(k)
         result = answer.get()
         k = result.key.text
-        if not db.has_key(k):
+        if k not in db:
             continue
-        print result.show()
+        print(result.show())
         speak(result)
         
         try:
-            word = raw_input("(d) Delete, (enter) Continue: ")
+            word = input("(d) Delete, (enter) Continue: ")
             if word == "d":
                 del db[k]                                
-                wordlist=db.items()
+                wordlist=list(db.items())
                 size=len(wordlist)
                 if size <= 1:
-                    print "There must be at least two words needed in the list."
+                    print("There must be at least two words needed in the list.")
                     exit()                    
         except KeyboardInterrupt:
             result(right,totalcount)            
         
 def wordlearn():
-    wordlist = db.items()
+    wordlist = list(db.items())
     wordlist.sort(key=seckey)
     size=len(wordlist)
     totalcount = 0.0
@@ -137,7 +140,7 @@ def wordlearn():
     lookuper.start()
 
     if size <= 1:
-        print "There must be at least two words needed in the list."
+        print("There must be at least two words needed in the list.")
         exit()
 
     while(1) :
@@ -149,14 +152,14 @@ def wordlearn():
         if result == None:
             continue
         k = result.key.text
-        if not db.has_key(k):
+        if k not in db:
             continue
-        print result.show().replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####")
+        print(result.show().replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####"))
         speak(result)
-        word = raw_input("Input :")                
+        word = input("Input :")                
                 
         if word == k.lower():
-            print "Bingo!"
+            print("Bingo!")
             right+=1
             db[k]+=1
             if db[k] >= 100:
@@ -165,16 +168,16 @@ def wordlearn():
             db[k]-=3
             if db[k] < 0:
                 db[k]=0
-            print "WRONG! Correct answer is : ",k
+            print("WRONG! Correct answer is : ",k)
             try:
-                word = raw_input("(d) Delete, (enter) Continue: ")
+                word = input("(d) Delete, (enter) Continue: ")
                 if word == "d":
                     del db[k]                                
-                    wordlist=db.items()
+                    wordlist=list(db.items())
                     wordlist.sort(key=seckey)
                     size=len(wordlist)
                     if size <= 1:
-                        print "There must be at least two words needed in the list."
+                        print("There must be at least two words needed in the list.")
                         exit()                    
             except KeyboardInterrupt:
                 result(right,totalcount)
@@ -182,14 +185,14 @@ def wordlearn():
 
         totalcount+=1
         if totalcount % (int(size/4)+1) == 0:            
-            wordlist=db.items()
+            wordlist=list(db.items())
             wordlist.sort(key=seckey)
 
 def wordlist():
-    wordlist = db.items()
+    wordlist = list(db.items())
     wordlist.sort(key=seckey)
     for k,v in wordlist:
-        print k,v
+        print(k,v)
 
 def htmlspcahrs(content):
     content=content.replace("&","")
@@ -200,8 +203,8 @@ def htmlspcahrs(content):
 
 def http_postconn(word):
     yahoourl="tw.dictionary.yahoo.com"
-    params = urllib.urlencode({'p': word})
-    return urllib.urlopen("https://%s/dictionary?%s" % (yahoourl, params))
+    params = urllib.parse.urlencode({'p': word})
+    return urllib.request.urlopen("https://%s/dictionary?%s" % (yahoourl, params))
 
 
 class explan_node:
@@ -222,7 +225,7 @@ def cprint(data, color, newline=1, indent=0, num=0):
         nu = ""
     idn = " " * indent
     if data != None:
-        if isinstance(data, str) or isinstance(data, unicode):
+        if isinstance(data, str) or isinstance(data, str):
             return (idn + nu + color + data + org + nl)
         elif data.text != None:
             return (idn + nu + color + data.text + org + nl)
@@ -310,7 +313,7 @@ def dict(word, more_exp):
         explan_entry.explanation = explanation_ol_list
         explan_list.append(explan_entry)
     exp_word.explan_list = explan_list
-    if not isinstance(exp_word.key.text, unicode):
+    if not isinstance(exp_word.key.text, str):
         db[exp_word.key.text] = 1
     return exp_word
 
@@ -328,7 +331,7 @@ if __name__ == '__main__':
     (lang , enc)=locale.getdefaultlocale()
 
     if enc != "UTF-8":
-        print "ydict can only works with encoding=UTF-8, and you encoding is : ", lang, enc
+        print("ydict can only works with encoding=UTF-8, and you encoding is : ", lang, enc)
         cleanup()
 
     if options.nocolor:
@@ -346,37 +349,37 @@ if __name__ == '__main__':
         cleanup()
         
     if options.version == True:
-        print version
+        print(version)
         cleanup()
         
     if options.browsemode == True:
         try:
             browse()
         except KeyboardInterrupt:
-            print ""
+            print("")
             cleanup()
         except EOFError:
-            print ""
+            print("")
             cleanup()
 
     if len(args) >= 1:
         for w in args:
             result=dict(w, options.more_exp)
             if result == None:
-                print cprint("[" + w + "] Not found", yellow, 0)
+                print(cprint("[" + w + "] Not found", yellow, 0))
                 continue
             speak(result)
-            print result.show()
+            print(result.show())
         cleanup()
         
     if options.learnmode:
         try:
             wordlearn()
         except KeyboardInterrupt:
-            print ""
+            print("")
             cleanup()
         except EOFError:
-            print ""
+            print("")
             cleanup()
         cleanup()
     elif options.listall:
@@ -385,18 +388,18 @@ if __name__ == '__main__':
             
     while(1):
         try:
-            word=raw_input("<PyDict> ")
+            word=input("<PyDict> ")
         except KeyboardInterrupt:
-            print ""
+            print("")
             cleanup()
         except EOFError:
-            print ""
+            print("")
             cleanup()
 
         result = dict(word, options.more_exp)
         if result == None:
-            print cprint("[" + word + "] Not found", yellow, 0)
+            print(cprint("[" + word + "] Not found", yellow, 0))
             continue
         else:
             speak(result)
-            print result.show()
+            print(result.show())
