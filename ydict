@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # Shun-Yi Jheng <shunyi@cs.nctu.edu.tw>
 # Web Site https://github.com/M157q/ydict
 
@@ -7,7 +7,9 @@ import getopt
 import sys
 import string
 import http.client
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 import string
 import sys
 import locale
@@ -21,78 +23,87 @@ from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
 
-version="ydict 1.3.4"
+version = "ydict 1.3.4"
 playback = ""
 prefetch = ""
 
-red="\33[31;1m"
-lindigo="\33[36;1m"
-indigo="\33[36m"
-green="\33[32m"
-yellow="\33[33;1m"
-blue="\33[34;1m"
-org="\33[0m"
-light="\33[0;1m"
+red = "\33[31;1m"
+lindigo = "\33[36;1m"
+indigo = "\33[36m"
+green = "\33[32m"
+yellow = "\33[33;1m"
+blue = "\33[34;1m"
+org = "\33[0m"
+light = "\33[0;1m"
 
-db = shelve.open(os.getenv("HOME")+"/.ydict.db","c")
+db = shelve.open(os.getenv("HOME")+"/.ydict.db", "c")
 
 try:
     config = ConfigParser.ConfigParser()
     config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
     playback = config.get('ydict', 'playback')
     prefetch = config.get('ydict', 'prefetch')
-except :
+except:
     pass
 
 if prefetch == "":
     prefetch = "5"
-        
+
+
 def cleanup():
     db.sync()
     exit()
 
+
 def importfile(file):
     fp = open(file)
     for line in fp:
-        newword=line.split(" ")[0]
-        newword=newword.split("\n")[0]
+        newword = line.split(" ")[0]
+        newword = newword.split("\n")[0]
         if (newword in db) == 0:
-            db[newword]=0
+            db[newword] = 0
     print("File imported!")
+
 
 def result(count, total):
     if total == 0:
         print("")
         exit()
-    print("\nScore: ",int(count),"/",int(total),"(",count/total,")")
+    print("\nScore: ", int(count), "/", int(total), "(", count/total, ")")
     exit()
+
 
 def seckey(x):
         return x[1]
 
+
 # XXX don't use system
 def speak(result):
-    if playback == "" or result == None:
+    if playback == "" or result is None:
         return
-    k = result.key.text    
-    os.system(playback+" '"+result.ogg.attrib['data-src']+"' >/dev/null 2>&1 &")
+    k = result.key.text
+    os.system(playback + " '" +
+              result.ogg.attrib['data-src'] +
+              "' >/dev/null 2>&1 &")
+
 
 def answers(iq, oq):
     while(1):
         key = iq.get()
         result = dict(key, False)
-        if result == None:
+        if result is None:
             result = dict(key, True)
         oq.put(result)
-        
+
+
 def browse():
     wordlist = list(db.items())
-    size=len(wordlist)
+    size = len(wordlist)
     totalcount = 0.0
     right = 0.0
-    lookup = Queue(maxsize = string.atoi(prefetch))
-    answer = Queue(maxsize = string.atoi(prefetch))
-    lookuper = Process( target=answers, args=(lookup, answer) )
+    lookup = Queue(maxsize=string.atoi(prefetch))
+    answer = Queue(maxsize=string.atoi(prefetch))
+    lookuper = Process(target=answers, args=(lookup, answer))
     lookuper.daemon = True
     lookuper.start()
 
@@ -100,13 +111,13 @@ def browse():
         print("There must be at least two words needed in the list.")
         exit()
     i = 0
-    while(1) :
+    while(1):
         while(not lookup.full()):
-            k=wordlist[i][0]
+            k = wordlist[i][0]
             i = i + 1
             if i >= size:
                 i = 0
-            k=k.lower()
+            k = k.lower()
             lookup.put(k)
         result = answer.get()
         k = result.key.text
@@ -114,28 +125,30 @@ def browse():
             continue
         print(result.show())
         speak(result)
-        
+
         try:
             word = input("(d) Delete, (enter) Continue: ")
             if word == "d":
-                del db[k]                                
-                wordlist=list(db.items())
-                size=len(wordlist)
+                del db[k]
+                wordlist = list(db.items())
+                size = len(wordlist)
                 if size <= 1:
-                    print("There must be at least two words needed in the list.")
-                    exit()                    
+                    print("There must be at least two words "
+                          "needed in the list.")
+                    exit()
         except KeyboardInterrupt:
-            result(right,totalcount)            
-        
+            result(right, totalcount)
+
+
 def wordlearn():
     wordlist = list(db.items())
     wordlist.sort(key=seckey)
-    size=len(wordlist)
+    size = len(wordlist)
     totalcount = 0.0
     right = 0.0
-    lookup = Queue(maxsize = 5)
-    answer = Queue(maxsize = 5)
-    lookuper = Process( target=answers, args=(lookup, answer) )
+    lookup = Queue(maxsize=5)
+    answer = Queue(maxsize=5)
+    lookuper = Process(target=answers, args=(lookup, answer))
     lookuper.daemon = True
     lookuper.start()
 
@@ -143,103 +156,114 @@ def wordlearn():
         print("There must be at least two words needed in the list.")
         exit()
 
-    while(1) :
+    while(1):
         while(not lookup.full()):
-            k=wordlist[int(random.triangular(0, size-1, 0))][0]
-            k=k.lower()
+            k = wordlist[int(random.triangular(0, size-1, 0))][0]
+            k = k.lower()
             lookup.put(k)
         result = answer.get()
-        if result == None:
+        if result is None:
             continue
         k = result.key.text
         if k not in db:
             continue
-        print(result.show().replace(k, "####").replace(k.upper(), "####").replace(k[0].swapcase()+k[1:].lower(),"####"))
+        s = result.show()
+        s = s.replace(k, "####")
+        s = s.replace(k.upper(), "####")
+        s = s.replace(k[0].swapcase() + k[1:].lower(), "####")
+        print(s)
         speak(result)
-        word = input("Input :")                
-                
+        word = input("Input :")
+
         if word == k.lower():
             print("Bingo!")
-            right+=1
-            db[k]+=1
+            right += 1
+            db[k] += 1
             if db[k] >= 100:
-                db[k]=100
+                db[k] = 100
         else:
-            db[k]-=3
+            db[k] -= 3
             if db[k] < 0:
-                db[k]=0
-            print("WRONG! Correct answer is : ",k)
+                db[k] = 0
+            print("WRONG! Correct answer is : ", k)
             try:
                 word = input("(d) Delete, (enter) Continue: ")
                 if word == "d":
-                    del db[k]                                
-                    wordlist=list(db.items())
+                    del db[k]
+                    wordlist = list(db.items())
                     wordlist.sort(key=seckey)
-                    size=len(wordlist)
+                    size = len(wordlist)
                     if size <= 1:
-                        print("There must be at least two words needed in the list.")
-                        exit()                    
+                        print("There must be at least two words "
+                              "needed in the list.")
+                        exit()
             except KeyboardInterrupt:
-                result(right,totalcount)
-            
+                result(right, totalcount)
 
-        totalcount+=1
-        if totalcount % (int(size/4)+1) == 0:            
-            wordlist=list(db.items())
+        totalcount += 1
+        if totalcount % (int(size/4) + 1) == 0:
+            wordlist = list(db.items())
             wordlist.sort(key=seckey)
+
 
 def wordlist():
     wordlist = list(db.items())
     wordlist.sort(key=seckey)
-    for k,v in wordlist:
-        print(k,v)
+    for k, v in wordlist:
+        print(k, v)
+
 
 def htmlspcahrs(content):
-    content=content.replace(b"&",b"")
-    content=content.replace(b"#39;",b"\'")
-    content=content.replace(b"quot;",b"\"")
+    content = content.replace(b"&", b"")
+    content = content.replace(b"#39;", b"\'")
+    content = content.replace(b"quot;", b"\"")
     return content
 
 
 def http_postconn(word):
-    yahoourl="tw.dictionary.yahoo.com"
+    yahoourl = "tw.dictionary.yahoo.com"
     params = urllib.parse.urlencode({'p': word})
-    return urllib.request.urlopen("https://%s/dictionary?%s" % (yahoourl, params))
+    return urllib.request.urlopen(
+        "https://{}/dictionary?{}".format(yahoourl, params)
+    )
 
 
 class explan_node:
     pass
 
+
 class explanation_node:
     pass
+
 
 # Color print
 def cprint(data, color, newline=1, indent=0, num=0):
     if newline == 1:
-        nl="\n"
+        nl = "\n"
     else:
-        nl=""        
-    if num !=0:
-        nu = str(num)+". "
+        nl = ""
+    if num != 0:
+        nu = str(num) + ". "
     else:
         nu = ""
     idn = " " * indent
-    if data != None:
+    if data is not None:
         if isinstance(data, str) or isinstance(data, str):
             return (idn + nu + color + data + org + nl)
-        elif data.text != None:
+        elif data.text is not None:
             return (idn + nu + color + data.text + org + nl)
     return None
 
+
 class explan_word:
     def show(self):
-        ret=""
-        res=[]
+        ret = ""
+        res = []
         res.append(cprint(self.key, yellow))
-        if self.kk != None:
+        if self.kk is not None:
             res.append(cprint("KK", org, 0))
             res.append(cprint(self.kk, light, 0))
-        if self.dj != None:
+        if self.dj is not None:
             res.append(cprint(" DJ", org, 0))
             res.append(cprint(self.dj, light))
 
@@ -254,8 +278,8 @@ class explan_word:
                     res.append(cprint(explanation, org, 0))
                     res.append(cprint(explanation.tail, org, 0))
                 res.append(cprint("", org))
-                
-                if explanation_ol_entry.example_sentence != None:
+
+                if explanation_ol_entry.example_sentence is not None:
                     res.append(cprint("    ", indigo, 0, 0))
                     for text in explanation_ol_entry.example_sentence.iter():
                         if text.tag == 'b':
@@ -267,9 +291,10 @@ class explan_word:
                 res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
                 i += 1
         for line in res:
-            if line != None:
-                ret = ret + line # XXX bad code
+            if line is not None:
+                ret = ret + line    # XXX bad code
         return ret
+
 
 def dict(word, more_exp):
     output = ""
@@ -278,7 +303,7 @@ def dict(word, more_exp):
         return None
     r1 = http_postconn(word)
     data1 = r1.read()
-    try :
+    try:
         summary = data1[data1.index(b'<div id="left">'):]
         summary = summary[:summary.index(b'<div id="right">')]
     except ValueError:
@@ -290,12 +315,15 @@ def dict(word, more_exp):
     exp_word.key = root.find(".//*/span[@class='yschttl']")
     exp_word.kk = root.find(".//*/span[@class='proun_value'][2]")
     exp_word.dj = root.find(".//*/span[@class='proun_value'][4]")
-    exp_word.mp3 = root.find(".//*/span[@class='source'][@data-type='audio/mpeg']")
-    exp_word.ogg = root.find(".//*/span[@class='source'][@data-type='audio/ogg']")
+    exp_word.mp3 = root.find(".//*/span[@class='source']"
+                             "[@data-type='audio/mpeg']")
+    exp_word.ogg = root.find(".//*/span[@class='source']"
+                             "[@data-type='audio/ogg']")
     if more_exp:
         search_exp = ".//*/li[@class='explanation_pos_wrapper']"
     else:
-        search_exp = ".//*/li[@class='result_cluster_first res']/*/li[@class='explanation_pos_wrapper']"
+        search_exp = (".//*/li[@class='result_cluster_first res']"
+                      "/*/li[@class='explanation_pos_wrapper']")
 
     explan_list = list()
     for explan in root.findall(search_exp):
@@ -304,11 +332,19 @@ def dict(word, more_exp):
         explan_entry.pos_abbr = explan.find("./h5/span[@class='pos_abbr']")
         explan_entry.pos_desc = explan.find("./h5/span[@class='pos_desc']")
 
-        for explanation_ol in explan.findall("./ol[@class='explanation_ol']/li"):
+        for explanation_ol in explan.findall(
+            "./ol[@class='explanation_ol']/li"
+        ):
             explanation_ol_entry = explanation_node()
-            explanation_ol_entry.explanation = explanation_ol.find("./p[@class='explanation']")
-            explanation_ol_entry.example_sentence = explanation_ol.find("./p[@class='sample']/samp[@class='example_sentence']")
-            explanation_ol_entry.samp = explanation_ol.find("./p[@class='sample']/samp[2]")
+            explanation_ol_entry.explanation = explanation_ol.find(
+                "./p[@class='explanation']"
+            )
+            explanation_ol_entry.example_sentence = explanation_ol.find(
+                "./p[@class='sample']/samp[@class='example_sentence']"
+            )
+            explanation_ol_entry.samp = explanation_ol.find(
+                "./p[@class='sample']/samp[2]"
+            )
             explanation_ol_list.append(explanation_ol_entry)
         explan_entry.explanation = explanation_ol_list
         explan_list.append(explan_entry)
@@ -318,41 +354,71 @@ def dict(word, more_exp):
     return exp_word
 
 if __name__ == '__main__':
-    parser = OptionParser(usage = "Usage: ydict [options] word1 word2 ......")
-    parser.add_option("-e", "--exp", dest="more_exp", help="Show more explanation.",default=False,action="store_true")
-    parser.add_option("-c", "--nocolor", dest="nocolor", help="force no color code",default=False, action="store_true")
-    parser.add_option("-v", "--version", dest="version", help="show version.",default=False,action="store_true")
-    parser.add_option("-l", "--learn", dest="learnmode", help="start learning mode.",default=False,action="store_true")
-    parser.add_option("-b", "--browse", dest="browsemode", help="start browse mode.",default=False,action="store_true")
-    parser.add_option("-a", "--list", dest="listall", help="list all word in list.",default=False,action="store_true")
-    parser.add_option("-i", "--import", dest="importfile", type="string", help="import a word list",default=False,action="store")
+    parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
+    parser.add_option("-e", "--exp",
+                      dest="more_exp",
+                      help="Show more explanation.",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-c", "--nocolor",
+                      dest="nocolor",
+                      help="force no color code",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-v", "--version",
+                      dest="version",
+                      help="show version.",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-l", "--learn",
+                      dest="learnmode",
+                      help="start learning mode.",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-b", "--browse",
+                      dest="browsemode",
+                      help="start browse mode.",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-a", "--list",
+                      dest="listall",
+                      help="list all word in list.",
+                      default=False,
+                      action="store_true")
+    parser.add_option("-i", "--import",
+                      dest="importfile",
+                      type="string",
+                      help="import a word list",
+                      default=False,
+                      action="store")
 
     (options, args) = parser.parse_args()
-    (lang , enc)=locale.getdefaultlocale()
+    (lang, enc) = locale.getdefaultlocale()
 
     if enc != "UTF-8":
-        print("ydict can only works with encoding=UTF-8, and you encoding is : ", lang, enc)
+        print("ydict only works with encoding=UTF-8, but you encoding is: ",
+              lang, enc)
         cleanup()
 
     if options.nocolor:
-        red=""
-        lindigo=""
-        indigo=""
-        green=""
-        yellow=""
-        blue=""
-        org=""
-        light=""
+        red = ""
+        lindigo = ""
+        indigo = ""
+        green = ""
+        yellow = ""
+        blue = ""
+        org = ""
+        light = ""
 
     if options.importfile:
         importfile(options.importfile)
         cleanup()
-        
-    if options.version == True:
+
+    if options.version is True:
         print(version)
         cleanup()
-        
-    if options.browsemode == True:
+
+    if options.browsemode is True:
         try:
             browse()
         except KeyboardInterrupt:
@@ -364,14 +430,14 @@ if __name__ == '__main__':
 
     if len(args) >= 1:
         for w in args:
-            result=dict(w, options.more_exp)
-            if result == None:
+            result = dict(w, options.more_exp)
+            if result is None:
                 print(cprint("[" + w + "] Not found", yellow, 0))
                 continue
             speak(result)
             print(result.show())
         cleanup()
-        
+
     if options.learnmode:
         try:
             wordlearn()
@@ -385,10 +451,10 @@ if __name__ == '__main__':
     elif options.listall:
         wordlist()
         cleanup()
-            
+
     while(1):
         try:
-            word=input("<PyDict> ")
+            word = input("<PyDict> ")
         except KeyboardInterrupt:
             print("")
             cleanup()
@@ -397,7 +463,7 @@ if __name__ == '__main__':
             cleanup()
 
         result = dict(word, options.more_exp)
-        if result == None:
+        if result is None:
             print(cprint("[" + word + "] Not found", yellow, 0))
             continue
         else:
