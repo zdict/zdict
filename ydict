@@ -195,9 +195,9 @@ def wordlist():
         print(k,v)
 
 def htmlspcahrs(content):
-    content=content.replace("&","")
-    content=content.replace("#39;","\'")
-    content=content.replace("quot;","\"")
+    content=content.replace(b"&",b"")
+    content=content.replace(b"#39;",b"\'")
+    content=content.replace(b"quot;",b"\"")
     return content
 
 
@@ -279,8 +279,8 @@ def dict(word, more_exp):
     r1 = http_postconn(word)
     data1 = r1.read()
     try :
-        summary = data1[data1.index('<div id="left">'):]
-        summary = summary[:summary.index('<div id="right">')]
+        summary = data1[data1.index(b'<div id="left">'):]
+        summary = summary[:summary.index(b'<div id="right">')]
     except ValueError:
         return None
 
