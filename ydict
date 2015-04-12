@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # Shun-Yi Jheng <shunyi@cs.nctu.edu.tw>
 # Web Site https://github.com/M157q/ydict
 
@@ -18,6 +17,8 @@ import os
 import random
 import configparser
 import xml.etree.ElementTree as ET
+import readline
+import ssl
 
 from codecs import EncodedFile
 from optparse import OptionParser
@@ -223,8 +224,10 @@ def htmlspcahrs(content):
 def http_postconn(word):
     yahoourl = "tw.dictionary.yahoo.com"
     params = urllib.parse.urlencode({'p': word})
+    context = ssl._create_unverified_context()
     return urllib.request.urlopen(
-        "https://{}/dictionary?{}".format(yahoourl, params)
+        "https://{}/dictionary?{}".format(yahoourl, params),
+        context=context
     )
 
 
@@ -353,6 +356,24 @@ def dict(word, more_exp):
         db[exp_word.key.text] = 1
     return exp_word
 
+
+class DictCompleter:
+    def __init__(self, word_list: list):
+        if not isinstance(word_list, list):
+            raise TypeError('word_list must be a list')
+
+        self.word_list = word_list
+    
+    def complete(self, text, state):
+        match = []
+        n = len(text)
+
+        for word in self.word_list:
+            if word[:n] == text[:n]:
+                match.append(word)
+        return match[state]
+
+
 if __name__ == '__main__':
     parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
     parser.add_option("-e", "--exp",
@@ -451,6 +472,13 @@ if __name__ == '__main__':
     elif options.listall:
         wordlist()
         cleanup()
+
+    
+    # configure readline and completer
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(DictCompleter(list(db.keys())).complete)
+    for x in db.keys():
+        readline.add_history(x)
 
     while(1):
         try:
