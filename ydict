@@ -355,17 +355,11 @@ def dict(word, more_exp):
 
 
 class DictCompleter:
-    def __init__(self, word_list: list):
-        if not isinstance(word_list, list):
-            raise TypeError('word_list must be a list')
-
-        self.word_list = word_list
-    
     def complete(self, text, state):
         match = []
         n = len(text)
 
-        for word in self.word_list:
+        for word in db.keys():
             if word[:n] == text[:n]:
                 match.append(word)
         return match[state]
@@ -473,7 +467,7 @@ if __name__ == '__main__':
     
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
-    readline.set_completer(DictCompleter(list(db.keys())).complete)
+    readline.set_completer(DictCompleter().complete)
     for x in db.keys():
         readline.add_history(x)
 
