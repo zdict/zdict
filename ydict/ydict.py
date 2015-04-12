@@ -22,6 +22,9 @@ from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
 
+from .completer import DictCompleter
+
+
 version = "ydict 1.3.4"
 playback = ""
 prefetch = ""
@@ -35,11 +38,16 @@ blue = "\33[34;1m"
 org = "\33[0m"
 light = "\33[0;1m"
 
-db = shelve.open(os.getenv("HOME")+"/.ydict.db", "c")
+ydict_home = os.path.join(os.getenv('HOME'), '.ydict')
+
+if not os.path.isdir(ydict_home):
+    os.mkdir(ydict_home)
+
+db = shelve.open(os.path.join(ydict_home, 'shelve'), "c")
 
 try:
     config = ConfigParser.ConfigParser()
-    config.readfp(open(os.getenv("HOME")+"/.ydictrc"))
+    config.readfp(open(os.path.join(ydict_home, 'ydictrc')))
     playback = config.get('ydict', 'playback')
     prefetch = config.get('ydict', 'prefetch')
 except:
@@ -354,17 +362,6 @@ def dict(word, more_exp):
     return exp_word
 
 
-class DictCompleter:
-    def complete(self, text, state):
-        match = []
-        n = len(text)
-
-        for word in db.keys():
-            if word[:n] == text[:n]:
-                match.append(word)
-        return match[state]
-
-
 def main():
     parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
     parser.add_option("-e", "--exp",
@@ -467,7 +464,7 @@ def main():
     
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
-    readline.set_completer(DictCompleter().complete)
+    readline.set_completer(DictCompleter(db).complete)
     for x in db.keys():
         readline.add_history(x)
 
