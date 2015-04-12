@@ -24,6 +24,7 @@ from multiprocessing import Process, Queue, Pool
 
 from . import constants
 from .completer import DictCompleter
+from .dictionarys import DictBase
 
 
 playback = ""
@@ -108,8 +109,8 @@ def browse():
     size = len(wordlist)
     totalcount = 0.0
     right = 0.0
-    lookup = Queue(maxsize=string.atoi(prefetch))
-    answer = Queue(maxsize=string.atoi(prefetch))
+    lookup = Queue(maxsize=int(prefetch))
+    answer = Queue(maxsize=int(prefetch))
     lookuper = Process(target=answers, args=(lookup, answer))
     lookuper.daemon = True
     lookuper.start()
@@ -360,7 +361,14 @@ def dict(word, more_exp):
     return exp_word
 
 
+class yDict(DictBase):
+    def get_prompt(self) -> str:
+        return '[yDict]: '
+
+
 def main():
+    ydict = yDict()
+
     parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
     parser.add_option("-e", "--exp",
                       dest="more_exp",
@@ -468,7 +476,7 @@ def main():
 
     while(1):
         try:
-            word = input("<PyDict> ")
+            word = ydict.prompt()
         except KeyboardInterrupt:
             print("")
             cleanup()
