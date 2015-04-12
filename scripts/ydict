@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+from ydict.ydict import main
+
+
+main()

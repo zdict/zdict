@@ -9,5 +9,6 @@ setup(
     maintainer='Iblis Lin',
     maintainer_email='e196819@hotmail.com',
     url='https://github.com/M157q/ydict',
-    py_modules=['ydict'],
+    packages=['ydict'],
+    scripts=['scripts/ydict'],
 )

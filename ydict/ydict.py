@@ -365,7 +365,7 @@ class DictCompleter:
         return match[state]
 
 
-if __name__ == '__main__':
+def main():
     parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
     parser.add_option("-e", "--exp",
                       dest="more_exp",
