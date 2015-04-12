@@ -18,6 +18,7 @@ import random
 import configparser
 import xml.etree.ElementTree as ET
 import readline
+import ssl
 
 from codecs import EncodedFile
 from optparse import OptionParser
@@ -223,8 +224,10 @@ def htmlspcahrs(content):
 def http_postconn(word):
     yahoourl = "tw.dictionary.yahoo.com"
     params = urllib.parse.urlencode({'p': word})
+    context = ssl._create_unverified_context()
     return urllib.request.urlopen(
-        "https://{}/dictionary?{}".format(yahoourl, params)
+        "https://{}/dictionary?{}".format(yahoourl, params),
+        context=context
     )
 
 
