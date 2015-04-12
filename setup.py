@@ -1,8 +1,11 @@
 from distutils.core import setup
 
+import ydict
+
+
 setup(
     name='ydict',
-    version='2.0.0',
+    version=ydict.__version__,
     description='A CLI tool for Yahoo! dictionary (https://tw.dictionary.yahoo.com/) using Python 3',
     author='Shun-Yi Jheng',
     author_email='M157q.tw@gmail.com',

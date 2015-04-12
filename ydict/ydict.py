@@ -22,10 +22,10 @@ from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
 
+from . import constants
 from .completer import DictCompleter
 
 
-version = "ydict 1.3.4"
 playback = ""
 prefetch = ""
 
@@ -214,7 +214,7 @@ def wordlearn():
 
 
 def wordlist():
-    for k, v in  list(db.items()).sort(key=lambda x: x[1]):
+    for k, v in sorted(db.items(), key=lambda x: x[1]):
         print(k, v)
 
 
@@ -422,7 +422,7 @@ def main():
         cleanup()
 
     if options.version is True:
-        print(version)
+        print(constants.VERSION)
         cleanup()
 
     if options.browsemode is True:
