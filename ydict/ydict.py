@@ -214,9 +214,7 @@ def wordlearn():
 
 
 def wordlist():
-    wordlist = list(db.items())
-    wordlist.sort(key=seckey)
-    for k, v in wordlist:
+    for k, v in  list(db.items()).sort(key=lambda x: x[1]):
         print(k, v)
 
 
