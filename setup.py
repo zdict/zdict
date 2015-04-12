@@ -1,5 +1,4 @@
 from setuptools import setup
-from pip.req import parse_requirements
 
 import ydict
 
@@ -15,5 +14,7 @@ setup(
     url='https://github.com/M157q/ydict',
     packages=['ydict'],
     scripts=['scripts/ydict'],
-    install_requires=[str(i.req) for i in  parse_requirements('./requirements.txt')],
+    install_requires=[
+        'pony',
+    ],
 )
