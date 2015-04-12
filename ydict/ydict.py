@@ -39,16 +39,15 @@ blue = "\33[34;1m"
 org = "\33[0m"
 light = "\33[0;1m"
 
-ydict_home = os.path.join(os.getenv('HOME'), '.ydict')
 
-if not os.path.isdir(ydict_home):
-    os.mkdir(ydict_home)
+if not os.path.isdir(constants.BASE_DIR):
+    os.mkdir(constants.BASE_DIR)
 
-db = shelve.open(os.path.join(ydict_home, 'shelve'), "c")
+db = shelve.open(os.path.join(constants.BASE_DIR, 'shelve'), "c")
 
 try:
     config = ConfigParser.ConfigParser()
-    config.readfp(open(os.path.join(ydict_home, 'ydictrc')))
+    config.readfp(open(os.path.join(constants.BASE_DIR, 'ydictrc')))
     playback = config.get('ydict', 'playback')
     prefetch = config.get('ydict', 'prefetch')
 except:
@@ -364,6 +363,9 @@ def dict(word, more_exp):
 class yDict(DictBase):
     def get_prompt(self) -> str:
         return '[yDict]: '
+
+    def query(self):
+        ...
 
 
 def main():
