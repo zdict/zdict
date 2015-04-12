@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# Shun-Yi Jheng <shunyi@cs.nctu.edu.tw>
-# Web Site https://github.com/M157q/ydict
 
 import getopt
 import sys
