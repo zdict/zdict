@@ -24,9 +24,9 @@ class Record(peewee.Model):
                 // type: (mp3|ogg)
             ],
             'explain': [
-                ('node',
+                ('speech',
                     (
-                        'name',
+                        'meaning',
                         ('sentence1', 'translation'),
                         ...
                     ),

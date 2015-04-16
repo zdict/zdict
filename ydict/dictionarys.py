@@ -62,6 +62,27 @@ class DictBase(metaclass=abc.ABCMeta):
             self.color.print(k, end='')
             self.color.print(v, 'lwhite', end=' ')
         print()
+        # print explain
+        explain = content.get('explain')
+        for speech in explain:
+            self.color.print(speech[0], 'lred')
+            for index, meaning in enumerate(speech[1:], start=1):
+                self.color.print(
+                    '{num}. {text}'.format(num=index, text=meaning[0]),
+                    'org',
+                    indent=2
+                )
+                for sentence in meaning[1:]:
+                    print(' ' * 4, end='')
+                    for i, s in enumerate(sentence[0].split('*')):
+                        self.color.print(
+                            s, 
+                            'lindigo' if i == 1 else 'indigo',
+                            end=''
+                        )
+                    print()
+                    self.color.print(sentence[1], 'green', indent=4)
+
 
     @property
     @abc.abstractmethod
