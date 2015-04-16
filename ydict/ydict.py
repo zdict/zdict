@@ -390,12 +390,19 @@ def main():
                       action="store")
 
     (options, args) = parser.parse_args()
-    (lang, enc) = locale.getdefaultlocale()
 
-    if enc != "UTF-8":
-        print("ydict only works with encoding=UTF-8, but you encoding is: ",
-              lang, enc)
+    try:
+        (lang, enc) = locale.getdefaultlocale()
+    except ValueError:
+        print("Didn't detect your LC_ALL environment variable.")
+        print("Please export LC_ALL with some UTF-8 encoding.")
         cleanup()
+    else:
+        if enc != "UTF-8":
+            print("ydict only works with encoding=UTF-8, ")
+            print("but you encoding is: {} {}".format(lang, enc))
+            print("Please export LC_ALL with some UTF-8 encoding.")
+            cleanup()
 
     if options.nocolor:
         red = ""

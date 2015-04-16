@@ -1,3 +1,6 @@
 *.py[co]
 dist
 MANIFEST
+*.swp
+build
+*.egg-info
