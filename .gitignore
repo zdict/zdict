@@ -2,3 +2,5 @@
 dist
 MANIFEST
 *.swp
+build
+*.egg-info
