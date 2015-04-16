@@ -316,6 +316,10 @@ class yDict(DictBase):
         db[exp_word.key] = 1
         return exp_word
 
+    @property
+    def provider(self):
+        return 'yahoo'
+
 
 def main():
     ydict = yDict()
@@ -403,7 +407,7 @@ def main():
 
     if len(args) >= 1:
         for w in args:
-            result = dict(w, options.more_exp)
+            result = ydict.query(w, verbose=options.more_exp)
             if result is None:
                 print(cprint("[" + w + "] Not found", yellow, 0))
                 continue

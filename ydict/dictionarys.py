@@ -3,12 +3,20 @@ import abc
 import requests
 
 from . import constants
-from .models import db
+from .models import Record, db
 
 
 class DictBase(metaclass=abc.ABCMeta):
+    REQUIRED_TABLE = (
+        Record,
+    )
+
     def __init__(self):
         self.db = db.connect()
+
+        for req in self.REQUIRED_TABLE:
+            if not req.table_exists():
+                req.create_table()
 
     def __del__(self):
         db.close()
@@ -39,4 +47,13 @@ class DictBase(metaclass=abc.ABCMeta):
         return res.text
 
     def show():
+        ...
+
+    @property
+    @abc.abstractmethod
+    def provider(self):
+        '''
+        Return the provider of online dictionary,
+        this value is considered as `source` field in Record model.
+        '''
         ...

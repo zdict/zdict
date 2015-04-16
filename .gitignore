@@ -4,3 +4,4 @@ MANIFEST
 *.swp
 build
 *.egg-info
+.coverage
