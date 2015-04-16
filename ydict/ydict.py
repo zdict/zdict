@@ -3,10 +3,6 @@
 import getopt
 import sys
 import string
-import http.client
-import urllib.request
-import urllib.parse
-import urllib.error
 import string
 import sys
 import locale
@@ -22,9 +18,12 @@ from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
 
+from bs4 import BeautifulSoup
+
 from . import constants
 from .completer import DictCompleter
 from .dictionarys import DictBase
+from .exceptions import QueryError
 
 
 playback = ""
@@ -225,16 +224,6 @@ def htmlspcahrs(content):
     return content
 
 
-def http_postconn(word):
-    yahoourl = "tw.dictionary.yahoo.com"
-    params = urllib.parse.urlencode({'p': word})
-    context = ssl._create_unverified_context()
-    return urllib.request.urlopen(
-        "https://{}/dictionary?{}".format(yahoourl, params),
-        context=context
-    )
-
-
 class explan_node:
     pass
 
@@ -299,69 +288,60 @@ class explan_word:
         return ''.join(line for line in res if line is not None)
 
 
-def dict(word, more_exp):
-    output = ""
-    word = word.strip()
-    if len(word) <= 0:
-        return None
-    r1 = http_postconn(word)
-    data1 = r1.read()
-    try:
-        summary = data1[data1.index(b'<div id="left">'):]
-        summary = summary[:summary.index(b'<div id="right">')]
-    except ValueError:
-        return None
-
-    summary = htmlspcahrs(summary)
-    root = ET.XML(summary)
-    exp_word = explan_word()
-    exp_word.key = root.find(".//*/span[@class='yschttl']")
-    exp_word.kk = root.find(".//*/span[@class='proun_value'][2]")
-    exp_word.dj = root.find(".//*/span[@class='proun_value'][4]")
-    exp_word.mp3 = root.find(".//*/span[@class='source']"
-                             "[@data-type='audio/mpeg']")
-    exp_word.ogg = root.find(".//*/span[@class='source']"
-                             "[@data-type='audio/ogg']")
-    if more_exp:
-        search_exp = ".//*/li[@class='explanation_pos_wrapper']"
-    else:
-        search_exp = (".//*/li[@class='result_cluster_first res']"
-                      "/*/li[@class='explanation_pos_wrapper']")
-
-    explan_list = list()
-    for explan in root.findall(search_exp):
-        explanation_ol_list = list()
-        explan_entry = explan_node()
-        explan_entry.pos_abbr = explan.find("./h5/span[@class='pos_abbr']")
-        explan_entry.pos_desc = explan.find("./h5/span[@class='pos_desc']")
-
-        for explanation_ol in explan.findall(
-            "./ol[@class='explanation_ol']/li"
-        ):
-            explanation_ol_entry = explanation_node()
-            explanation_ol_entry.explanation = explanation_ol.find(
-                "./p[@class='explanation']"
-            )
-            explanation_ol_entry.example_sentence = explanation_ol.find(
-                "./p[@class='sample']/samp[@class='example_sentence']"
-            )
-            explanation_ol_entry.samp = explanation_ol.find(
-                "./p[@class='sample']/samp[2]"
-            )
-            explanation_ol_list.append(explanation_ol_entry)
-        explan_entry.explanation = explanation_ol_list
-        explan_list.append(explan_entry)
-    exp_word.explan_list = explan_list
-    db[exp_word.key.text] = 1
-    return exp_word
-
-
 class yDict(DictBase):
-    def get_prompt(self) -> str:
+    API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
+
+    def _get_prompt(self) -> str:
         return '[yDict]: '
 
-    def query(self):
-        ...
+    def _get_url(self, word) -> str:
+        return self.API.format(word=word)
+
+    def query(self, word: str):
+        '''
+        :param s: loopup key word
+        '''
+        data = self._get_raw(word)
+        exp_word.key = data.find('span', class_='yschttl').text
+        proun_value = data.find_all('span', class_='proun_value')
+        exp_word.kk = proun_value[0]
+        exp_word.dj = proun_value[1]
+        proun_sound = data.find(class_='proun_sound')
+        exp_word.mp3 = proun_sound.find(class_='source', attrs={'data-type': 'audio/mpeg'}).attrs['data-src']
+        exp_word.ogg = proun_sound.find(class_='source', attrs={'data-type': 'audio/ogg'}).attrs['data-src']
+
+        if more_exp:
+            search_exp = ".//*/li[@class='explanation_pos_wrapper']"
+        else:
+            search_exp = (".//*/li[@class='result_cluster_first res']"
+                          "/*/li[@class='explanation_pos_wrapper']")
+
+        explan_list = list()
+        for explan in root.findall(search_exp):
+            explanation_ol_list = list()
+            explan_entry = explan_node()
+            explan_entry.pos_abbr = explan.find("./h5/span[@class='pos_abbr']")
+            explan_entry.pos_desc = explan.find("./h5/span[@class='pos_desc']")
+
+            for explanation_ol in explan.findall(
+                "./ol[@class='explanation_ol']/li"
+            ):
+                explanation_ol_entry = explanation_node()
+                explanation_ol_entry.explanation = explanation_ol.find(
+                    "./p[@class='explanation']"
+                )
+                explanation_ol_entry.example_sentence = explanation_ol.find(
+                    "./p[@class='sample']/samp[@class='example_sentence']"
+                )
+                explanation_ol_entry.samp = explanation_ol.find(
+                    "./p[@class='sample']/samp[2]"
+                )
+                explanation_ol_list.append(explanation_ol_entry)
+            explan_entry.explanation = explanation_ol_list
+            explan_list.append(explan_entry)
+        exp_word.explan_list = explan_list
+        db[exp_word.key.text] = 1
+        return exp_word
 
 
 def main():
@@ -472,7 +452,7 @@ def main():
         wordlist()
         cleanup()
 
-    
+
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter(db).complete)
@@ -489,10 +469,11 @@ def main():
             print("")
             cleanup()
 
-        result = dict(word, options.more_exp)
-        if result is None:
-            print(cprint("[" + word + "] Not found", yellow, 0))
-            continue
-        else:
-            speak(result)
-            print(result.show())
+        # result = dict(word, options.more_exp)
+        # result = ''
+        # if result is None:
+        #     print(cprint("[" + word + "] Not found", yellow, 0))
+        #     continue
+        # else:
+        #     speak(result)
+        #     print(result.show())
