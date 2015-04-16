@@ -28,15 +28,6 @@ from .exceptions import QueryError
 playback = ""
 prefetch = ""
 
-red = "\33[31;1m"
-lindigo = "\33[36;1m"
-indigo = "\33[36m"
-green = "\33[32m"
-yellow = "\33[33;1m"
-blue = "\33[34;1m"
-org = "\33[0m"
-light = "\33[0;1m"
-
 
 if not os.path.isdir(constants.BASE_DIR):
     os.mkdir(constants.BASE_DIR)
@@ -229,25 +220,6 @@ class explan_node:
 
 class explanation_node:
     pass
-
-
-# Color print
-def cprint(data, color, newline=1, indent=0, num=0):
-    if newline == 1:
-        nl = "\n"
-    else:
-        nl = ""
-    if num != 0:
-        nu = str(num) + ". "
-    else:
-        nu = ""
-    idn = " " * indent
-    if data is not None:
-        if isinstance(data, str) or isinstance(data, str):
-            return (idn + nu + color + data + org + nl)
-        elif data.text is not None:
-            return (idn + nu + color + data.text + org + nl)
-    return None
 
 
 class explan_word:
