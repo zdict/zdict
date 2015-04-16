@@ -3,7 +3,7 @@ import unittest
 from ..ydict import yDict
 
 
-class yDictTestCase(unittest.TestCase):
+class TestyDict(unittest.TestCase):
     def setUp(self):
         self.ydcit = yDict()
 
