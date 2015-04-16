@@ -253,8 +253,7 @@ def cprint(data, color, newline=1, indent=0, num=0):
 
 class explan_word:
     def show(self):
-        pass
-#         ret = ""
+        ...
 #         res = []
 #         res.append(cprint(self.key, yellow))
 #         if self.kk is not None:
@@ -265,7 +264,8 @@ class explan_word:
 #             res.append(cprint(self.dj, light))
 #
 #         for explan_entry in self.explan_list:
-#             res.append(cprint(explan_entry.pos, red, 0))
+#             res.append(cprint(explan_entry.pos_abbr, red, 0))
+#             res.append(cprint(explan_entry.pos_desc, red, 0))
 #             res.append(cprint("", org, 1))
 #             i = 1
 #             for explanation_ol_entry in explan_entry.explanation:
@@ -286,10 +286,7 @@ class explan_word:
 #                     res.append(cprint("", org, 1))
 #                 res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
 #                 i += 1
-#         for line in res:
-#             if line is not None:
-#                 ret = ret + line    # XXX bad code
-#         return ret
+#         return ''.join(line for line in res if line is not None)
 
 
 class yDict(DictBase):
