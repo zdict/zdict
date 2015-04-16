@@ -1,6 +1,7 @@
 ******
 ydict
 ******
+*Note: This project is under heavily reconstruction.*
 
 
 Testing

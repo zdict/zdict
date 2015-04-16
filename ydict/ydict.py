@@ -253,43 +253,43 @@ def cprint(data, color, newline=1, indent=0, num=0):
 
 class explan_word:
     def show(self):
-        ret = ""
-        res = []
-        res.append(cprint(self.key, yellow))
-        if self.kk is not None:
-            res.append(cprint("KK", org, 0))
-            res.append(cprint(self.kk, light, 0))
-        if self.dj is not None:
-            res.append(cprint(" DJ", org, 0))
-            res.append(cprint(self.dj, light))
-
-        for explan_entry in self.explan_list:
-            res.append(cprint(explan_entry.pos_abbr, red, 0))
-            res.append(cprint(explan_entry.pos_desc, red, 0))
-            res.append(cprint("", org, 1))
-            i = 1
-            for explanation_ol_entry in explan_entry.explanation:
-                res.append(cprint("", org, 0, 2, i))
-                for explanation in explanation_ol_entry.explanation.iter():
-                    res.append(cprint(explanation, org, 0))
-                    res.append(cprint(explanation.tail, org, 0))
-                res.append(cprint("", org))
-
-                if explanation_ol_entry.example_sentence is not None:
-                    res.append(cprint("    ", indigo, 0, 0))
-                    for text in explanation_ol_entry.example_sentence.iter():
-                        if text.tag == 'b':
-                            res.append(cprint(text.text, lindigo, 0))
-                            res.append(cprint(text.tail, indigo, 0))
-                        else:
-                            res.append(cprint(text, indigo, 0, 0))
-                    res.append(cprint("", org, 1))
-                res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
-                i += 1
-        for line in res:
-            if line is not None:
-                ret = ret + line    # XXX bad code
-        return ret
+        pass
+#         ret = ""
+#         res = []
+#         res.append(cprint(self.key, yellow))
+#         if self.kk is not None:
+#             res.append(cprint("KK", org, 0))
+#             res.append(cprint(self.kk, light, 0))
+#         if self.dj is not None:
+#             res.append(cprint(" DJ", org, 0))
+#             res.append(cprint(self.dj, light))
+#
+#         for explan_entry in self.explan_list:
+#             res.append(cprint(explan_entry.pos, red, 0))
+#             res.append(cprint("", org, 1))
+#             i = 1
+#             for explanation_ol_entry in explan_entry.explanation:
+#                 res.append(cprint("", org, 0, 2, i))
+#                 for explanation in explanation_ol_entry.explanation.iter():
+#                     res.append(cprint(explanation, org, 0))
+#                     res.append(cprint(explanation.tail, org, 0))
+#                 res.append(cprint("", org))
+#
+#                 if explanation_ol_entry.example_sentence is not None:
+#                     res.append(cprint("    ", indigo, 0, 0))
+#                     for text in explanation_ol_entry.example_sentence.iter():
+#                         if text.tag == 'b':
+#                             res.append(cprint(text.text, lindigo, 0))
+#                             res.append(cprint(text.tail, indigo, 0))
+#                         else:
+#                             res.append(cprint(text, indigo, 0, 0))
+#                     res.append(cprint("", org, 1))
+#                 res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
+#                 i += 1
+#         for line in res:
+#             if line is not None:
+#                 ret = ret + line    # XXX bad code
+#         return ret
 
 
 class yDict(DictBase):
@@ -301,50 +301,51 @@ class yDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def query(self, word: str):
+    def query(self, word: str, verbose=False):
         '''
         :param s: loopup key word
         '''
-        data = self._get_raw(word)
+        data = BeautifulSoup(self._get_raw(word))
+        exp_word = explan_word()
         exp_word.key = data.find('span', class_='yschttl').text
-        proun_value = data.find_all('span', class_='proun_value')
-        exp_word.kk = proun_value[0]
-        exp_word.dj = proun_value[1]
-        proun_sound = data.find(class_='proun_sound')
-        exp_word.mp3 = proun_sound.find(class_='source', attrs={'data-type': 'audio/mpeg'}).attrs['data-src']
-        exp_word.ogg = proun_sound.find(class_='source', attrs={'data-type': 'audio/ogg'}).attrs['data-src']
 
-        if more_exp:
-            search_exp = ".//*/li[@class='explanation_pos_wrapper']"
+        proun_value = data.find_all('span', class_='proun_value')
+        if proun_value:
+            exp_word.kk = proun_value[0].text
+            exp_word.dj = proun_value[1].text
+
+        proun_sound = data.find(class_='proun_sound')
+        if proun_sound:
+            exp_word.mp3 = proun_sound.find(class_='source', attrs={'data-type': 'audio/mpeg'}).attrs['data-src']
+            exp_word.ogg = proun_sound.find(class_='source', attrs={'data-type': 'audio/ogg'}).attrs['data-src']
+
+        if verbose:
+            search_exp = data.find_all(class_='explanation_pos_wrapper')
         else:
-            search_exp = (".//*/li[@class='result_cluster_first res']"
-                          "/*/li[@class='explanation_pos_wrapper']")
+            search_exp = data.find(class_='result_cluster_first').find_all(class_='explanation_pos_wrapper')
 
         explan_list = list()
-        for explan in root.findall(search_exp):
+        for explan in search_exp:
             explanation_ol_list = list()
             explan_entry = explan_node()
-            explan_entry.pos_abbr = explan.find("./h5/span[@class='pos_abbr']")
-            explan_entry.pos_desc = explan.find("./h5/span[@class='pos_desc']")
+            explan_entry.pos = explan.h5.text
 
-            for explanation_ol in explan.findall(
-                "./ol[@class='explanation_ol']/li"
-            ):
+            for explanation_ol in explan.ol.find_all('li'):
                 explanation_ol_entry = explanation_node()
                 explanation_ol_entry.explanation = explanation_ol.find(
-                    "./p[@class='explanation']"
+                    'p', class_='explanation'
                 )
-                explanation_ol_entry.example_sentence = explanation_ol.find(
-                    "./p[@class='sample']/samp[@class='example_sentence']"
-                )
-                explanation_ol_entry.samp = explanation_ol.find(
-                    "./p[@class='sample']/samp[2]"
-                )
+                # TODO: consider multi sample
+                sample = explanation_ol.find('p', class_='sample')
+                if sample:
+                    samp = sample.find_all('samp')
+                    explanation_ol_entry.example_sentence = samp[0].contents
+                    explanation_ol_entry.samp = samp[1].text
                 explanation_ol_list.append(explanation_ol_entry)
             explan_entry.explanation = explanation_ol_list
             explan_list.append(explan_entry)
         exp_word.explan_list = explan_list
-        db[exp_word.key.text] = 1
+        db[exp_word.key] = 1
         return exp_word
 
 
