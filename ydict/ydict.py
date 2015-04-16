@@ -10,9 +10,8 @@ import shelve
 import os
 import random
 import configparser
-import xml.etree.ElementTree as ET
 import readline
-import ssl
+import json
 
 from codecs import EncodedFile
 from optparse import OptionParser
@@ -23,6 +22,7 @@ from . import constants
 from .completer import DictCompleter
 from .dictionarys import DictBase
 from .exceptions import QueryError
+from .models import Record
 
 
 playback = ""
@@ -207,59 +207,6 @@ def wordlist():
         print(k, v)
 
 
-def htmlspcahrs(content):
-    content = content.replace(b"&", b"")
-    content = content.replace(b"#39;", b"\'")
-    content = content.replace(b"quot;", b"\"")
-    return content
-
-
-class explan_node:
-    pass
-
-
-class explanation_node:
-    pass
-
-
-class explan_word:
-    def show(self):
-        ...
-#         res = []
-#         res.append(cprint(self.key, yellow))
-#         if self.kk is not None:
-#             res.append(cprint("KK", org, 0))
-#             res.append(cprint(self.kk, light, 0))
-#         if self.dj is not None:
-#             res.append(cprint(" DJ", org, 0))
-#             res.append(cprint(self.dj, light))
-#
-#         for explan_entry in self.explan_list:
-#             res.append(cprint(explan_entry.pos_abbr, red, 0))
-#             res.append(cprint(explan_entry.pos_desc, red, 0))
-#             res.append(cprint("", org, 1))
-#             i = 1
-#             for explanation_ol_entry in explan_entry.explanation:
-#                 res.append(cprint("", org, 0, 2, i))
-#                 for explanation in explanation_ol_entry.explanation.iter():
-#                     res.append(cprint(explanation, org, 0))
-#                     res.append(cprint(explanation.tail, org, 0))
-#                 res.append(cprint("", org))
-#
-#                 if explanation_ol_entry.example_sentence is not None:
-#                     res.append(cprint("    ", indigo, 0, 0))
-#                     for text in explanation_ol_entry.example_sentence.iter():
-#                         if text.tag == 'b':
-#                             res.append(cprint(text.text, lindigo, 0))
-#                             res.append(cprint(text.tail, indigo, 0))
-#                         else:
-#                             res.append(cprint(text, indigo, 0, 0))
-#                     res.append(cprint("", org, 1))
-#                 res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
-#                 i += 1
-#         return ''.join(line for line in res if line is not None)
-
-
 class yDict(DictBase):
     API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
 
@@ -273,48 +220,69 @@ class yDict(DictBase):
         '''
         :param s: loopup key word
         '''
+        try:
+            record = Record.get(word=word, source=self.provider)
+        except Record.DoesNotExist as e:
+            record = Record.create(word=word, source=self.provider)
+        else:
+            # return ret
+            ...
+
         data = BeautifulSoup(self._get_raw(word))
-        exp_word = explan_word()
-        exp_word.key = data.find('span', class_='yschttl').text
-
-        proun_value = data.find_all('span', class_='proun_value')
-        if proun_value:
-            exp_word.kk = proun_value[0].text
-            exp_word.dj = proun_value[1].text
-
-        proun_sound = data.find(class_='proun_sound')
-        if proun_sound:
-            exp_word.mp3 = proun_sound.find(class_='source', attrs={'data-type': 'audio/mpeg'}).attrs['data-src']
-            exp_word.ogg = proun_sound.find(class_='source', attrs={'data-type': 'audio/ogg'}).attrs['data-src']
+        content = {}
+        # handle record.word
+        record.word = data.find('span', class_='yschttl').text
+        # handle pronounce
+        pronu_value = data.find_all('span', class_='proun_value')
+        if pronu_value:
+            content['pronounce'] = [
+                ('KK', pronu_value[0].text),
+                ('DJ', pronu_value[1].text),
+            ]
+        # handle sound
+        pronu_sound = data.find(class_='proun_sound')
+        if pronu_sound:
+            content['sound'] = [
+                ('mp3', pronu_sound.find(
+                        class_='source',
+                        attrs={'data-type': 'audio/mpeg'}
+                    ).attrs['data-src']
+                ),
+                ('ogg', pronu_sound.find(
+                        class_='source',
+                        attrs={'data-type': 'audio/ogg'}
+                    ).attrs['data-src']
+                ),
+            ]
 
         if verbose:
             search_exp = data.find_all(class_='explanation_pos_wrapper')
         else:
             search_exp = data.find(class_='result_cluster_first').find_all(class_='explanation_pos_wrapper')
 
-        explan_list = list()
-        for explan in search_exp:
-            explanation_ol_list = list()
-            explan_entry = explan_node()
-            explan_entry.pos = explan.h5.text
+        content['explain'] = []
+        for explain in search_exp:
+            node = [explain.h5.text]
 
-            for explanation_ol in explan.ol.find_all('li'):
-                explanation_ol_entry = explanation_node()
-                explanation_ol_entry.explanation = explanation_ol.find(
-                    'p', class_='explanation'
-                )
-                # TODO: consider multi sample
-                sample = explanation_ol.find('p', class_='sample')
-                if sample:
+            for item in explain.ol.find_all('li'):
+                pack = [item.find('p', class_='explanation').text]
+                for sample in item.find_all('p', class_='sample'):
                     samp = sample.find_all('samp')
-                    explanation_ol_entry.example_sentence = samp[0].contents
-                    explanation_ol_entry.samp = samp[1].text
-                explanation_ol_list.append(explanation_ol_entry)
-            explan_entry.explanation = explanation_ol_list
-            explan_list.append(explan_entry)
-        exp_word.explan_list = explan_list
-        db[exp_word.key] = 1
-        return exp_word
+                    pack.append((
+                        ''.join([
+                            ('*{}*'.format(tag.text) if tag.name == 'b' else tag)
+                            for tag in samp[0].contents
+                        ]),
+                        samp[1].text
+                    ))
+
+                node.append(pack)
+
+            content['explain'].append(node)
+
+        record.content = json.dumps(content)
+        record.save()
+        return record
 
     @property
     def provider(self):
@@ -378,14 +346,7 @@ def main():
             cleanup()
 
     if options.nocolor:
-        red = ""
-        lindigo = ""
-        indigo = ""
-        green = ""
-        yellow = ""
-        blue = ""
-        org = ""
-        light = ""
+        pass
 
     if options.importfile:
         importfile(options.importfile)
@@ -407,12 +368,8 @@ def main():
 
     if len(args) >= 1:
         for w in args:
-            result = ydict.query(w, verbose=options.more_exp)
-            if result is None:
-                print(cprint("[" + w + "] Not found", yellow, 0))
-                continue
-            speak(result)
-            print(result.show())
+            record = ydict.query(w, verbose=options.more_exp)
+            ydict.show(record)
         cleanup()
 
     if options.learnmode:
@@ -440,10 +397,10 @@ def main():
         try:
             word = ydict.prompt()
         except KeyboardInterrupt:
-            print("")
+            print()
             cleanup()
         except EOFError:
-            print("")
+            print()
             cleanup()
 
         # result = dict(word, options.more_exp)

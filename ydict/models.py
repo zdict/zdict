@@ -20,24 +20,26 @@ class Record(peewee.Model):
             ],
             'sound': [
                 ('type', 'url'),
-                ... // type: (mp3|ogg)
+                ...
+                // type: (mp3|ogg)
             ],
             'explain': [
                 ('node',
                     (
                         'name',
                         ('sentence1', 'translation'),
+                        ...
                     ),
+                    ...
                 ),
                 ...
             ]
         }
     :param source: source of the content. May be Yahoo!, Google, ... Dict
-
     '''
 
     word = peewee.TextField()
-    content = peewee.TextField()
+    content = peewee.TextField(null=True)
     source = peewee.CharField()
 
     class Meta:
