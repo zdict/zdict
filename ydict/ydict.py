@@ -264,7 +264,6 @@ def cprint(data, color, newline=1, indent=0, num=0):
 
 class explan_word:
     def show(self):
-        ret = ""
         res = []
         res.append(cprint(self.key, yellow))
         if self.kk is not None:
@@ -297,10 +296,7 @@ class explan_word:
                     res.append(cprint("", org, 1))
                 res.append(cprint(explanation_ol_entry.samp, green, 1, 4))
                 i += 1
-        for line in res:
-            if line is not None:
-                ret = ret + line    # XXX bad code
-        return ret
+        return ''.join(line for line in res if line is not None)
 
 
 def dict(word, more_exp):
