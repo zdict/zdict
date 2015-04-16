@@ -39,7 +39,7 @@ class Record(peewee.Model):
     '''
 
     word = peewee.TextField()
-    content = peewee.TextField(null=True)
+    content = peewee.TextField()
     source = peewee.CharField()
 
     class Meta:

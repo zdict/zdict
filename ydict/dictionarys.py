@@ -4,6 +4,7 @@ import json
 import requests
 
 from . import constants
+from .exceptions import NotFoundError
 from .models import Record, db
 from .utils import Color
 
@@ -34,9 +35,25 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     def prompt(self):
-        self.show(
-            self.query(input(self._get_prompt()).strip())
-        )
+        user_input = input(self._get_prompt())
+        
+        if not user_input:
+            return
+       
+        try:
+            record = self.query(user_input.strip())
+        except NotFoundError as e:
+            self.color.print(e, 'yellow')
+            return
+        self.show(record)
+
+    def loop_prompt(self):
+        while True:
+            try:
+                self.prompt()
+            except (KeyboardInterrupt, EOFError):
+                print()
+                return
 
     @abc.abstractclassmethod
     def query(self, word: str) -> Record:

@@ -13,7 +13,6 @@ import configparser
 import readline
 import json
 
-from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
 from bs4 import BeautifulSoup
@@ -21,7 +20,7 @@ from bs4 import BeautifulSoup
 from . import constants
 from .completer import DictCompleter
 from .dictionarys import DictBase
-from .exceptions import QueryError
+from .exceptions import NotFoundError, QueryError
 from .models import Record
 
 
@@ -223,15 +222,17 @@ class yDict(DictBase):
         try:
             record = Record.get(word=word, source=self.provider)
         except Record.DoesNotExist as e:
-            record = Record.create(word=word, source=self.provider)
+            record = Record(word=word, source=self.provider, content='{}')
         else:
-            # return ret
-            ...
+            return record
 
         data = BeautifulSoup(self._get_raw(word))
         content = {}
         # handle record.word
-        record.word = data.find('span', class_='yschttl').text
+        try:
+            record.word = data.find('span', class_='yschttl').text
+        except AttributeError:
+            raise NotFoundError(word)
         # handle pronounce
         pronu_value = data.find_all('span', class_='proun_value')
         if pronu_value:
@@ -281,7 +282,7 @@ class yDict(DictBase):
             content['explain'].append(node)
 
         record.content = json.dumps(content)
-        record.save()
+        print(record.save(force_insert=True))  # using force_insert for CompositeKey
         return record
 
     @property
@@ -393,21 +394,4 @@ def main():
     for x in db.keys():
         readline.add_history(x)
 
-    while(1):
-        try:
-            word = ydict.prompt()
-        except KeyboardInterrupt:
-            print()
-            cleanup()
-        except EOFError:
-            print()
-            cleanup()
-
-        # result = dict(word, options.more_exp)
-        # result = ''
-        # if result is None:
-        #     print(cprint("[" + word + "] Not found", yellow, 0))
-        #     continue
-        # else:
-        #     speak(result)
-        #     print(result.show())
+    ydict.loop_prompt()
