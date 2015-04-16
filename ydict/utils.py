@@ -40,6 +40,7 @@ class Color(metaclass=ColorConst):
         :type s: str
         :param s: message
         :param color: predefined color name, e,g,: red, RED.
+            Using 'l' prefix for bright color, e.g.: lred, lwhite.
             It's case-insensitive.
         '''
         if s is None:

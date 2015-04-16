@@ -11,7 +11,27 @@ class Record(peewee.Model):
     A model for storing the query results into the SQLite db.
 
     :param word: the vocabulary
-    :param content: the query result of the vocabulary
+    :param content: the query result of the vocabulary.
+        It's a json document has the following spec.
+        {
+            'pronounce': [
+                ('key', 'value'),
+                ...
+            ],
+            'sound': [
+                ('type', 'url'),
+                ... // type: (mp3|ogg)
+            ],
+            'explain': [
+                ('node',
+                    (
+                        'name',
+                        ('sentence1', 'translation'),
+                    ),
+                ),
+                ...
+            ]
+        }
     :param source: source of the content. May be Yahoo!, Google, ... Dict
 
     '''
