@@ -282,7 +282,7 @@ class yDict(DictBase):
             content['explain'].append(node)
 
         record.content = json.dumps(content)
-        print(record.save(force_insert=True))  # using force_insert for CompositeKey
+        record.save(force_insert=True)  # using force_insert for CompositeKey
         return record
 
     @property
@@ -390,8 +390,8 @@ def main():
 
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
-    readline.set_completer(DictCompleter(db).complete)
-    for x in db.keys():
-        readline.add_history(x)
+    readline.set_completer(DictCompleter().complete)
+    # for x in db.keys():
+    #     readline.add_history(x)
 
     ydict.loop_prompt()
