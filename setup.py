@@ -15,8 +15,8 @@ setup(
     packages=['ydict'],
     scripts=['scripts/ydict'],
     install_requires=[
-        'pony',
         'beautifulsoup4',
         'requests',
+        'peewee',
     ],
 )
