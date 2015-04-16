@@ -17,7 +17,6 @@ import ssl
 from codecs import EncodedFile
 from optparse import OptionParser
 from multiprocessing import Process, Queue, Pool
-
 from bs4 import BeautifulSoup
 
 from . import constants
