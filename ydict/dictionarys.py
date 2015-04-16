@@ -1,15 +1,17 @@
 import abc
 
-import pony.orm as pony
 import requests
 
 from . import constants
+from .models import db
 
 
 class DictBase(metaclass=abc.ABCMeta):
     def __init__(self):
-        self.db = pony.Database('sqlite', constants.DB_FILE, create_db=True)
-        self.db.generate_mapping(create_tables=True)
+        self.db = db.connect()
+
+    def __del__(self):
+        db.close()
 
     @abc.abstractmethod
     def _get_prompt(self) -> str:
@@ -35,3 +37,6 @@ class DictBase(metaclass=abc.ABCMeta):
         if res.status_code != 200:
             raise QueryError(word, res.status_code)
         return res.text
+
+    def show():
+        ...
