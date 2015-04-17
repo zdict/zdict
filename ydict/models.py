@@ -14,7 +14,7 @@ class Record(peewee.Model):
     :param content: the query result of the vocabulary.
         It's a json document has the following spec.
         {
-            'word': word    # storing the querying result.
+            'word': word    # storing the query result.
             'pronounce': [
                 ('key', 'value'),
                 ...
