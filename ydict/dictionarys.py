@@ -45,6 +45,7 @@ class DictBase(metaclass=abc.ABCMeta):
         except NotFoundError as e:
             self.color.print(e, 'yellow')
             return
+
         self.show(record)
 
     def loop_prompt(self):
@@ -56,7 +57,7 @@ class DictBase(metaclass=abc.ABCMeta):
                 return
 
     @abc.abstractclassmethod
-    def query(self, word: str) -> Record:
+    def query(self, word: str, verbose: bool) -> Record:
         ...
 
     def _get_raw(self, word) -> str:
@@ -69,6 +70,7 @@ class DictBase(metaclass=abc.ABCMeta):
         if res.status_code != 200:
             raise QueryError(word, res.status_code)
         return res.text
+
 
     def show(self, record: Record):
         content = json.loads(record.content)
@@ -93,14 +95,13 @@ class DictBase(metaclass=abc.ABCMeta):
                     print(' ' * 4, end='')
                     for i, s in enumerate(sentence[0].split('*')):
                         self.color.print(
-                            s, 
+                            s,
                             'lindigo' if i == 1 else 'indigo',
                             end=''
                         )
                     print()
                     self.color.print(sentence[1], 'green', indent=4)
         print()
-
 
     @property
     @abc.abstractmethod
