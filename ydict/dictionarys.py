@@ -72,8 +72,8 @@ class DictBase(metaclass=abc.ABCMeta):
 
     def show(self, record: Record):
         content = json.loads(record.content)
-        # print keyword
-        self.color.print(record.word, 'yellow')
+        # print word
+        self.color.print(content['word'], 'yellow')
         # print pronounce
         for k, v in content.get('pronounce', []):
             self.color.print(k, end='')
@@ -99,6 +99,7 @@ class DictBase(metaclass=abc.ABCMeta):
                         )
                     print()
                     self.color.print(sentence[1], 'green', indent=4)
+        print()
 
 
     @property

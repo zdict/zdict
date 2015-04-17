@@ -217,12 +217,16 @@ class yDict(DictBase):
 
     def query(self, word: str, verbose=False):
         '''
-        :param s: loopup key word
+        :param word: look up word
+        :param verbose: verbose mode flag
         '''
+
+        keyword = word.lower()
+
         try:
-            record = Record.get(word=word, source=self.provider)
+            record = Record.get(word=keyword, source=self.provider)
         except Record.DoesNotExist as e:
-            record = Record(word=word, source=self.provider, content='{}')
+            record = Record(word=keyword, source=self.provider, content=None)
         else:
             return record
 
@@ -230,7 +234,7 @@ class yDict(DictBase):
         content = {}
         # handle record.word
         try:
-            record.word = data.find('span', class_='yschttl').text
+            content['word'] = data.find('span', class_='yschttl').text
         except AttributeError:
             raise NotFoundError(word)
         # handle pronounce
