@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-
 import getopt
 import sys
 import string
-import string
-import sys
 import locale
 import shelve
 import os
