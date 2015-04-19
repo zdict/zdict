@@ -8,7 +8,43 @@ from ..models import Record
 
 
 class yDict(DictBase):
+
     API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
+
+    @property
+    def provider(self):
+        return 'yahoo'
+
+    def show(self, record: Record):
+        content = json.loads(record.content)
+        # print word
+        self.color.print(content['word'], 'yellow')
+        # print pronounce
+        for k, v in content.get('pronounce', []):
+            self.color.print(k, end='')
+            self.color.print(v, 'lwhite', end=' ')
+        print()
+        # print explain
+        explain = content.get('explain')
+        for speech in explain:
+            self.color.print(speech[0], 'lred')
+            for index, meaning in enumerate(speech[1:], start=1):
+                self.color.print(
+                    '{num}. {text}'.format(num=index, text=meaning[0]),
+                    'org',
+                    indent=2
+                )
+                for sentence in meaning[1:]:
+                    print(' ' * 4, end='')
+                    for i, s in enumerate(sentence[0].split('*')):
+                        self.color.print(
+                            s,
+                            'lindigo' if i == 1 else 'indigo',
+                            end=''
+                        )
+                    print()
+                    self.color.print(sentence[1], 'green', indent=4)
+        print()
 
     def _get_prompt(self) -> str:
         return '[yDict]: '
@@ -52,19 +88,18 @@ class yDict(DictBase):
                 ('mp3', pronu_sound.find(
                         class_='source',
                         attrs={'data-type': 'audio/mpeg'}
-                    ).attrs['data-src']
-                ),
+                    ).attrs['data-src']),
                 ('ogg', pronu_sound.find(
                         class_='source',
                         attrs={'data-type': 'audio/ogg'}
-                    ).attrs['data-src']
-                ),
+                    ).attrs['data-src']),
             ]
 
         if verbose:
             search_exp = data.find_all(class_='explanation_pos_wrapper')
         else:
-            search_exp = data.find(class_='result_cluster_first').find_all(class_='explanation_pos_wrapper')
+            search_exp = data.find(class_='result_cluster_first')
+            search_exp = search_exp.find_all(class_='explanation_pos_wrapper')
 
         content['explain'] = []
         for explain in search_exp:
@@ -76,7 +111,8 @@ class yDict(DictBase):
                     samp = sample.find_all('samp')
                     pack.append((
                         ''.join([
-                            ('*{}*'.format(tag.text) if tag.name == 'b' else tag)
+                            ('*{}*'.format(tag.text)
+                             if tag.name == 'b' else tag)
                             for tag in samp[0].contents
                         ]),
                         samp[1].text
@@ -89,8 +125,3 @@ class yDict(DictBase):
         record.content = json.dumps(content)
         record.save(force_insert=True)  # using force_insert for CompositeKey
         return record
-
-    @property
-    def provider(self):
-        return 'yahoo'
-
