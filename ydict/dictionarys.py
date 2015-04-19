@@ -10,9 +10,11 @@ from .utils import Color
 
 
 class DictBase(metaclass=abc.ABCMeta):
+
     REQUIRED_TABLE = (
         Record,
     )
+
 
     def __init__(self):
         self.db = db
@@ -24,8 +26,22 @@ class DictBase(metaclass=abc.ABCMeta):
 
         self.color = Color()
 
+
     def __del__(self):
         self.db.close()
+
+
+    @property
+    @abc.abstractmethod
+    def provider(self):
+        '''
+        Return the provider of online dictionary,
+        this value is considered as `source` field in Record model.
+        '''
+        ...
+
+    def show(self, record: Record):
+        ...
 
     @abc.abstractmethod
     def _get_prompt(self) -> str:
@@ -45,6 +61,7 @@ class DictBase(metaclass=abc.ABCMeta):
         except NotFoundError as e:
             self.color.print(e, 'yellow')
             return
+
         self.show(record)
 
     def loop_prompt(self):
@@ -56,7 +73,7 @@ class DictBase(metaclass=abc.ABCMeta):
                 return
 
     @abc.abstractclassmethod
-    def query(self, word: str) -> Record:
+    def query(self, word: str, verbose: bool) -> Record:
         ...
 
     def _get_raw(self, word) -> str:
@@ -69,44 +86,3 @@ class DictBase(metaclass=abc.ABCMeta):
         if res.status_code != 200:
             raise QueryError(word, res.status_code)
         return res.text
-
-    def show(self, record: Record):
-        content = json.loads(record.content)
-        # print word
-        self.color.print(content['word'], 'yellow')
-        # print pronounce
-        for k, v in content.get('pronounce', []):
-            self.color.print(k, end='')
-            self.color.print(v, 'lwhite', end=' ')
-        print()
-        # print explain
-        explain = content.get('explain')
-        for speech in explain:
-            self.color.print(speech[0], 'lred')
-            for index, meaning in enumerate(speech[1:], start=1):
-                self.color.print(
-                    '{num}. {text}'.format(num=index, text=meaning[0]),
-                    'org',
-                    indent=2
-                )
-                for sentence in meaning[1:]:
-                    print(' ' * 4, end='')
-                    for i, s in enumerate(sentence[0].split('*')):
-                        self.color.print(
-                            s, 
-                            'lindigo' if i == 1 else 'indigo',
-                            end=''
-                        )
-                    print()
-                    self.color.print(sentence[1], 'green', indent=4)
-        print()
-
-
-    @property
-    @abc.abstractmethod
-    def provider(self):
-        '''
-        Return the provider of online dictionary,
-        this value is considered as `source` field in Record model.
-        '''
-        ...
