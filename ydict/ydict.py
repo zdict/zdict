@@ -1,6 +1,4 @@
 import getopt
-import sys
-import string
 import locale
 import shelve
 import os

@@ -35,13 +35,13 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     def prompt(self):
-        user_input = input(self._get_prompt())
+        user_input = input(self._get_prompt()).strip()
         
         if not user_input:
             return
        
         try:
-            record = self.query(user_input.strip())
+            record = self.query(user_input)
         except NotFoundError as e:
             self.color.print(e, 'yellow')
             return
