@@ -18,7 +18,7 @@ from multiprocessing import Process, Queue, Pool
 from . import constants
 from .completer import DictCompleter
 from .dictionarys import DictBase
-from .sites.yahoo_dict import yDict
+from .plugins.yahoo_dict import yDict
 
 
 playback = ""
