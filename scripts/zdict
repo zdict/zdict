@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from ydict.ydict import main
+from zdict.zdict import main
 
 
 main()

@@ -1,4 +1,4 @@
-from .ydict import main
+from .zdict import main
 
 
 if __name__ == '__main__':
