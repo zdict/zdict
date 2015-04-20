@@ -1,6 +1,7 @@
 *************
 zdict |test|
 *************
+*Note: This project is working in progress.*
 
 zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.
 This project originly forked from https://github.com/chenpc/ydict, which is a CLI tool for the Yahoo! online dictionary.
@@ -12,12 +13,11 @@ After heavily refactoring the original project including:
 
 So, we decided to create a new project.
 
-*Note: This project is under heavily reconstruction.*
 
 Testing
 -------
 ``python3 -m unittest discover``
 
 
-.. |test| image:: https://img.shields.io/github/issues/M157q/ydict.svg
+.. |test| image:: https://img.shields.io/github/issues/M157q/zdict.svg
    :target: https://github.com/badges/shields/issues
