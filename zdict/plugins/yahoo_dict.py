@@ -2,12 +2,12 @@ import json
 
 from bs4 import BeautifulSoup
 
-from ..dictionarys import DictBase
-from ..exceptions import NotFoundError, QueryError
+from ..dictionaries import DictBase
+from ..exceptions import NotFoundError
 from ..models import Record
 
 
-class yDict(DictBase):
+class YahooDict(DictBase):
 
     API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
 
@@ -47,7 +47,7 @@ class yDict(DictBase):
         print()
 
     def _get_prompt(self) -> str:
-        return '[yDict]: '
+        return '[zDict]: '
 
     def _get_url(self, word) -> str:
         return self.API.format(word=word)

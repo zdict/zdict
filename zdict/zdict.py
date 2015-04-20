@@ -11,8 +11,8 @@ from multiprocessing import Process, Queue, Pool
 
 from . import constants
 from .completer import DictCompleter
-from .dictionarys import DictBase
-from .plugins.yahoo_dict import yDict
+from .dictionaries import DictBase
+from .plugins.yahoo_dict import YahooDict
 
 
 playback = ""
@@ -26,9 +26,9 @@ db = shelve.open(os.path.join(constants.BASE_DIR, 'shelve'), "c")
 
 try:
     config = ConfigParser.ConfigParser()
-    config.readfp(open(os.path.join(constants.BASE_DIR, 'ydictrc')))
-    playback = config.get('ydict', 'playback')
-    prefetch = config.get('ydict', 'prefetch')
+    config.readfp(open(os.path.join(constants.BASE_DIR, 'rc')))
+    playback = config.get('zdict', 'playback')
+    prefetch = config.get('zdict', 'prefetch')
 except:
     pass
 
@@ -199,7 +199,6 @@ def wordlist():
 
 
 def main():
-
     # Check user's encoding settings
     try:
         (lang, enc) = locale.getdefaultlocale()
@@ -209,13 +208,13 @@ def main():
         cleanup()
     else:
         if enc != "UTF-8":
-            print("ydict only works with encoding=UTF-8, ")
+            print("zdict only works with encoding=UTF-8, ")
             print("but you encoding is: {} {}".format(lang, enc))
             print("Please export LC_ALL with some UTF-8 encoding.")
             cleanup()
 
     # parse options
-    parser = OptionParser(usage="Usage: ydict [options] word1 word2 ......")
+    parser = OptionParser(usage="Usage: zdict [options] word1 word2 ......")
     parser.add_option("-e", "--exp",
                       dest="more_exp",
                       help="Show more explanation.",
@@ -289,13 +288,13 @@ def main():
         wordlist()
         cleanup()
     elif len(args) >= 1:
-        ydict = yDict()
+        ydict = YahooDict()
         for w in args:
             record = ydict.query(w, verbose=options.more_exp)
             ydict.show(record)
         cleanup()
     else:
-        ydict = yDict()
+        ydict = YahooDict()
         # configure readline and completer
         readline.parse_and_bind("tab: complete")
         readline.set_completer(DictCompleter().complete)

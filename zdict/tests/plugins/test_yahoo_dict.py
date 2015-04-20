@@ -1,11 +1,11 @@
 import unittest
 
-from ..ydict import yDict
+from ...plugins import YahooDict
 
 
 class TestyDict(unittest.TestCase):
     def setUp(self):
-        self.ydcit = yDict()
+        self.ydcit = YahooDict()
 
     def test__get_url(self):
         self.assertEqual(
