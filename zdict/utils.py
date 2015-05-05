@@ -1,3 +1,4 @@
+import abc
 
 
 class ColorConst(type):
@@ -55,3 +56,15 @@ class Color(metaclass=ColorConst):
     @classmethod
     def print(self, *args, end='\n', **kwargs):
         print(self.format(*args, **kwargs), end=end)
+
+
+class sequence(metaclass=abc.ABCMeta):
+    @property
+    @abc.abstractmethod
+    def __item__(self):
+        ...
+
+
+sequence.register(tuple)
+sequence.register(list)
+sequence.register(type((_ for _ in ())))

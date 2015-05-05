@@ -1,12 +1,17 @@
 import abc
 import json
+from functools import reduce, singledispatch
+from itertools import product
 
 import requests
+
+from bs4 import BeautifulSoup
 
 from . import constants
 from .exceptions import NotFoundError
 from .models import Record, db
-from .utils import Color
+from .soup import DictionarySoup
+from .utils import Color, sequence
 
 
 class DictBase(metaclass=abc.ABCMeta):
@@ -14,7 +19,6 @@ class DictBase(metaclass=abc.ABCMeta):
     REQUIRED_TABLE = (
         Record,
     )
-
 
     def __init__(self):
         self.db = db
@@ -29,7 +33,6 @@ class DictBase(metaclass=abc.ABCMeta):
 
     def __del__(self):
         self.db.close()
-
 
     @property
     @abc.abstractmethod
@@ -52,17 +55,17 @@ class DictBase(metaclass=abc.ABCMeta):
 
     def prompt(self):
         user_input = input(self._get_prompt()).strip()
-        
+
         if not user_input:
             return
-       
+
         try:
             record = self.query(user_input)
         except NotFoundError as e:
             self.color.print(e, 'yellow')
             return
 
-        self.show(record)
+        # self.show(record)
 
     def loop_prompt(self):
         while True:
@@ -72,9 +75,86 @@ class DictBase(metaclass=abc.ABCMeta):
                 print()
                 return
 
-    @abc.abstractclassmethod
-    def query(self, word: str, verbose: bool) -> Record:
+    def query(self, word: str) -> Record:
+        '''
+        :param word: lookup word
+        '''
+        keyword = word.lower()
+
+        try:
+            record = Record.get(word=keyword, source=self.provider)
+        except Record.DoesNotExist as e:
+            record = Record(word=keyword, source=self.provider, content=None)
+        else:
+            return record
+
+        data = BeautifulSoup(self._get_raw(word))
+
+        self._expand_selectors(self.selectors)
+        # record.content = json.dumps(self.parse(data))
+        # record.save(force_insert=True)
+        # return record
+
+    @property
+    @abc.abstractmethod
+    def selectors(self, data: DictionarySoup) -> dict:
         ...
+
+    def _expand_selectors(self, selectors: dict or sequence or str) -> tuple:
+        '''
+        Expand selectors
+        e.g. {
+            'div.a': [
+                'span',
+                'p',
+            ],
+            'ul': 'a',
+        }
+        will return
+        (
+            'div.a span',
+            'div.a p',
+            'ul a',
+        )
+        '''
+        @singledispatch
+        def f(selectors):
+            raise TypeError(
+                'selectors "{}" should be dict, sequence or str'.format(
+                    selectors
+                )
+            )
+
+        @f.register(str)
+        def _(selectors):
+            return (selectors, )
+
+        @f.register(dict)
+        def _(selectors):
+            return tuple(
+                reduce(
+                    lambda x, y: tuple(x) + tuple(y),
+                    map(
+                        lambda key: map(
+                            lambda l: ' '.join(l),
+                            product((key,), f(selectors.get(key)))
+                        ),
+                        sorted(selectors.keys())
+                    )
+                )
+            )
+
+        @f.register(sequence)
+        def _(selectors):
+            return tuple(
+                reduce(
+                    lambda x, y: x + y,
+                    map(lambda x: f(x), selectors)
+                )
+            )
+
+        return f(selectors)
+
 
     def _get_raw(self, word) -> str:
         '''
