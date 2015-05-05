@@ -5,8 +5,6 @@ from itertools import product
 
 import requests
 
-from bs4 import BeautifulSoup
-
 from . import constants
 from .exceptions import NotFoundError
 from .models import Record, db
@@ -90,14 +88,14 @@ class DictBase(metaclass=abc.ABCMeta):
 
         data = BeautifulSoup(self._get_raw(word))
 
-        self._expand_selectors(self.selectors)
+        self.select()
         # record.content = json.dumps(self.parse(data))
         # record.save(force_insert=True)
         # return record
 
     @property
     @abc.abstractmethod
-    def selectors(self, data: DictionarySoup) -> dict:
+    def selectors(self) -> dict or sequence:
         ...
 
     def _expand_selectors(self, selectors: dict or sequence or str) -> tuple:
@@ -154,6 +152,9 @@ class DictBase(metaclass=abc.ABCMeta):
             )
 
         return f(selectors)
+
+    def select(self) -> dict:
+        selectors = self._expand_selectors(self.selectors)
 
 
     def _get_raw(self, word) -> str:
