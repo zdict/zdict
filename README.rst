@@ -1,6 +1,10 @@
 *************
 zdict |test|
 *************
+
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/M157q/zdict
+   :target: https://gitter.im/M157q/zdict?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 *Note: This project is working in progress.*
 
 zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.
