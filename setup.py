@@ -1,7 +1,8 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 import zdict
 
+EXCLUDE_FROM_PACKAGES = ['scripts']
 
 setup(
     name='zdict',
@@ -12,7 +13,7 @@ setup(
     maintainer='Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
     maintainer_email='e196819@hotmail.com, michael66230@gmail.com, wdv4758h@gmail.com',
     url='https://github.com/M157q/zdict',
-    packages=['zdict'],
+    packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     scripts=['scripts/zdict'],
     install_requires=[
         'beautifulsoup4',
