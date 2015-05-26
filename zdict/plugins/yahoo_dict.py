@@ -28,22 +28,25 @@ class YahooDict(DictBase):
         explain = content.get('explain')
         for speech in explain:
             self.color.print(speech[0], 'lred')
-            for index, meaning in enumerate(speech[1:], start=1):
+            for meaning in speech[1:]:
                 self.color.print(
-                    '{num}. {text}'.format(num=index, text=meaning[0]),
+                    '{text}'.format(text=meaning[0]),
                     'org',
                     indent=2
                 )
-                for sentence in meaning[1:]:
-                    print(' ' * 4, end='')
-                    for i, s in enumerate(sentence[0].split('*')):
-                        self.color.print(
-                            s,
-                            'lindigo' if i == 1 else 'indigo',
-                            end=''
-                        )
-                    print()
-                    self.color.print(sentence[1], 'green', indent=4)
+                for (english, chinese) in meaning[1:]:
+                    if english:
+                        print(' ' * 4, end='')
+                        for i, s in enumerate(english.split('*')):
+                            self.color.print(
+                                s,
+                                'lindigo' if i == 1 else 'indigo',
+                                end=''
+                            )
+                        print()
+
+                    if chinese:
+                        self.color.print(chinese, 'green', indent=4)
         print()
 
     def _get_prompt(self) -> str:
@@ -71,17 +74,21 @@ class YahooDict(DictBase):
         content = {}
         # handle record.word
         try:
-            content['word'] = data.find('span', class_='yschttl').text
+            content['word'] = data.find('span', id='term').text
         except AttributeError:
             raise NotFoundError(word)
+
         # handle pronounce
-        pronu_value = data.find_all('span', class_='proun_value')
+        pronu_value = data.find('span', id='pronunciation_pos').text
         if pronu_value:
+            pronu_value = pronu_value.split()
             content['pronounce'] = [
-                ('KK', pronu_value[0].text),
-                ('DJ', pronu_value[1].text),
+                    ('KK', pronu_value[0][2:]),
+                    ('DJ', pronu_value[1][2:]),
             ]
+
         # handle sound
+        # looks like the sound had been removed. 2015/05/26
         pronu_sound = data.find(class_='proun_sound')
         if pronu_sound:
             content['sound'] = [
@@ -96,30 +103,36 @@ class YahooDict(DictBase):
             ]
 
         if verbose:
-            search_exp = data.find_all(class_='explanation_pos_wrapper')
+            search_exp = data.find_all(class_='dd algo lst DictionaryResults')
         else:
-            search_exp = data.find(class_='result_cluster_first')
-            search_exp = search_exp.find_all(class_='explanation_pos_wrapper')
+            search_exp = data.find(
+                class_='dd algo mt-20 lst DictionaryResults'
+            )
+            search_exp = zip(
+                search_exp.find_all(class_='compTitle mb-10'),
+                search_exp.find_all(class_='compArticleList mb-15 ml-10')
+            )
 
         content['explain'] = []
-        for explain in search_exp:
-            node = [explain.h5.text]
+        for part_of_speech, explain in search_exp:
+            node = [part_of_speech.text]
 
-            for item in explain.ol.find_all('li'):
-                pack = [item.find('p', class_='explanation').text]
-                for sample in item.find_all('p', class_='sample'):
-                    samp = sample.find_all('samp')
-                    pack.append((
-                        ''.join([
-                            ('*{}*'.format(tag.text)
-                             if tag.name == 'b' else tag)
-                            for tag in samp[0].contents
-                        ]),
-                        samp[1].text
-                    ))
+            for item in explain.find_all('li', class_='ov-a'):
+                pack = [item.find('h4').text]
+                for example in item.find_all('span', id='example'):
+                    sentence = ''
+                    translation = ''
 
+                    for word in example.contents:
+                        if word.name == 'b':
+                            sentence += '*' + word.text + '*'
+                        elif word.name == 'span':
+                            translation = word.text
+                        else:
+                            sentence += word
+
+                    pack.append((sentence.strip(), translation.strip()))
                 node.append(pack)
-
             content['explain'].append(node)
 
         record.content = json.dumps(content)
