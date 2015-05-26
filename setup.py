@@ -16,7 +16,8 @@ setup(
     scripts=['scripts/zdict'],
     install_requires=[
         'beautifulsoup4',
-        'requests',
         'peewee',
+        'readline',
+        'requests',
     ],
 )
