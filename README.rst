@@ -18,6 +18,23 @@ After heavily refactoring the original project including:
 So, we decided to create a new project.
 
 
+Installation
+------------
+``pip install git+https://github.com/M157q/zdict.git``
+
+
+Usage
+-----
+
+* Normal Mode
+``zdict hello``
+.. image:: http://i.imgur.com/iFTysUz.png
+
+* Interactive Mode
+``zdict``
+.. image:: http://i.imgur.com/NtbWXKH.png
+
+
 Testing
 -------
 ``python3 -m unittest discover``
