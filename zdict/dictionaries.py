@@ -15,7 +15,6 @@ class DictBase(metaclass=abc.ABCMeta):
         Record,
     )
 
-
     def __init__(self):
         self.db = db
         self.db.connect()
@@ -26,10 +25,8 @@ class DictBase(metaclass=abc.ABCMeta):
 
         self.color = Color()
 
-
     def __del__(self):
         self.db.close()
-
 
     @property
     @abc.abstractmethod
@@ -50,19 +47,21 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
-    def prompt(self):
-        user_input = input(self._get_prompt()).strip()
-        
-        if not user_input:
-            return
-       
+    def lookup(self, word):
         try:
-            record = self.query(user_input)
+            record = self.query(word)
         except NotFoundError as e:
             self.color.print(e, 'yellow')
-            return
+        else:
+            self.show(record)
 
-        self.show(record)
+    def prompt(self):
+        user_input = input(self._get_prompt()).strip()
+
+        if user_input:
+            self.lookup(user_input)
+        else:
+            return
 
     def loop_prompt(self):
         while True:

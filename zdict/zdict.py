@@ -197,7 +197,6 @@ def wordlist():
         print(k, v)
 
 
-
 def main():
     # Check user's encoding settings
     try:
@@ -289,9 +288,9 @@ def main():
         cleanup()
     elif len(args) >= 1:
         ydict = YahooDict()
+
         for w in args:
-            record = ydict.query(w, verbose=options.more_exp)
-            ydict.show(record)
+            ydict.lookup(w)
         cleanup()
     else:
         ydict = YahooDict()
