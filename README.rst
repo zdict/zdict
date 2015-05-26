@@ -28,10 +28,13 @@ Usage
 
 * Normal Mode
 ``zdict hello``
+
 .. image:: http://i.imgur.com/iFTysUz.png
+
 
 * Interactive Mode
 ``zdict``
+
 .. image:: http://i.imgur.com/NtbWXKH.png
 
 
