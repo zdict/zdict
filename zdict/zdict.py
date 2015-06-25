@@ -1,10 +1,11 @@
+import configparser
 import getopt
 import locale
 import os
-import configparser
 import readline
+import sys
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 from . import constants
 from .completer import DictCompleter
@@ -43,35 +44,42 @@ def main():
             print("Please export LC_ALL with some UTF-8 encoding.")
             cleanup()
 
-    # parse options
-    parser = OptionParser(usage="Usage: zdict [options] word1 word2 ......")
+    # parse args
+    #parser = ArgumentParser(usage="Usage: zdict [options] word1 word2 ......")
+    parser = ArgumentParser()
 
-    parser.add_option("-v", "--version",
+    parser.add_argument('words',
+                        metavar='word',
+                        type=str,
+                        nargs='*',
+                        help='a word for searching its translation')
+
+    parser.add_argument("-v", "--version",
                       dest="version",
                       help="show version.",
                       default=False,
                       action="store_true")
-
-    parser.add_option("-d", "--disable-db-cache",
+    parser.add_argument("-d", "--disable-db-cache",
                       dest="disable_db_cache",
-                      help="temporarily not using the result from db cache.",
+                      help="temporarily not using the result from db cache.\
+                            (still save the result into db)",
                       default=False,
                       action="store_true")
-    (options, args) = parser.parse_args()
+    args = parser.parse_args()
 
-    if options.version is True:
+    if args.version is True:
         print(constants.VERSION)
         cleanup()
-    elif len(args) >= 1:
-        zdict = YahooDict()
-
-        for w in args:
-            zdict.lookup(w, options.disable_db_cache)
-        cleanup()
-    else:
+    elif len(sys.argv) <= 2:
         zdict = YahooDict()
 
         # configure readline and completer
         readline.parse_and_bind("tab: complete")
         readline.set_completer(DictCompleter().complete)
-        zdict.loop_prompt(options.disable_db_cache)
+        zdict.loop_prompt(args.disable_db_cache)
+    else:
+        zdict = YahooDict()
+
+        for w in args.words:
+            zdict.lookup(w, args.disable_db_cache)
+        cleanup()
