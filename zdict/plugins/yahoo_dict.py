@@ -123,7 +123,10 @@ class YahooDict(DictBase):
                         elif word.name == 'span':
                             translation = word.text
                         else:
-                            sentence += word
+                            try:
+                                sentence += word
+                            except:
+                                pass
 
                     pack.append((sentence.strip(), translation.strip()))
                 node.append(pack)
