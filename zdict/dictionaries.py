@@ -52,7 +52,6 @@ class DictBase(metaclass=abc.ABCMeta):
         if not disable_db_cache:
             record = self.query_db_cache(word)
             if record:
-                record.save(force_insert=True)
                 self.show(record)
                 return
 

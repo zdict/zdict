@@ -129,6 +129,10 @@ class YahooDict(DictBase):
             content['explain'].append(node)
 
         record.content = json.dumps(content)
+
+        if self.query_db_cache(keyword) is None:
+            record.save(force_insert=True)
+
         return record
 
     def query_db_cache(self, word: str, verbose=False):
