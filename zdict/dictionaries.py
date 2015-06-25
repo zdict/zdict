@@ -47,32 +47,47 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
-    def lookup(self, word):
+    def lookup(self, word, disable_db_cache):
+
+        if not disable_db_cache:
+            record = self.query_db_cache(word)
+            if record:
+                record.save(force_insert=True)
+                self.show(record)
+                return
+
         try:
             record = self.query(word)
         except NotFoundError as e:
             self.color.print(e, 'yellow')
         else:
             self.show(record)
+            return
 
-    def prompt(self):
+    def prompt(self, disable_db_cache):
         user_input = input(self._get_prompt()).strip()
 
         if user_input:
-            self.lookup(user_input)
+            self.lookup(user_input, disable_db_cache)
         else:
             return
 
-    def loop_prompt(self):
+    def loop_prompt(self, disable_db_cache):
         while True:
             try:
-                self.prompt()
+                self.prompt(disable_db_cache)
             except (KeyboardInterrupt, EOFError):
                 print()
                 return
 
-    @abc.abstractclassmethod
+    @classmethod
+    @abc.abstractmethod
     def query(self, word: str, verbose: bool) -> Record:
+        ...
+
+    @classmethod
+    @abc.abstractmethod
+    def query_db_cache(self, word: str, verbose: bool) -> Record:
         ...
 
     def _get_raw(self, word) -> str:

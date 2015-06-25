@@ -62,14 +62,7 @@ class YahooDict(DictBase):
         '''
 
         keyword = word.lower()
-
-        try:
-            record = Record.get(word=keyword, source=self.provider)
-        except Record.DoesNotExist as e:
-            record = Record(word=keyword, source=self.provider, content=None)
-        else:
-            return record
-
+        record = Record(word=keyword, source=self.provider, content=None)
         data = BeautifulSoup(self._get_raw(word))
         content = {}
         # handle record.word
@@ -136,5 +129,13 @@ class YahooDict(DictBase):
             content['explain'].append(node)
 
         record.content = json.dumps(content)
-        record.save(force_insert=True)  # using force_insert for CompositeKey
         return record
+
+    def query_db_cache(self, word: str, verbose=False):
+        keyword = word.lower()
+        try:
+            record = Record.get(word=keyword, source=self.provider)
+        except Record.DoesNotExist as e:
+            return None
+        else:
+            return record

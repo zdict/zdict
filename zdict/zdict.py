@@ -214,6 +214,19 @@ def main():
 
     # parse options
     parser = OptionParser(usage="Usage: zdict [options] word1 word2 ......")
+
+    parser.add_option("-v", "--version",
+                      dest="version",
+                      help="show version.",
+                      default=False,
+                      action="store_true")
+
+    parser.add_option("-d", "--disable-db-cache",
+                      dest="disable_db_cache",
+                      help="temporarily not using the result from db cache.",
+                      default=False,
+                      action="store_true")
+
     parser.add_option("-e", "--exp",
                       dest="more_exp",
                       help="Show more explanation.",
@@ -222,11 +235,6 @@ def main():
     parser.add_option("-c", "--nocolor",
                       dest="nocolor",
                       help="force no color code",
-                      default=False,
-                      action="store_true")
-    parser.add_option("-v", "--version",
-                      dest="version",
-                      help="show version.",
                       default=False,
                       action="store_true")
     parser.add_option("-l", "--learn",
@@ -263,8 +271,7 @@ def main():
     if options.version is True:
         print(constants.VERSION)
         cleanup()
-
-    if options.browsemode is True:
+    elif options.browsemode is True:
         try:
             browse()
         except KeyboardInterrupt:
@@ -290,7 +297,7 @@ def main():
         ydict = YahooDict()
 
         for w in args:
-            ydict.lookup(w)
+            ydict.lookup(w, options.disable_db_cache)
         cleanup()
     else:
         ydict = YahooDict()
@@ -300,4 +307,4 @@ def main():
         # for x in db.keys():
         #     readline.add_history(x)
 
-        ydict.loop_prompt()
+        ydict.loop_prompt(options.disable_db_cache)
