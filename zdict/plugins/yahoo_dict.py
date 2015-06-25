@@ -1,3 +1,4 @@
+import re
 import json
 
 from bs4 import BeautifulSoup
@@ -74,11 +75,11 @@ class YahooDict(DictBase):
         # handle pronounce
         pronu_value = data.find('span', id='pronunciation_pos').text
         if pronu_value:
-            pronu_value = pronu_value.split()
-            content['pronounce'] = [
-                    ('KK', pronu_value[0][2:]),
-                    ('DJ', pronu_value[1][2:]),
-            ]
+            p = re.compile('(\w+)(\[.*\])')
+            content['pronounce'] = []
+            for pronu in pronu_value.split():
+                m = p.match(pronu)
+                content['pronounce'].append(m.group(1, 2))
 
         # handle sound
         # looks like the sound had been removed. 2015/05/26
