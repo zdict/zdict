@@ -29,6 +29,13 @@ def cleanup():
     exit()
 
 
+def interactive_mode(zdict, disable_db_cache):
+    # configure readline and completer
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(DictCompleter().complete)
+    zdict.loop_prompt(disable_db_cache)
+
+
 def main():
     # Check user's encoding settings
     try:
@@ -70,16 +77,12 @@ def main():
     if args.version is True:
         print(constants.VERSION)
         cleanup()
-    elif len(sys.argv) <= 2:
-        zdict = YahooDict()
 
-        # configure readline and completer
-        readline.parse_and_bind("tab: complete")
-        readline.set_completer(DictCompleter().complete)
-        zdict.loop_prompt(args.disable_db_cache)
+    zdict = YahooDict()
+
+    if len(sys.argv) == 1 or (len(sys.argv) == 2 and not args.words):
+        interactive_mode(zdict, args.disable_db_cache)
     else:
-        zdict = YahooDict()
-
         for w in args.words:
             zdict.lookup(w, args.disable_db_cache)
         cleanup()
