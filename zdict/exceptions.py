@@ -1,3 +1,4 @@
+from .constants import ERRNO
 
 
 class QueryError(Exception):
@@ -15,3 +16,7 @@ class NotFoundError(Exception):
 
     def __str__(self):
         return '"{}" not found!'.format(self.word)
+
+
+class EncodingError(Exception):
+    errno = ERRNO['EncodingError']
