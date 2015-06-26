@@ -79,12 +79,10 @@ class DictBase(metaclass=abc.ABCMeta):
                 print()
                 return
 
-    @classmethod
     @abc.abstractmethod
     def query(self, word: str, verbose: bool) -> Record:
         ...
 
-    @classmethod
     @abc.abstractmethod
     def query_db_cache(self, word: str, verbose: bool) -> Record:
         ...
