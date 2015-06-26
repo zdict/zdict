@@ -1,5 +1,6 @@
-import re
+import itertools
 import json
+import re
 
 from bs4 import BeautifulSoup
 
@@ -66,6 +67,7 @@ class YahooDict(DictBase):
         record = Record(word=keyword, source=self.provider, content=None)
         data = BeautifulSoup(self._get_raw(word))
         content = {}
+
         # handle record.word
         try:
             content['word'] = data.find('span', id='term').text
@@ -96,20 +98,21 @@ class YahooDict(DictBase):
                     ).attrs['data-src']),
             ]
 
+        # handel explain
         if verbose:
             search_exp = data.find_all(class_='dd algo lst DictionaryResults')
         else:
             search_exp = data.find(
                 class_='dd algo mt-20 lst DictionaryResults'
             )
-            search_exp = zip(
+            search_exp = itertools.zip_longest(
                 search_exp.find_all(class_='compTitle mb-10'),
                 search_exp.find_all(class_='compArticleList mb-15 ml-10')
             )
 
         content['explain'] = []
         for part_of_speech, explain in search_exp:
-            node = [part_of_speech.text]
+            node = [part_of_speech.text] if part_of_speech else ['']
 
             for item in explain.find_all('li', class_='ov-a'):
                 pack = [item.find('h4').text]
