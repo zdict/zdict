@@ -4,7 +4,7 @@ import json
 import requests
 
 from . import constants
-from .exceptions import NotFoundError
+from .exceptions import NotFoundError, NoNetworkError
 from .models import Record, db
 from .utils import Color
 
@@ -57,6 +57,8 @@ class DictBase(metaclass=abc.ABCMeta):
 
         try:
             record = self.query(word)
+        except NoNetworkError as e:
+            self.color.print(e, 'red')
         except NotFoundError as e:
             self.color.print(e, 'yellow')
         else:
@@ -94,6 +96,7 @@ class DictBase(metaclass=abc.ABCMeta):
         :param word: single word
         '''
         res = requests.get(self._get_url(word), timeout=5)
+
         if res.status_code != 200:
             raise QueryError(word, res.status_code)
         return res.text

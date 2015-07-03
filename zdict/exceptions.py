@@ -1,5 +1,3 @@
-
-
 class QueryError(Exception):
     def __init__(self, word, status_code):
         self.word = word
@@ -15,3 +13,8 @@ class NotFoundError(Exception):
 
     def __str__(self):
         return '"{}" not found!'.format(self.word)
+
+
+class NoNetworkError(Exception):
+    def __str__(self):
+        return 'No Network Connection!'

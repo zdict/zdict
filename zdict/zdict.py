@@ -59,7 +59,7 @@ def main():
                         metavar='word',
                         type=str,
                         nargs='*',
-                        help='a word for searching its translation')
+                        help='words for searching its translation')
 
     parser.add_argument("-v", "--version",
                       dest="version",

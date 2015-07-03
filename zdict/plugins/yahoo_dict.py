@@ -5,7 +5,7 @@ import re
 from bs4 import BeautifulSoup
 
 from ..dictionaries import DictBase
-from ..exceptions import NotFoundError
+from ..exceptions import NotFoundError, NoNetworkError
 from ..models import Record
 
 
@@ -65,7 +65,13 @@ class YahooDict(DictBase):
 
         keyword = word.lower()
         record = Record(word=keyword, source=self.provider, content=None)
-        data = BeautifulSoup(self._get_raw(word))
+
+        try:
+            webpage = self._get_raw(word)
+        except:
+            raise NoNetworkError()
+
+        data = BeautifulSoup(webpage)
         content = {}
 
         # handle record.word
