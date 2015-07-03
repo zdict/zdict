@@ -29,11 +29,11 @@ def cleanup():
     exit()
 
 
-def interactive_mode(zdict, disable_db_cache):
+def interactive_mode(zdict, args):
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
-    zdict.loop_prompt(disable_db_cache)
+    zdict.loop_prompt(args)
 
 
 def main():
@@ -52,7 +52,6 @@ def main():
             cleanup()
 
     # parse args
-    #parser = ArgumentParser(usage="Usage: zdict [options] word1 word2 ......")
     parser = ArgumentParser()
 
     parser.add_argument('words',
@@ -66,23 +65,32 @@ def main():
                       help="show version.",
                       default=False,
                       action="store_true")
+
     parser.add_argument("-d", "--disable-db-cache",
                       dest="disable_db_cache",
                       help="temporarily not using the result from db cache.\
                             (still save the result into db)",
                       default=False,
                       action="store_true")
+
+    parser.add_argument("-t", "--query-timeout",
+                      type=float,
+                      dest="query_timeout",
+                      help="set timeout for every query. default is 5.",
+                      default=5.0,
+                      action="store")
+
     args = parser.parse_args()
 
-    if args.version is True:
+    if args.version:
         print(constants.VERSION)
         cleanup()
 
     zdict = YahooDict()
 
-    if len(sys.argv) == 1 or (len(sys.argv) == 2 and not args.words):
-        interactive_mode(zdict, args.disable_db_cache)
+    if not args.words:
+        interactive_mode(zdict, args)
     else:
         for w in args.words:
-            zdict.lookup(w, args.disable_db_cache)
+            zdict.lookup(w, args)
         cleanup()

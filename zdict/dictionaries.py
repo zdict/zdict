@@ -3,8 +3,8 @@ import json
 
 import requests
 
+from . import exceptions
 from . import constants
-from .exceptions import NotFoundError, NoNetworkError
 from .models import Record, db
 from .utils import Color
 
@@ -47,56 +47,72 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
-    def lookup(self, word, disable_db_cache):
+    def lookup(self, word, args):
 
-        if not disable_db_cache:
+        if not args.disable_db_cache:
             record = self.query_db_cache(word)
             if record:
                 self.show(record)
                 return
 
         try:
-            record = self.query(word)
-        except NoNetworkError as e:
+            record = self.query(word, args.query_timeout)
+        except exceptions.NoNetworkError as e:
             self.color.print(e, 'red')
-        except NotFoundError as e:
+        except exceptions.TimeoutError as e:
+            self.color.print(e, 'red')
+        except exceptions.NotFoundError as e:
             self.color.print(e, 'yellow')
         else:
             self.show(record)
             return
 
-    def prompt(self, disable_db_cache):
+    def prompt(self, args):
         user_input = input(self._get_prompt()).strip()
 
         if user_input:
-            self.lookup(user_input, disable_db_cache)
+            self.lookup(user_input, args)
         else:
             return
 
-    def loop_prompt(self, disable_db_cache):
+    def loop_prompt(self, args):
         while True:
             try:
-                self.prompt(disable_db_cache)
+                self.prompt(args)
             except (KeyboardInterrupt, EOFError):
                 print()
                 return
 
     @abc.abstractmethod
-    def query(self, word: str, verbose: bool) -> Record:
+    def query(self, word: str, timeout: float, verbose: bool) -> Record:
         ...
 
     @abc.abstractmethod
     def query_db_cache(self, word: str, verbose: bool) -> Record:
         ...
 
-    def _get_raw(self, word) -> str:
+    def _get_raw(self, word: str, timeout: float) -> str:
         '''
         Get raw data from http request
 
         :param word: single word
         '''
-        res = requests.get(self._get_url(word), timeout=5)
+        try:
+            res = requests.get(self._get_url(word), timeout=timeout)
+        except requests.exceptions.ConnectionError as e:
+            error_msg = str(e.args)
+
+            errs = {}
+            errs["NoNetworkError()"] = \
+                "gaierror(8, 'nodename nor servname provided, or not known')"
+            errs["TimeoutError()"] = \
+                "BlockingIOError(36, 'Operation now in progress')"
+
+            for err, msg in errs.items():
+                if msg in error_msg:
+                    r = 'exceptions.' + err
+                    raise eval(r)
 
         if res.status_code != 200:
-            raise QueryError(word, res.status_code)
+            raise exceptions.QueryError(word, res.status_code)
         return res.text

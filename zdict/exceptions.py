@@ -18,3 +18,8 @@ class NotFoundError(Exception):
 class NoNetworkError(Exception):
     def __str__(self):
         return 'No Network Connection!'
+
+
+class TimeoutError(Exception):
+    def __str__(self):
+        return 'Query timeout!'
