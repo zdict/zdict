@@ -1,5 +1,5 @@
 *************
-zdict |test|
+zdict |issues|
 *************
 
 .. image:: https://badges.gitter.im/Join%20Chat.svg
@@ -43,5 +43,5 @@ Testing
 ``python3 -m unittest discover``
 
 
-.. |test| image:: https://img.shields.io/github/issues/M157q/zdict.svg
-   :target: https://github.com/badges/shields/issues
+.. |issues| image:: https://img.shields.io/github/issues/M157q/zdict.svg
+   :target: https://github.com/M157q/zdict/issues
