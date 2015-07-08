@@ -138,11 +138,3 @@ class YahooDict(DictBase):
         record.content = json.dumps(content)
 
         return record
-
-    def query_db_cache(self, word: str, verbose=False):
-        try:
-            record = Record.get(word=word, source=self.provider)
-        except Record.DoesNotExist as e:
-            return None
-        else:
-            return record

@@ -52,10 +52,13 @@ class DictBase(metaclass=abc.ABCMeta):
     def query(self, word: str, timeout: float, verbose: bool) -> Record:
         ...
 
-    @abc.abstractmethod
-    def query_db_cache(self, word: str, verbose: bool) -> Record:
-        ...
-
+    def query_db_cache(self, word: str, verbose=False) -> Record:
+        try:
+            record = Record.get(word=word, source=self.provider)
+        except Record.DoesNotExist as e:
+            return None
+        else:
+            return record
 
     def save(self, query_record: Record, word: str):
         db_record = self.query_db_cache(word)
@@ -69,9 +72,6 @@ class DictBase(metaclass=abc.ABCMeta):
             if db_content != query_content:
                 db_record.content = query_record.content
                 db_record.save()
-
-
-
 
     def lookup(self, word, args):
         '''
