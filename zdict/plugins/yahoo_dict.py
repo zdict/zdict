@@ -63,8 +63,7 @@ class YahooDict(DictBase):
         :param verbose: verbose mode flag
         '''
 
-        keyword = word.lower()
-        record = Record(word=keyword, source=self.provider, content=None)
+        record = Record(word=word, source=self.provider, content=None)
         webpage = self._get_raw(word, timeout)
         data = BeautifulSoup(webpage)
         content = {}
@@ -138,15 +137,11 @@ class YahooDict(DictBase):
 
         record.content = json.dumps(content)
 
-        if self.query_db_cache(keyword) is None:
-            record.save(force_insert=True)
-
         return record
 
     def query_db_cache(self, word: str, verbose=False):
-        keyword = word.lower()
         try:
-            record = Record.get(word=keyword, source=self.provider)
+            record = Record.get(word=word, source=self.provider)
         except Record.DoesNotExist as e:
             return None
         else:

@@ -37,20 +37,52 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
+    @abc.abstractmethod
     def show(self, record: Record):
         ...
 
     @abc.abstractmethod
     def _get_prompt(self) -> str:
         '''
-        The prompt string is used by prompt()
+        The prompt string used by prompt()
         '''
         ...
 
+    @abc.abstractmethod
+    def query(self, word: str, timeout: float, verbose: bool) -> Record:
+        ...
+
+    @abc.abstractmethod
+    def query_db_cache(self, word: str, verbose: bool) -> Record:
+        ...
+
+
+    def save(self, query_record: Record, word: str):
+        db_record = self.query_db_cache(word)
+
+        if db_record is None:
+            query_record.save(force_insert=True)
+        else:
+            db_content = json.loads(db_record.content)
+            query_content = json.loads(query_record.content)
+
+            if db_content != query_content:
+                db_record.content = query_record.content
+                db_record.save()
+
+
+
+
     def lookup(self, word, args):
+        '''
+        Main workflow for searching a word.
+        '''
+
+        word = word.lower()
 
         if not args.disable_db_cache:
             record = self.query_db_cache(word)
+
             if record:
                 self.show(record)
                 return
@@ -64,6 +96,7 @@ class DictBase(metaclass=abc.ABCMeta):
         except exceptions.NotFoundError as e:
             self.color.print(e, 'yellow')
         else:
+            self.save(record, word)
             self.show(record)
             return
 
@@ -82,14 +115,6 @@ class DictBase(metaclass=abc.ABCMeta):
             except (KeyboardInterrupt, EOFError):
                 print()
                 return
-
-    @abc.abstractmethod
-    def query(self, word: str, timeout: float, verbose: bool) -> Record:
-        ...
-
-    @abc.abstractmethod
-    def query_db_cache(self, word: str, verbose: bool) -> Record:
-        ...
 
     def _get_raw(self, word: str, timeout: float) -> str:
         '''
