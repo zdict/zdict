@@ -25,10 +25,6 @@ except:
     pass
 
 
-def cleanup():
-    exit()
-
-
 def interactive_mode(zdict, args):
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
@@ -43,13 +39,13 @@ def main():
     except ValueError:
         print("Didn't detect your LC_ALL environment variable.")
         print("Please export LC_ALL with some UTF-8 encoding.")
-        cleanup()
+        exit()
     else:
         if enc != "UTF-8":
             print("zdict only works with encoding=UTF-8, ")
             print("but you encoding is: {} {}".format(lang, enc))
             print("Please export LC_ALL with some UTF-8 encoding.")
-            cleanup()
+            exit()
 
     # parse args
     parser = ArgumentParser()
@@ -84,7 +80,7 @@ def main():
 
     if args.version:
         print(constants.VERSION)
-        cleanup()
+        exit()
 
     zdict = YahooDict()
 
@@ -93,4 +89,4 @@ def main():
     else:
         for w in args.words:
             zdict.lookup(w, args)
-        cleanup()
+        exit()
