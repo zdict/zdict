@@ -56,7 +56,7 @@ class YahooDict(DictBase):
 
     def query(self, word: str, timeout: float, verbose=False):
         webpage = self._get_raw(word, timeout)
-        data = BeautifulSoup(webpage)
+        data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
         # handle record.word
