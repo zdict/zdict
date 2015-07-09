@@ -76,6 +76,18 @@ def main():
                       default=5.0,
                       action="store")
 
+    parser.add_argument("-sp", "--show-provider",
+                      dest="show_provider",
+                      help="Show the dictionary provider of the queried word",
+                      default=False,
+                      action="store_true")
+
+    parser.add_argument("-su", "--show-url",
+                      dest="show_url",
+                      help="Show the url of the queried word",
+                      default=False,
+                      action="store_true")
+
     args = parser.parse_args()
 
     if args.version:

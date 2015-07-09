@@ -80,9 +80,13 @@ class DictBase(metaclass=abc.ABCMeta):
                 db_record.content = query_record.content
                 db_record.save()
 
-    def show_result(self, record: Record, word: str):
-        self.color.print('[' + self.provider + ']', 'blue', end='')
-        self.color.print('(' + self._get_url(word) + ')', 'blue')
+    def show_result(self, record: Record, word: str, args):
+        if args.show_provider:
+            self.color.print('[' + self.provider + ']', 'blue')
+
+        if args.show_url:
+            self.color.print('(' + self._get_url(word) + ')', 'blue')
+
         self.show(record)
 
     def lookup(self, word, args):
@@ -96,7 +100,7 @@ class DictBase(metaclass=abc.ABCMeta):
             record = self.query_db_cache(word)
 
             if record:
-                self.show_result(record, word)
+                self.show_result(record, word, args)
                 return
 
         try:
@@ -109,7 +113,7 @@ class DictBase(metaclass=abc.ABCMeta):
             self.color.print(e, 'yellow')
         else:
             self.save(record, word)
-            self.show_result(record, word)
+            self.show_result(record, word, args)
             return
 
     def _get_prompt(self) -> str:
