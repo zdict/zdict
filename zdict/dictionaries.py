@@ -150,6 +150,8 @@ class DictBase(metaclass=abc.ABCMeta):
                 if msg in error_msg:
                     r = 'exceptions.' + err
                     raise eval(r)
+        except requests.exceptions.ReadTimeout as e:
+            raise exceptions.TimeoutError()
 
         if res.status_code != 200:
             raise exceptions.QueryError(word, res.status_code)
