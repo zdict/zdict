@@ -54,17 +54,17 @@ def main():
                         metavar='word',
                         type=str,
                         nargs='*',
-                        help='words for searching its translation')
+                        help='Words for searching its translation')
 
     parser.add_argument("-v", "--version",
                       dest="version",
-                      help="show version.",
+                      help="Show zdict version number.",
                       default=False,
                       action="store_true")
 
     parser.add_argument("-d", "--disable-db-cache",
                       dest="disable_db_cache",
-                      help="temporarily not using the result from db cache.\
+                      help="Temporarily not using the result from db cache.\
                             (still save the result into db)",
                       default=False,
                       action="store_true")
@@ -72,7 +72,7 @@ def main():
     parser.add_argument("-t", "--query-timeout",
                       type=float,
                       dest="query_timeout",
-                      help="set timeout for every query. default is 5.",
+                      help="Set timeout for every query. default is 5 seconds.",
                       default=5.0,
                       action="store")
 
