@@ -38,18 +38,25 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def show(self, record: Record):
+    def _get_url(self, word: str) -> str:
+        '''
+        Return the result of the current dict web url for the searching word.
+        '''
         ...
 
     @abc.abstractmethod
-    def _get_prompt(self) -> str:
+    def show(self, record: Record):
         '''
-        The prompt string used by prompt()
+        Define how to render the result of the specific dictionary.
         '''
         ...
 
     @abc.abstractmethod
     def query(self, word: str, timeout: float, verbose: bool) -> Record:
+        '''
+        Define how to get the information from specific dictionary.
+        Should return a record contains word, content and source.
+        '''
         ...
 
     def query_db_cache(self, word: str, verbose=False) -> Record:
@@ -99,6 +106,12 @@ class DictBase(metaclass=abc.ABCMeta):
             self.save(record, word)
             self.show(record)
             return
+
+    def _get_prompt(self) -> str:
+        '''
+        The prompt string used by prompt()
+        '''
+        return '[zDict]: '
 
     def prompt(self, args):
         user_input = input(self._get_prompt()).strip()

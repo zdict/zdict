@@ -17,6 +17,9 @@ class YahooDict(DictBase):
     def provider(self):
         return 'yahoo'
 
+    def _get_url(self, word) -> str:
+        return self.API.format(word=word)
+
     def show(self, record: Record):
         content = json.loads(record.content)
         # print word
@@ -51,19 +54,7 @@ class YahooDict(DictBase):
                         self.color.print(chinese, 'green', indent=4)
         print()
 
-    def _get_prompt(self) -> str:
-        return '[zDict]: '
-
-    def _get_url(self, word) -> str:
-        return self.API.format(word=word)
-
     def query(self, word: str, timeout: float, verbose=False):
-        '''
-        :param word: look up word
-        :param verbose: verbose mode flag
-        '''
-
-        record = Record(word=word, source=self.provider, content=None)
         webpage = self._get_raw(word, timeout)
         data = BeautifulSoup(webpage)
         content = {}
@@ -120,14 +111,14 @@ class YahooDict(DictBase):
                     sentence = ''
                     translation = ''
 
-                    for word in example.contents:
-                        if word.name == 'b':
-                            sentence += '*' + word.text + '*'
-                        elif word.name == 'span':
-                            translation = word.text
+                    for w in example.contents:
+                        if w.name == 'b':
+                            sentence += '*' + w.text + '*'
+                        elif w.name == 'span':
+                            translation = w.text
                         else:
                             try:
-                                sentence += word
+                                sentence += w
                             except:
                                 pass
 
@@ -135,6 +126,9 @@ class YahooDict(DictBase):
                 node.append(pack)
             content['explain'].append(node)
 
-        record.content = json.dumps(content)
-
+        record = Record(
+                    word=word,
+                    content=json.dumps(content),
+                    source=self.provider,
+                 )
         return record
