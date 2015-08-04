@@ -1,0 +1,8 @@
+language: python
+python:
+    - "3.4"
+    - "nightly"
+install:
+    - "pip install ."
+script:
+    - "python -m unittest discover"
