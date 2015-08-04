@@ -1,9 +1,7 @@
 import configparser
-import getopt
 import locale
 import os
 import readline
-import sys
 
 from argparse import ArgumentParser
 
