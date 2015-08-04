@@ -96,10 +96,14 @@ class YahooDict(DictBase):
             search_exp = data.find(
                 class_='dd algo mt-20 lst DictionaryResults'
             )
-            search_exp = itertools.zip_longest(
-                search_exp.find_all(class_='compTitle mb-10'),
-                search_exp.find_all(class_='compArticleList mb-15 ml-10')
-            )
+
+            if not search_exp:
+                search_exp = ""
+            else:
+                search_exp = itertools.zip_longest(
+                    search_exp.find_all(class_='compTitle mb-10'),
+                    search_exp.find_all(class_='compArticleList mb-15 ml-10')
+                )
 
         content['explain'] = []
         for part_of_speech, explain in search_exp:
