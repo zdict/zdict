@@ -11,10 +11,9 @@ class DictCompleter:
 
     def complete(self, text, state):
         match = []
-        n = len(text)
 
         for record in Record.select():
             word = record.word
-            if word[:n] == text[:n]:
+            if word.startswith(text):
                 match.append(word)
         return match[state]
