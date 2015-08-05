@@ -14,6 +14,9 @@ from .plugins.yahoo_dict import YahooDict
 if not os.path.isdir(constants.BASE_DIR):
     os.mkdir(constants.BASE_DIR)
 
+if not os.path.exists(constants.DB_FILE):
+    open(constants.DB_FILE, 'a').close()
+
 try:
     config = configparser.ConfigParser()
     config.readfp(open(os.path.join(constants.BASE_DIR, 'rc')))
