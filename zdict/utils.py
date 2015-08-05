@@ -1,3 +1,16 @@
+import os
+
+from . import constants
+
+
+def create_zdict_dir_if_not_exists():
+    if not os.path.isdir(constants.BASE_DIR):
+        os.mkdir(constants.BASE_DIR)
+
+
+def create_zdict_db_if_not_exists():
+    if not os.path.exists(constants.DB_FILE):
+        open(constants.DB_FILE, 'a').close()
 
 
 class ColorConst(type):

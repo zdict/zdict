@@ -5,6 +5,4 @@ python:
 install:
     - "pip install ."
 script:
-    - "mkdir ~/.zdict"
-    - "touch ~/.zdict/zdict.db"
     - "python -m unittest discover"
