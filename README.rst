@@ -1,10 +1,10 @@
 *************
-zdict |issues|
+zdict
 *************
 
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/M157q/zdict
-   :target: https://gitter.im/M157q/zdict?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+|issues| |travis| |license|
+|gitter|
+
 *Note: This project is working in progress.*
 
 zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.
@@ -45,3 +45,13 @@ Testing
 
 .. |issues| image:: https://img.shields.io/github/issues/M157q/zdict.svg
    :target: https://github.com/M157q/zdict/issues
+
+.. |travis| image:: https://img.shields.io/travis/M157q/zdict.svg
+   :target: https://travis-ci.org/M157q/zdict
+
+.. |license| image:: https://img.shields.io/github/license/M157q/zdict.svg
+   :target: https://github.com/M157q/zdict/blob/master/LICENSE.md
+
+.. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/M157q/zdict
+   :target: https://gitter.im/M157q/zdict?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
