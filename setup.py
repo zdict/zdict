@@ -2,6 +2,9 @@ from setuptools import find_packages, setup
 
 import zdict
 
+zdict.utils.create_zdict_dir_if_not_exists()
+zdict.utils.create_zdict_db_if_not_exists()
+
 EXCLUDE_FROM_PACKAGES = ['scripts']
 
 setup(
