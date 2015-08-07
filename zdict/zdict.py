@@ -6,7 +6,6 @@ from argparse import ArgumentParser
 from . import constants
 from . import utils
 from .completer import DictCompleter
-from .plugins.yahoo_dict import YahooDict
 
 
 def check_zdict_dir_and_db():
@@ -80,6 +79,13 @@ def get_command_line_args():
         help="Show the url of the queried word"
     )
 
+    parser.add_argument(
+        "-dt", "--dict",
+        default="yahoo",
+        action="store",
+        help="Choose the dictionary you want [yahoo|moedict] (default: yahoo)"
+    )
+
     return parser.parse_args()
 
 
@@ -93,7 +99,15 @@ def execute_zdict(args):
     if args.show_version:
         print(constants.VERSION)
     else:
-        zdict = YahooDict()
+        if args.dict == 'yahoo':
+            from .plugins.yahoo_dict import YahooDict
+            zdict = YahooDict()
+        elif args.dict == 'moedict':
+            from .plugins.moedict import MoeDict
+            zdict = MoeDict()
+        else:
+            from .plugins.yahoo_dict import YahooDict
+            zdict = YahooDict()
 
         if args.words:
             for w in args.words:
