@@ -1,6 +1,6 @@
 import json
 
-from ..dictionaries import DictBase
+from ..dictionary import DictBase
 from ..exceptions import QueryError, NotFoundError
 from ..models import Record
 

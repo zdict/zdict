@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 
 from . import constants
 from . import utils
+from . import dictionaries
 from .completer import DictCompleter
 
 
@@ -83,7 +84,8 @@ def get_command_line_args():
         "-dt", "--dict",
         default="yahoo",
         action="store",
-        help="Choose the dictionary you want [yahoo|moedict] (default: yahoo)"
+        choices=list(filter(lambda attr: not attr.startswith('_'), dir(dictionaries))),
+        help="Choose the dictionary you want. (default: yahoo)"
     )
 
     return parser.parse_args()
@@ -99,15 +101,7 @@ def execute_zdict(args):
     if args.show_version:
         print(constants.VERSION)
     else:
-        if args.dict == 'yahoo':
-            from .plugins.yahoo_dict import YahooDict
-            zdict = YahooDict()
-        elif args.dict == 'moedict':
-            from .plugins.moedict import MoeDict
-            zdict = MoeDict()
-        else:
-            from .plugins.yahoo_dict import YahooDict
-            zdict = YahooDict()
+        zdict = eval("dictionaries.{}()".format(args.dict))
 
         if args.words:
             for w in args.words:

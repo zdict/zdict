@@ -4,7 +4,7 @@ import re
 
 from bs4 import BeautifulSoup
 
-from ..dictionaries import DictBase
+from ..dictionary import DictBase
 from ..exceptions import NotFoundError
 from ..models import Record
 
