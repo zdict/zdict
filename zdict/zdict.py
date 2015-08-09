@@ -101,7 +101,7 @@ def execute_zdict(args):
     if args.show_version:
         print(constants.VERSION)
     else:
-        zdict = eval("dictionaries.{}()".format(args.dict))
+        zdict = getattr(dictionaries, args.dict)()
 
         if args.words:
             for w in args.words:
