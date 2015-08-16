@@ -31,7 +31,7 @@ def user_set_encoding_and_is_utf8():
     return True
 
 
-def get_command_line_args():
+def get_args():
     # parse args
     parser = ArgumentParser(prog='zdict')
 
@@ -81,34 +81,66 @@ def get_command_line_args():
 
     parser.add_argument(
         "-dt", "--dict",
-        default="yahoo",
+        default=["yahoo"],
         action="store",
-        choices=list(filter(lambda attr: not attr.startswith('_'), dir(dictionaries))),
-        help="Choose the dictionary you want. (default: yahoo)"
+        choices=dictionary_list + ['all'],
+        nargs = '+',
+        help="""
+            Choose the dictionary you want. (default: yahoo)
+            Use 'all' for qureying all dictionaries.
+            If 'all' has been chosen,
+            --show-provider will be set to True in order to
+            provide more understandable output.
+        """
     )
 
     return parser.parse_args()
 
 
-def interactive_mode(zdict, args):
+def set_args():
+    if 'all' in args.dict:
+        args.dict = dictionary_list
+    else:
+        args.dict = list(set(args.dict))
+
+    if len(args.dict) > 1:
+        args.show_provider = True
+
+
+def normal_mode():
+    for word in args.words:
+        for dictionary in args.dict:
+            zdict = getattr(dictionaries, dictionary)()
+            zdict.lookup(word, args)
+
+
+def interactive_mode():
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
+
+    zdict = getattr(dictionaries, args.dict[0])()
     zdict.loop_prompt(args)
 
-def execute_zdict(args):
-    zdict = getattr(dictionaries, args.dict)()
-
+def execute_zdict():
     if args.words:
-        for w in args.words:
-            zdict.lookup(w, args)
+        normal_mode()
     else:
-        interactive_mode(zdict, args)
+        interactive_mode()
 
 def main():
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
-        args = get_command_line_args()
-        execute_zdict(args)
+
+        global dictionary_list
+        dictionary_list = sorted(list(
+            filter(lambda attr: not attr.startswith('_'), dir(dictionaries))
+        ))
+
+        global args
+        args = get_args()
+        set_args()
+
+        execute_zdict()
     else:
         exit()
