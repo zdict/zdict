@@ -33,7 +33,7 @@ def user_set_encoding_and_is_utf8():
 
 def get_command_line_args():
     # parse args
-    parser = ArgumentParser()
+    parser = ArgumentParser(prog='zdict')
 
     parser.add_argument(
         'words',
@@ -44,10 +44,9 @@ def get_command_line_args():
     )
 
     parser.add_argument(
-        "-v", "--show-version",
-        default=False,
-        action="store_true",
-        help="Show zdict version number."
+        "-v", "--version",
+        action="version",
+        version='%(prog)s-' + constants.VERSION
     )
 
     parser.add_argument(
@@ -98,16 +97,13 @@ def interactive_mode(zdict, args):
     zdict.loop_prompt(args)
 
 def execute_zdict(args):
-    if args.show_version:
-        print(constants.VERSION)
-    else:
-        zdict = getattr(dictionaries, args.dict)()
+    zdict = getattr(dictionaries, args.dict)()
 
-        if args.words:
-            for w in args.words:
-                zdict.lookup(w, args)
-        else:
-            interactive_mode(zdict, args)
+    if args.words:
+        for w in args.words:
+            zdict.lookup(w, args)
+    else:
+        interactive_mode(zdict, args)
 
 def main():
     if user_set_encoding_and_is_utf8():
