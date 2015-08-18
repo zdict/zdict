@@ -4,8 +4,8 @@ import readline
 from argparse import ArgumentParser
 
 from . import constants
-from . import utils
 from . import dictionaries
+from . import utils
 from .completer import DictCompleter
 
 
@@ -109,9 +109,34 @@ def set_args():
 
 def normal_mode():
     for word in args.words:
-        for dictionary in args.dict:
-            zdict = getattr(dictionaries, dictionary)()
+        for d in args.dict:
+            zdict = getattr(dictionaries, d)()
             zdict.lookup(word, args)
+
+
+class MetaInteractivePrompt():
+    def __init__(self, dict_list):
+        self.dict_list = [getattr(dictionaries, d)() for d in dict_list]
+
+    def __del__(self):
+        del self.dict_list
+
+    def prompt(self, args):
+        user_input = input('[zDict]: ').strip()
+
+        if user_input:
+            for dictionary_instance in self.dict_list:
+                dictionary_instance.lookup(user_input, args)
+        else:
+            return
+
+    def loop_prompt(self, args):
+        while True:
+            try:
+                self.prompt(args)
+            except (KeyboardInterrupt, EOFError):
+                print()
+                return
 
 
 def interactive_mode():
@@ -119,14 +144,16 @@ def interactive_mode():
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
 
-    zdict = getattr(dictionaries, args.dict[0])()
+    zdict = MetaInteractivePrompt(args.dict)
     zdict.loop_prompt(args)
+
 
 def execute_zdict():
     if args.words:
         normal_mode()
     else:
         interactive_mode()
+
 
 def main():
     if user_set_encoding_and_is_utf8():
