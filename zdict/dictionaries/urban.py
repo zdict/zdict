@@ -1,6 +1,7 @@
 import json
 
 from ..dictionary import DictBase
+from ..exceptions import NotFoundError
 from ..models import Record
 
 class UrbanDict(DictBase):
@@ -40,6 +41,9 @@ class UrbanDict(DictBase):
 
     def query(self, word: str, timeout: float, verbose=False):
         content = self._get_raw(word, timeout)
+
+        if "no_results" in content:
+            raise NotFoundError(word)
 
         record = Record(
                     word=word,
