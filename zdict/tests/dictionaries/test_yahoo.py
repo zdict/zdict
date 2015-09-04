@@ -9,6 +9,6 @@ class TestyDict(unittest.TestCase):
 
     def test__get_url(self):
         self.assertEqual(
-            'https://tw.dictionary.yahoo.com/dictionary?p=test',
+            'https://tw.dictionary.search.yahoo.com/search?p=test',
             self.dict._get_url('test')
         )
