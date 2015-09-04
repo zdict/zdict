@@ -45,7 +45,7 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def show(self, record: Record):
+    def show(self, record: Record, verbose: bool):
         '''
         Define how to render the result of the specific dictionary.
         '''
@@ -59,7 +59,7 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
-    def query_db_cache(self, word: str, verbose=False) -> Record:
+    def query_db_cache(self, word: str) -> Record:
         try:
             record = Record.get(word=word, source=self.provider)
         except Record.DoesNotExist as e:
@@ -103,11 +103,11 @@ class DictBase(metaclass=abc.ABCMeta):
             record = self.query_db_cache(word)
 
             if record:
-                self.show(record)
+                self.show(record, args.verbose)
                 return
 
         try:
-            record = self.query(word, args.query_timeout)
+            record = self.query(word, args.query_timeout, args.verbose)
         except exceptions.NoNetworkError as e:
             self.color.print(e, 'red')
         except exceptions.TimeoutError as e:
@@ -116,7 +116,7 @@ class DictBase(metaclass=abc.ABCMeta):
             self.color.print(e, 'yellow')
         else:
             self.save(record, word)
-            self.show(record)
+            self.show(record, args.verbose)
             return
 
     def _get_prompt(self) -> str:

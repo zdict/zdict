@@ -20,18 +20,21 @@ class YahooDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record):
+    def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
+
         # print word
         self.color.print(content['word'], 'yellow')
+
         # print pronounce
         for k, v in content.get('pronounce', []):
             self.color.print(k, end='')
             self.color.print(v, 'lwhite', end=' ')
         print()
+
         # print explain
-        explain = content.get('explain')
-        for speech in explain:
+        main_explanations = content.get('explain')
+        for speech in main_explanations:
             self.color.print(speech[0], 'lred')
             for meaning in speech[1:]:
                 self.color.print(
@@ -39,20 +42,44 @@ class YahooDict(DictBase):
                     'org',
                     indent=2
                 )
-                for (english, chinese) in meaning[1:]:
-                    if english:
+                for sentence in meaning[1:]:
+                    if sentence:
                         print(' ' * 4, end='')
-                        for i, s in enumerate(english.split('*')):
+                        for i, s in enumerate(sentence.split('*')):
                             self.color.print(
                                 s,
                                 'lindigo' if i == 1 else 'indigo',
                                 end=''
                             )
                         print()
-
-                    if chinese:
-                        self.color.print(chinese, 'green', indent=4)
         print()
+
+        if verbose:
+            # print verbose
+            try:
+                more_explanations = content.get('verbose')
+            except:
+                return
+            else:
+                for speech in more_explanations:
+                    self.color.print(speech[0], 'lred')
+                    for meaning in speech[1:]:
+                        self.color.print(
+                            '{text}'.format(text=meaning[0]),
+                            'org',
+                            indent=2
+                        )
+                        for sentence in meaning[1:]:
+                            if sentence:
+                                print(' ' * 4, end='')
+                                for i, s in enumerate(sentence.split('*')):
+                                    self.color.print(
+                                        s,
+                                        'lindigo' if i == 1 else 'indigo',
+                                        end=''
+                                    )
+                                print()
+                print()
 
     def query(self, word: str, timeout: float, verbose=False):
         webpage = self._get_raw(word, timeout)
@@ -75,7 +102,6 @@ class YahooDict(DictBase):
                 content['pronounce'].append(m.group(1, 2))
 
         # handle sound
-        # looks like the sound had been removed. 2015/05/26
         pronu_sound = data.find(class_='proun_sound')
         if pronu_sound:
             content['sound'] = [
@@ -89,46 +115,89 @@ class YahooDict(DictBase):
                     ).attrs['data-src']),
             ]
 
-        # handel explain
-        if verbose:
-            search_exp = data.find_all(class_='dd algo lst DictionaryResults')
-        else:
-            search_exp = data.find(
-                class_='dd algo explain mt-20 lst DictionaryResults'
+        # Handle explain
+        main_explanations = data.find(
+            class_='dd algo explain mt-20 lst DictionaryResults'
+        )
+        if main_explanations:
+            main_explanations = itertools.zip_longest(
+                main_explanations.find_all(class_='compTitle mb-10'),
+                main_explanations.find_all(class_='compArticleList mb-15 ml-10')
             )
 
-            if not search_exp:
-                search_exp = ""
-            else:
-                search_exp = itertools.zip_longest(
-                    search_exp.find_all(class_='compTitle mb-10'),
-                    search_exp.find_all(class_='compArticleList mb-15 ml-10')
+        part_of_speech_list, meaning_list = [], []
+        if verbose:
+            variation_explanations = data.find(
+                class_='dd algo variation fst DictionaryResults'
+            )
+            if variation_explanations:
+                part_of_speech_list.extend(
+                    variation_explanations.find_all(class_='compTitle')
+                )
+                meaning_list.extend(
+                    variation_explanations.find_all(class_='compArticleList')
                 )
 
+            additional_explanations = data.find(
+                class_='dd algo othersNew lst DictionaryResults'
+            )
+            if additional_explanations:
+                part_of_speech_list.extend(
+                    additional_explanations.find_all(class_='compTitle mt-26')
+                )
+                meaning_list.extend(
+                    additional_explanations.find_all(class_='compArticleList')
+                )
+
+        more_explanations = itertools.zip_longest(
+            part_of_speech_list, meaning_list
+        )
+
         content['explain'] = []
-        for part_of_speech, explain in search_exp:
+        for part_of_speech, meaning in main_explanations:
             node = [part_of_speech.text] if part_of_speech else ['']
 
-            for item in explain.find_all('li', class_='ov-a'):
+            for item in meaning.find_all('li', class_='ov-a'):
                 pack = [item.find('h4').text]
-                for example in item.find_all('span', id='example'):
+
+                for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
                     sentence = ''
-                    translation = ''
 
                     for w in example.contents:
                         if w.name == 'b':
                             sentence += '*' + w.text + '*'
-                        elif w.name == 'span':
-                            translation = w.text
                         else:
                             try:
                                 sentence += w
                             except:
                                 pass
 
-                    pack.append((sentence.strip(), translation.strip()))
+                    pack.append((sentence.strip()))
                 node.append(pack)
             content['explain'].append(node)
+
+        content['verbose'] = []
+        for part_of_speech, meaning in more_explanations:
+            node = [part_of_speech.text] if part_of_speech else ['']
+
+            for item in meaning.find_all('li', class_='ov-a'):
+                pack = [item.find('h4').text]
+
+                for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
+                    sentence = ''
+
+                    for w in example.contents:
+                        if w.name == 'b':
+                            sentence += '*' + w.text + '*'
+                        else:
+                            try:
+                                sentence += w
+                            except:
+                                pass
+
+                    pack.append((sentence.strip()))
+                node.append(pack)
+            content['verbose'].append(node)
 
         record = Record(
                     word=word,

@@ -87,6 +87,14 @@ def get_command_line_args():
         help="Choose the dictionary you want. (default: yahoo)"
     )
 
+    parser.add_argument(
+        "-V", "--verbose",
+        default=False,
+        action="store_true",
+        help="Show more information for the queried word.\
+        (If the chosen dictionary have implemented verbose related functions)"
+    )
+
     return parser.parse_args()
 
 
