@@ -11,7 +11,7 @@ from ..models import Record
 
 class YahooDict(DictBase):
 
-    API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
+    API = 'https://tw.dictionary.search.yahoo.com/search?p={word}'
 
     @property
     def provider(self):
@@ -94,7 +94,7 @@ class YahooDict(DictBase):
             search_exp = data.find_all(class_='dd algo lst DictionaryResults')
         else:
             search_exp = data.find(
-                class_='dd algo mt-20 lst DictionaryResults'
+                class_='dd algo explain mt-20 lst DictionaryResults'
             )
 
             if not search_exp:
