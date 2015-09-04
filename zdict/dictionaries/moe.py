@@ -16,7 +16,7 @@ class MoeDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record):
+    def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
 
         # print word
