@@ -124,34 +124,8 @@ class YahooDict(DictBase):
                 main_explanations.find_all(class_='compTitle mb-10'),
                 main_explanations.find_all(class_='compArticleList mb-15 ml-10')
             )
-
-        part_of_speech_list, meaning_list = [], []
-        if verbose:
-            variation_explanations = data.find(
-                class_='dd algo variation fst DictionaryResults'
-            )
-            if variation_explanations:
-                part_of_speech_list.extend(
-                    variation_explanations.find_all(class_='compTitle')
-                )
-                meaning_list.extend(
-                    variation_explanations.find_all(class_='compArticleList')
-                )
-
-            additional_explanations = data.find(
-                class_='dd algo othersNew lst DictionaryResults'
-            )
-            if additional_explanations:
-                part_of_speech_list.extend(
-                    additional_explanations.find_all(class_='compTitle mt-26')
-                )
-                meaning_list.extend(
-                    additional_explanations.find_all(class_='compArticleList')
-                )
-
-        more_explanations = itertools.zip_longest(
-            part_of_speech_list, meaning_list
-        )
+        else:
+            main_explanations = ""
 
         content['explain'] = []
         for part_of_speech, meaning in main_explanations:
@@ -176,28 +150,57 @@ class YahooDict(DictBase):
                 node.append(pack)
             content['explain'].append(node)
 
-        content['verbose'] = []
-        for part_of_speech, meaning in more_explanations:
-            node = [part_of_speech.text] if part_of_speech else ['']
+        if verbose:
+            part_of_speech_list, meaning_list = [], []
 
-            for item in meaning.find_all('li', class_='ov-a'):
-                pack = [item.find('h4').text]
+            variation_explanations = data.find(
+                class_='dd algo variation fst DictionaryResults'
+            )
+            if variation_explanations:
+                part_of_speech_list.extend(
+                    variation_explanations.find_all(class_='compTitle')
+                )
+                meaning_list.extend(
+                    variation_explanations.find_all(class_='compArticleList')
+                )
 
-                for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
-                    sentence = ''
+            additional_explanations = data.find(
+                class_='dd algo othersNew lst DictionaryResults'
+            )
+            if additional_explanations:
+                part_of_speech_list.extend(
+                    additional_explanations.find_all(class_='compTitle mt-26')
+                )
+                meaning_list.extend(
+                    additional_explanations.find_all(class_='compArticleList')
+                )
 
-                    for w in example.contents:
-                        if w.name == 'b':
-                            sentence += '*' + w.text + '*'
-                        else:
-                            try:
-                                sentence += w
-                            except:
-                                pass
+            more_explanations = itertools.zip_longest(
+                part_of_speech_list, meaning_list
+            )
 
-                    pack.append((sentence.strip()))
-                node.append(pack)
-            content['verbose'].append(node)
+            content['verbose'] = []
+            for part_of_speech, meaning in more_explanations:
+                node = [part_of_speech.text] if part_of_speech else ['']
+
+                for item in meaning.find_all('li', class_='ov-a'):
+                    pack = [item.find('h4').text]
+
+                    for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
+                        sentence = ''
+
+                        for w in example.contents:
+                            if w.name == 'b':
+                                sentence += '*' + w.text + '*'
+                            else:
+                                try:
+                                    sentence += w
+                                except:
+                                    pass
+
+                        pack.append((sentence.strip()))
+                    node.append(pack)
+                content['verbose'].append(node)
 
         record = Record(
                     word=word,
