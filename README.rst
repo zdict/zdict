@@ -21,7 +21,7 @@ So, we decided to create a new project.
 Installation
 ------------------------------
 
-``pip install git+https://github.com/M157q/zdict.git``
+``pip install git+https://github.com/zdict/zdict.git``
 
 
 Usage
@@ -31,12 +31,14 @@ Yahoo
 ++++++++++++++++++++
 
 * Normal Mode
+
 ``zdict hello``
 
 .. image:: http://i.imgur.com/iFTysUz.png
 
 
 * Interactive Mode
+
 ``zdict``
 
 .. image:: http://i.imgur.com/NtbWXKH.png
@@ -64,15 +66,15 @@ Testing
 ``python3 -m unittest discover``
 
 
-.. |issues| image:: https://img.shields.io/github/issues/M157q/zdict.svg
-   :target: https://github.com/M157q/zdict/issues
+.. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/issues
 
-.. |travis| image:: https://img.shields.io/travis/M157q/zdict.svg
-   :target: https://travis-ci.org/M157q/zdict
+.. |travis| image:: https://img.shields.io/travis/zdict/zdict.svg
+   :target: https://travis-ci.org/zdict/zdict
 
-.. |license| image:: https://img.shields.io/github/license/M157q/zdict.svg
-   :target: https://github.com/M157q/zdict/blob/master/LICENSE.md
+.. |license| image:: https://img.shields.io/github/license/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/blob/master/LICENSE.md
 
 .. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/M157q/zdict
-   :target: https://gitter.im/M157q/zdict?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+   :alt: Join the chat at https://gitter.im/zdict/zdict
+   :target: https://gitter.im/zdict/zdict
