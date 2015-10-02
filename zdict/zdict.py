@@ -81,14 +81,14 @@ def get_args():
 
     parser.add_argument(
         "-dt", "--dict",
-        default=["yahoo"],
+        default="yahoo",
         action="store",
-        choices=dictionary_list + ['all'],
-        nargs = '+',
+        metavar=','.join(dictionary_list + ['all']),
         help="""
+            Must be seperated by comma and no spaces after each comma.
             Choose the dictionary you want. (default: yahoo)
             Use 'all' for qureying all dictionaries.
-            If 'all' has been chosen,
+            If 'all' or more than 1 dictionaries been chosen,
             --show-provider will be set to True in order to
             provide more understandable output.
         """
@@ -98,10 +98,13 @@ def get_args():
 
 
 def set_args():
+    args.dict = args.dict.split(',')
+
     if 'all' in args.dict:
         args.dict = dictionary_list
     else:
-        args.dict = list(set(args.dict))
+        # Uniq and Filter the dict not in supported dictionary list then sort.
+        args.dict = sorted(set([d for d in args.dict if d in dictionary_list]))
 
     if len(args.dict) > 1:
         args.show_provider = True
