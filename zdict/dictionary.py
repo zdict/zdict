@@ -119,28 +119,6 @@ class DictBase(metaclass=abc.ABCMeta):
             self.show(record, args.verbose)
             return
 
-    def _get_prompt(self) -> str:
-        '''
-        The prompt string used by prompt()
-        '''
-        return '[zDict]: '
-
-    def prompt(self, args):
-        user_input = input(self._get_prompt()).strip()
-
-        if user_input:
-            self.lookup(user_input, args)
-        else:
-            return
-
-    def loop_prompt(self, args):
-        while True:
-            try:
-                self.prompt(args)
-            except (KeyboardInterrupt, EOFError):
-                print()
-                return
-
     def _get_raw(self, word: str, timeout: float) -> str:
         '''
         Get raw data from http request

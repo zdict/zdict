@@ -4,8 +4,8 @@ import readline
 from argparse import ArgumentParser
 
 from . import constants
-from . import utils
 from . import dictionaries
+from . import utils
 from .completer import DictCompleter
 
 
@@ -31,7 +31,7 @@ def user_set_encoding_and_is_utf8():
     return True
 
 
-def get_command_line_args():
+def get_args():
     # parse args
     parser = ArgumentParser(prog='zdict')
 
@@ -83,8 +83,15 @@ def get_command_line_args():
         "-dt", "--dict",
         default="yahoo",
         action="store",
-        choices=list(filter(lambda attr: not attr.startswith('_'), dir(dictionaries))),
-        help="Choose the dictionary you want. (default: yahoo)"
+        metavar=','.join(dictionary_list + ['all']),
+        help="""
+            Must be seperated by comma and no spaces after each comma.
+            Choose the dictionary you want. (default: yahoo)
+            Use 'all' for qureying all dictionaries.
+            If 'all' or more than 1 dictionaries been chosen,
+            --show-provider will be set to True in order to
+            provide more understandable output.
+        """
     )
 
     parser.add_argument(
@@ -98,25 +105,80 @@ def get_command_line_args():
     return parser.parse_args()
 
 
-def interactive_mode(zdict, args):
+def set_args():
+    args.dict = args.dict.split(',')
+
+    if 'all' in args.dict:
+        args.dict = dictionary_list
+    else:
+        # Uniq and Filter the dict not in supported dictionary list then sort.
+        args.dict = sorted(set([d for d in args.dict if d in dictionary_list]))
+
+    if len(args.dict) > 1:
+        args.show_provider = True
+
+
+def normal_mode():
+    for word in args.words:
+        for d in args.dict:
+            zdict = getattr(dictionaries, d)()
+            zdict.lookup(word, args)
+
+
+class MetaInteractivePrompt():
+    def __init__(self, dict_list):
+        self.dict_list = [getattr(dictionaries, d)() for d in dict_list]
+
+    def __del__(self):
+        del self.dict_list
+
+    def prompt(self, args):
+        user_input = input('[zDict]: ').strip()
+
+        if user_input:
+            for dictionary_instance in self.dict_list:
+                dictionary_instance.lookup(user_input, args)
+        else:
+            return
+
+    def loop_prompt(self, args):
+        while True:
+            try:
+                self.prompt(args)
+            except (KeyboardInterrupt, EOFError):
+                print()
+                return
+
+
+def interactive_mode():
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
+
+    zdict = MetaInteractivePrompt(args.dict)
     zdict.loop_prompt(args)
 
-def execute_zdict(args):
-    zdict = getattr(dictionaries, args.dict)()
 
+def execute_zdict():
     if args.words:
-        for w in args.words:
-            zdict.lookup(w, args)
+        normal_mode()
     else:
-        interactive_mode(zdict, args)
+        interactive_mode()
+
 
 def main():
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
-        args = get_command_line_args()
-        execute_zdict(args)
+
+        global dictionary_list
+        dictionary_list = sorted(list(
+            filter(lambda attr: not attr.startswith('_'), dir(dictionaries))
+        ))
+
+        global args
+        args = get_args()
+        set_args()
+
+        execute_zdict()
     else:
         exit()
