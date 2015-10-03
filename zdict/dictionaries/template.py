@@ -13,8 +13,8 @@ from ..models import Record
 class TemplateDict(DictBase):
 
     # Change the url below to the API url of the new dictionary.
-    API = 'https://tw.dictionary.search.yahoo.com/search?p={word}'
     # Need to keep the `{word}` for `_get_url()` usage.
+    API = 'https://tw.dictionary.search.yahoo.com/search?p={word}'
 
     @property
     def provider(self):
@@ -36,6 +36,7 @@ class TemplateDict(DictBase):
         if verbose:
             try:
                 # Get the addtional information if it exists.
+                pass
             except:
                 return
             else:
@@ -49,6 +50,7 @@ class TemplateDict(DictBase):
         content = {}
 
         # Parse `data` and fill the information you need into `content`
+        #
         # Use
         # ```
         # except AttributeError:
@@ -58,11 +60,11 @@ class TemplateDict(DictBase):
 
         if verbose:
             # Store the additonal information for the verbose option.
+            pass
 
-        record = Record(
-                    word=word,
-                    content=json.dumps(content),
-                    source=self.provider,
+        record = Record(word=word,
+                        content=json.dumps(content),
+                        source=self.provider,
                  )
 
         return record
