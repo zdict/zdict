@@ -30,9 +30,11 @@ class JishoDict(DictBase):
         for data in (content['data'][0],):
 
             # print word
-            self.color.print(data['japanese'][0]['reading'], 'lyellow')
-
+            reading = data['japanese'][0].get('reading', '')
             word = data['japanese'][0].get('word', '')
+
+            if reading:
+                self.color.print(reading, 'lyellow')
 
             if word:
                 self.color.print(word, 'green', indent=2)
