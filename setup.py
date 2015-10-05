@@ -53,6 +53,6 @@ setup(
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     scripts=['scripts/zdict'],
     install_requires=REQUIRES,
-    tests_require=['coverage', 'pytest'],
+    tests_require=['coverage', 'pytest', 'pytest-cov'],
     cmdclass={'test': PyTest}
 )
