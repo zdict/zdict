@@ -3,7 +3,7 @@ zdict
 ========================================
 
 |issues| |travis| |license|
-|gitter|
+|gitter| |coveralls|
 
 *Note: This project is working in progress.*
 
@@ -78,3 +78,6 @@ Testing
 .. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
    :alt: Join the chat at https://gitter.im/zdict/zdict
    :target: https://gitter.im/zdict/zdict
+
+.. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg?branch=master&service=github
+   :target: https://coveralls.io/github/zdict/zdict
