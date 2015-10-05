@@ -9,4 +9,7 @@ class TestyDict:
         del self.dict
 
     def test__get_url(self):
-        assert 'https://www.moedict.tw/uni/萌', self.dict._get_url('萌')
+        assert 'https://www.moedict.tw/uni/萌' == self.dict._get_url('萌')
+
+    def test_provider(self):
+        assert self.dict.provider == 'moe'
