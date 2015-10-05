@@ -63,7 +63,17 @@ Urban
 Testing
 ------------------------------
 
-``python3 -m unittest discover``
+During development, you can install our project as *editable*::
+
+    $ pip install -e .
+
+We use ``py.test``::
+
+    $ pip install pytest pytest-cov coverage
+    $ python setup.py test
+
+Also, there is some configs for ``py.test`` in ``setup.cfg``.
+Change it if you need.
 
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
