@@ -1,12 +1,18 @@
 language: python
+
 python:
     - "3.4"
     - "3.5"
     - "nightly"
+
 install:
     - "pip install ."
+
 script:
-    - "python -m unittest discover"
+    - python setup.py test
+
+after_success:
+    - coveralls
 
 notifications:
   webhooks:
