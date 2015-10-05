@@ -16,6 +16,10 @@ after_success:
     - coveralls
 
 notifications:
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/7498c1d7f0e50c212e1a
+    webhooks:
+        urls:
+            - https://webhooks.gitter.im/e/7498c1d7f0e50c212e1a
+
+matrix:
+    allow_failures:
+        - python: "nightly"
