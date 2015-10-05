@@ -10,4 +10,4 @@ class TestyDict:
 
     def test__get_url(self):
         url = 'https://tw.dictionary.search.yahoo.com/search?p=test'
-        assert url, self.dict._get_url('test')
+        assert url == self.dict._get_url('test')
