@@ -72,6 +72,12 @@ We use ``py.test``::
     $ pip install pytest pytest-cov coverage
     $ python setup.py test
 
+After runing testing, we will get a coverage report in html.
+We can browse around it::
+
+    $ cd htmlcov
+    $ python -m http.server
+
 Also, there is some configs for ``py.test`` in ``setup.cfg``.
 Change it if you need.
 
