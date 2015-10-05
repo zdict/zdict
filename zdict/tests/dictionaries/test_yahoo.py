@@ -1,14 +1,13 @@
-import unittest
-
 from ...dictionaries import yahoo
 
 
-class TestyDict(unittest.TestCase):
-    def setUp(self):
+class TestyDict:
+    def setup_method(self, method):
         self.dict = yahoo()
 
+    def teardown_method(self, method):
+        del self.dict
+
     def test__get_url(self):
-        self.assertEqual(
-            'https://tw.dictionary.search.yahoo.com/search?p=test',
-            self.dict._get_url('test')
-        )
+        url = 'https://tw.dictionary.search.yahoo.com/search?p=test'
+        assert url, self.dict._get_url('test')
