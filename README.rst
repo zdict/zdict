@@ -89,5 +89,5 @@ Change it if you need.
    :alt: Join the chat at https://gitter.im/zdict/zdict
    :target: https://gitter.im/zdict/zdict
 
-.. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg?branch=master&service=github
+.. |coveralls| image:: https://img.shields.io/coveralls/zdict/zdict.svg
    :target: https://coveralls.io/github/zdict/zdict
