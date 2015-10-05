@@ -5,3 +5,5 @@ MANIFEST
 build
 *.egg-info
 .coverage
+.cache
+.eggs
