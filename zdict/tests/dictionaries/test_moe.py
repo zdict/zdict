@@ -1,9 +1,9 @@
-from ...dictionaries import moe
+from ...dictionaries.moe import MoeDict
 
 
 class TestyDict:
     def setup_method(self, method):
-        self.dict = moe()
+        self.dict = MoeDict()
 
     def teardown_method(self, method):
         del self.dict

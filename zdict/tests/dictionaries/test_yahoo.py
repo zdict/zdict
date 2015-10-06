@@ -1,9 +1,9 @@
-from ...dictionaries import yahoo
+from ...dictionaries.yahoo import YahooDict
 
 
 class TestyDict:
     def setup_method(self, method):
-        self.dict = yahoo()
+        self.dict = YahooDict()
 
     def teardown_method(self, method):
         del self.dict
