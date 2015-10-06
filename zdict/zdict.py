@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 
 from . import constants, utils
 from .completer import DictCompleter
-from .loader import discover
+from .loader import get_dictionary_map
 
 
 def check_zdict_dir_and_db():
@@ -126,16 +126,16 @@ def normal_mode():
 
 class MetaInteractivePrompt():
     def __init__(self, dict_list):
-        self.dict_list = tuple(dictionary_map[d]() for d in dict_list)
+        self.dicts = tuple(dictionary_map[d]() for d in dict_list)
 
     def __del__(self):
-        del self.dict_list
+        del self.dicts
 
     def prompt(self, args):
         user_input = input('[zDict]: ').strip()
 
         if user_input:
-            for dictionary_instance in self.dict_list:
+            for dictionary_instance in self.dicts:
                 dictionary_instance.lookup(user_input, args)
         else:
             return
@@ -170,7 +170,7 @@ def main():
         check_zdict_dir_and_db()
 
         global dictionary_map
-        dictionary_map = discover()
+        dictionary_map = get_dictionary_map()
 
         global args
         args = get_args()

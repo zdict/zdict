@@ -9,7 +9,7 @@ from . import dictionaries
 from .dictionary import DictBase
 
 
-def discover():
+def get_dictionary_map():
     '''
     Auto discover dictionaries in package ``dictionaries``.
     Each dictionary class MUST be the subclass of ``DictBase``
