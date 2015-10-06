@@ -1,5 +1,6 @@
 from ...dictionaries.moe import MoeDict
 from ...exceptions import NotFoundError, QueryError
+from ...models import Record
 
 from pytest import raises
 from unittest.mock import Mock, patch
@@ -33,3 +34,31 @@ class TestyDict:
         record = self.dict.query('萌', timeout=666)
 
         Record.assert_called_with(word='萌', content='{}', source='moe')
+
+
+    def test_show(self):
+        content = '''
+        {
+            "heteronyms": [{
+                "bopomofo": "ㄧㄢˋ",
+                "bopomofo2": "yàn",
+                "definitions": [{
+                    "def": "假的、偽造的。",
+                    "example": ["如：「贗品」。"],
+                    "quote": ["..."],
+                    "type": "形",
+                    "synonyms": "尛",
+                    "antonyms": "萌"
+                }], 
+                "pinyin": "yàn"
+            }],
+            "non_radical_stroke_count": 15,
+            "radical": "貝",
+            "stroke_count": 22,
+            "title": "贗"
+        }
+        '''
+        r = Record(word='贗', content=content, source=self.dict.provider)
+
+        # god bless this method, hope that it do not raise any exception
+        self.dict.show(r)
