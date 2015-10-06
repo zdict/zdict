@@ -57,7 +57,7 @@ class Color(metaclass=ColorConst):
             Using 'l' prefix for bright color, e.g.: lred, lwhite.
             It's case-insensitive.
 
-            If stdout is'nt a tty, the color option will be ignored.
+            If stdout isn't a tty, the color option will be ignored.
         '''
         if s is None:
             return
