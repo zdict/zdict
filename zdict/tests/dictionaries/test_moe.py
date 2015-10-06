@@ -35,7 +35,6 @@ class TestyDict:
 
         Record.assert_called_with(word='萌', content='{}', source='moe')
 
-
     def test_show(self):
         content = '''
         {
