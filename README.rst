@@ -72,6 +72,10 @@ We use ``py.test``::
     $ pip install pytest pytest-cov coverage
     $ python setup.py test
 
+or::
+
+    $ py.test
+
 After runing testing, we will get a coverage report in html.
 We can browse around it::
 
@@ -80,6 +84,18 @@ We can browse around it::
 
 Also, there is some configs for ``py.test`` in ``setup.cfg``.
 Change it if you need.
+
+
+Debuging
+++++++++++++++++++++
+
+``py.test`` can prompt ``pdb`` shell when your test case failed::
+
+    $ python setup.py test -a "--pdb"
+
+or::
+
+    $ py.test --pdb
 
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
