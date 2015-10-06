@@ -1,5 +1,6 @@
 from ..utils import (Color, create_zdict_db_if_not_exists,
                      create_zdict_dir_if_not_exists)
+
 from pytest import raises
 from unittest.mock import patch
 
@@ -11,10 +12,20 @@ class TestColor:
     def teardown_method(self, method):
         del self.color
 
-    def test_format(self):
+    @patch('zdict.utils.sys.stdout.isatty', return_value=True)
+    def test_format_in_tty(self, isatty):
         assert '\33[31;1mtest\33[0m' == self.color.format('test', 'lred')
         assert '\33[31mtest\33[0m' == self.color.format('test', 'red')
         assert '  \33[31mtest\33[0m' == self.color.format('test', 'red', indent=2)
+        assert isatty.called
+
+    @patch('zdict.utils.sys.stdout.isatty', return_value=False)
+    def test_format_not_tty(self, isatty):
+        assert '  test' == self.color.format('test', 'red', indent=2)
+        assert isatty.called
+
+    def test_format_none(self):
+        assert self.color.format(None) is None
 
     def test_attribute(self):
         self.color.red = '\33[31m'

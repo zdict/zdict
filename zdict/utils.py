@@ -1,4 +1,5 @@
 import os
+import sys
 
 from . import constants
 
@@ -55,14 +56,19 @@ class Color(metaclass=ColorConst):
         :param color: predefined color name, e,g,: red, RED.
             Using 'l' prefix for bright color, e.g.: lred, lwhite.
             It's case-insensitive.
+
+            If stdout is'nt a tty, the color option will be ignored.
         '''
         if s is None:
             return
+
+        isatty = sys.stdout.isatty()
+
         return '{indent}{color}{s}{org}'.format(
             indent=' ' * indent,
-            color=getattr(self, color, ''),
+            color=getattr(self, color, '') if isatty else '',
             s=s,
-            org=self.ORG,
+            org=self.ORG if isatty else '',
         )
 
     @classmethod
