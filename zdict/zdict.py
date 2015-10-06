@@ -118,11 +118,9 @@ def set_args():
 
 
 def normal_mode():
-    zdicts = discover()
-
     for word in args.words:
         for d in args.dict:
-            zdict = zdicts[d]()
+            zdict = dictionary_map[d]()
             zdict.lookup(word, args)
 
 
