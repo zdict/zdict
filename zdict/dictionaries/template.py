@@ -7,8 +7,6 @@ from ..exceptions import NotFoundError
 from ..models import Record
 
 
-# Don't forget to register the new dictionary at `zdict/dictionaries/__init__.py`
-
 # Change `Template` to the name of new dictionary. like xxxDict.
 class TemplateDict(DictBase):
 
@@ -68,5 +66,3 @@ class TemplateDict(DictBase):
                  )
 
         return record
-
-# Don't forget to register the new dictionary at `zdict/dictionaries/__init__.py`
