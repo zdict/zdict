@@ -3,10 +3,9 @@ import readline
 
 from argparse import ArgumentParser
 
-from . import constants
-from . import dictionaries
-from . import utils
+from . import constants, utils
 from .completer import DictCompleter
+from .loader import discover
 
 
 def check_zdict_dir_and_db():
@@ -83,7 +82,7 @@ def get_args():
         "-dt", "--dict",
         default="yahoo",
         action="store",
-        metavar=','.join(dictionary_list + ['all']),
+        metavar=','.join(list(dictionary_map.keys()) + ['all']),
         help="""
             Must be seperated by comma and no spaces after each comma.
             Choose the dictionary you want. (default: yahoo)
@@ -109,25 +108,27 @@ def set_args():
     args.dict = args.dict.split(',')
 
     if 'all' in args.dict:
-        args.dict = dictionary_list
+        args.dict = tuple(dictionary_map.keys())
     else:
         # Uniq and Filter the dict not in supported dictionary list then sort.
-        args.dict = sorted(set([d for d in args.dict if d in dictionary_list]))
+        args.dict = sorted(set(d for d in args.dict if d in dictionary_map))
 
     if len(args.dict) > 1:
         args.show_provider = True
 
 
 def normal_mode():
+    zdicts = discover()
+
     for word in args.words:
         for d in args.dict:
-            zdict = getattr(dictionaries, d)()
+            zdict = zdicts[d]()
             zdict.lookup(word, args)
 
 
 class MetaInteractivePrompt():
     def __init__(self, dict_list):
-        self.dict_list = [getattr(dictionaries, d)() for d in dict_list]
+        self.dict_list = tuple(dictionary_map[d]() for d in dict_list)
 
     def __del__(self):
         del self.dict_list
@@ -170,10 +171,8 @@ def main():
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
 
-        global dictionary_list
-        dictionary_list = sorted(list(
-            filter(lambda attr: not attr.startswith('_'), dir(dictionaries))
-        ))
+        global dictionary_map
+        dictionary_map = discover()
 
         global args
         args = get_args()
