@@ -134,11 +134,11 @@ class MetaInteractivePrompt():
     def prompt(self, args):
         user_input = input('[zDict]: ').strip()
 
-        if user_input:
-            for dictionary_instance in self.dicts:
-                dictionary_instance.lookup(user_input, args)
-        else:
+        if not user_input:
             return
+
+        for dictionary_instance in self.dicts:
+            dictionary_instance.lookup(user_input, args)
 
     def loop_prompt(self, args):
         while True:
