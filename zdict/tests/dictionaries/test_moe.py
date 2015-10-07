@@ -6,7 +6,7 @@ from pytest import raises
 from unittest.mock import Mock, patch
 
 
-class TestyDict:
+class TestMoeDict:
     def setup_method(self, method):
         self.dict = MoeDict()
 
