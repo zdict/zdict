@@ -2,8 +2,11 @@
 zdict
 ========================================
 
-|issues| |travis| |license|
-|gitter| |coveralls|
+|issues| |travis| |coveralls|
+
+|license|
+
+|gitter| 
 
 *Note: This project is working in progress.*
 
@@ -27,8 +30,43 @@ Installation
 Usage
 ------------------------------
 
-Yahoo
-++++++++++++++++++++
+::
+
+   usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-sp] [-su]
+                [-dt yahoo,urban,moe,all] [-V]
+                [word [word ...]]
+
+   positional arguments:
+     word                  Words for searching its translation
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -v, --version         show program's version number and exit
+     -d, --disable-db-cache
+                           Temporarily not using the result from db cache. (still
+                           save the result into db)
+     -t QUERY_TIMEOUT, --query-timeout QUERY_TIMEOUT
+                           Set timeout for every query. default is 5 seconds.
+     -sp, --show-provider  Show the dictionary provider of the queried word
+     -su, --show-url       Show the url of the queried word
+     -dt yahoo,urban,moe,all, --dict yahoo,urban,moe,all
+                           Must be seperated by comma and no spaces after each
+                           comma. Choose the dictionary you want. (default:
+                           yahoo) Use 'all' for qureying all dictionaries. If
+                           'all' or more than 1 dictionaries been chosen, --show-
+                           provider will be set to True in order to provide more
+                           understandable output.
+     -V, --verbose         Show more information for the queried word. (If the
+                           chosen dictionary have implemented verbose related
+                           functions)
+
+
+
+Screenshots
+------------------------------
+
+`Yahoo Dictionary <http://tw.dictionary.search.yahoo.com/>`_
+^^^^^^^^^^^^^^^^^^^^
 
 * Normal Mode
 
@@ -44,16 +82,16 @@ Yahoo
 .. image:: http://i.imgur.com/NtbWXKH.png
 
 
-萌典
-++++++++++++++++++++
+`Moe Dictionary 萌典 <https://www.moedict.tw>`_
+^^^^^^^^^^^^^^^^^^^^
 
 .. image:: http://i.imgur.com/FZD4HBS.png
 
 .. image:: http://i.imgur.com/tF2S98h.png
 
 
-Urban
-++++++++++++++++++++
+`Urban Dictionary <http://www.urbandictionary.com/>`_
+^^^^^^^^^^^^^^^^^^^^
 
 .. image:: http://i.imgur.com/KndSJqz.png
 
@@ -86,8 +124,8 @@ Also, there is some configs for ``py.test`` in ``setup.cfg``.
 Change it if you need.
 
 
-Debuging
-++++++++++++++++++++
+Debugging
+------------------------------
 
 ``py.test`` can prompt ``pdb`` shell when your test case failed::
 
@@ -96,6 +134,13 @@ Debuging
 or::
 
     $ py.test --pdb
+
+
+Related Projects
+------------------------------
+
+* `zdict.vim <https://github.com/zdict/zdict.vim>`_
+    * A vim plugin for `zdict`
 
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
@@ -111,5 +156,5 @@ or::
    :alt: Join the chat at https://gitter.im/zdict/zdict
    :target: https://gitter.im/zdict/zdict
 
-.. |coveralls| image:: https://img.shields.io/coveralls/zdict/zdict.svg
+.. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg
    :target: https://coveralls.io/github/zdict/zdict
