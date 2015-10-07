@@ -7,18 +7,6 @@ from setuptools.command.test import test as TestCommand
 zdict.utils.create_zdict_dir_if_not_exists()
 zdict.utils.create_zdict_db_if_not_exists()
 
-EXCLUDE_FROM_PACKAGES = ['scripts']
-REQUIRES = [
-    'beautifulsoup4',
-    'peewee',
-    'requests',
-]
-
-try:
-    import readline
-except ImportError:
-    REQUIRES += ['readline']
-
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
@@ -40,19 +28,44 @@ class PyTest(TestCommand):
 
 
 setup(
+    packages=find_packages(exclude=['scripts']),
+    scripts=['scripts/zdict'],
+    install_requires=[
+        'beautifulsoup4',
+        'peewee',
+        'readline',
+        'requests',
+    ],
+
+    tests_require=['coverage', 'pytest', 'pytest-cov'],
+    cmdclass={'test': PyTest},
+
     name='zdict',
     version=zdict.__version__,
-    description='The last dictionary framework you will need. (?)',
     author='Shun-Yi Jheng',
     author_email='M157q.tw@gmail.com',
-    maintainer='Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
-    maintainer_email=('e196819@hotmail.com, '
-                      'michael66230@gmail.com, '
+    maintainer='Shun-Yi Jheng, Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
+    maintainer_email=('M157q.tw@gmail.com,'
+                      'e196819@hotmail.com,'
+                      'michael66230@gmail.com,'
                       'wdv4758h@gmail.com'),
-    url='https://github.com/M157q/zdict',
-    packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
-    scripts=['scripts/zdict'],
-    install_requires=REQUIRES,
-    tests_require=['coverage', 'pytest', 'pytest-cov'],
-    cmdclass={'test': PyTest}
+    url='https://github.com/zdict/zdict',
+    keywords="cli, dictionary, framework",
+    description="The last dictionary framework you need. (?)",
+    long_description="zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.",
+    download_url="https://github.com/zdict/zdict/archive/v0.0.5.zip",
+    platforms=['Linux', 'Mac'],
+    license="GPL3",
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Environment :: Console",
+        "Intended Audience :: End Users/Desktop",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Natural Language :: Chinese (Traditional)",
+        "Natural Language :: English",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS :: MacOS X",
+        "Programming Language :: Python :: 3 :: Only",
+        "Topic :: Utilities",
+    ],
 )
