@@ -166,16 +166,16 @@ def execute_zdict():
 
 
 def main():
-    if user_set_encoding_and_is_utf8():
-        check_zdict_dir_and_db()
-
-        global dictionary_map
-        dictionary_map = get_dictionary_map()
-
-        global args
-        args = get_args()
-        set_args()
-
-        execute_zdict()
-    else:
+    if not user_set_encoding_and_is_utf8():
         exit()
+
+    check_zdict_dir_and_db()
+
+    global dictionary_map
+    dictionary_map = get_dictionary_map()
+
+    global args
+    args = get_args()
+    set_args()
+
+    execute_zdict()
