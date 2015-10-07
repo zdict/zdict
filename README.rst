@@ -6,7 +6,7 @@ zdict
 
 |license|
 
-|gitter| 
+|gitter|
 
 *Note: This project is working in progress.*
 
@@ -66,7 +66,7 @@ Screenshots
 ------------------------------
 
 `Yahoo Dictionary <http://tw.dictionary.search.yahoo.com/>`_
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * Normal Mode
 
@@ -83,7 +83,7 @@ Screenshots
 
 
 `Moe Dictionary 萌典 <https://www.moedict.tw>`_
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: http://i.imgur.com/FZD4HBS.png
 
@@ -91,19 +91,29 @@ Screenshots
 
 
 `Urban Dictionary <http://www.urbandictionary.com/>`_
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: http://i.imgur.com/KndSJqz.png
 
 .. image:: http://i.imgur.com/nh62wi1.png
 
 
+Development & Contributing
+---------------------------
+
 Testing
-------------------------------
+^^^^^^^^
 
-During development, you can install our project as *editable*::
+During development, you can install our project as *editable*.
+If you use `virtualenv`, you may want to create a new enviroment for `zdict`::
 
+    $ git clone https://github.com/zdict/zdict.git
+    $ cd zdict
     $ pip install -e .
+
+Once you installed it with the command above,
+just execute `zdict` after modification.
+Don't need to install it again.
 
 We use ``py.test``::
 
@@ -125,7 +135,7 @@ Change it if you need.
 
 
 Debugging
-------------------------------
+^^^^^^^^^^
 
 ``py.test`` can prompt ``pdb`` shell when your test case failed::
 

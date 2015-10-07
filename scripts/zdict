@@ -9,7 +9,5 @@ Just simply use `python3 ./scripts/zdict` or `.scripts/zdict`
 import os
 import sys
 
-sys.path.insert(0, os.getcwd())
-
 from zdict import zdict
 zdict.main()
