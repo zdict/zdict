@@ -20,6 +20,12 @@ class TemplateDict(DictBase):
         return 'template'
 
 
+    @property
+    def title(self):
+        # Change `Template Dictionary` to the brief title of the new dictionary.
+        return 'Template Dictionary'
+
+
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 

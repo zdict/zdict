@@ -13,6 +13,10 @@ class MoeDict(DictBase):
     def provider(self):
         return 'moe'
 
+    @property
+    def title(self):
+        return '萌典'
+
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 

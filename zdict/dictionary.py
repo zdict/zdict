@@ -37,6 +37,15 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
         ...
 
+    @property
+    @abc.abstractmethod
+    def title(self):
+        '''
+        Return the brief title of online dictionary,
+        this value is considered as `source` field in Record model.
+        '''
+        ...
+
     @abc.abstractmethod
     def _get_url(self, word: str) -> str:
         '''

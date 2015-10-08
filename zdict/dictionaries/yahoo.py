@@ -17,6 +17,10 @@ class YahooDict(DictBase):
     def provider(self):
         return 'yahoo'
 
+    @property
+    def title(self):
+        return 'Yahoo Dictionary'
+
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 

@@ -94,6 +94,13 @@ def get_args():
     )
 
     parser.add_argument(
+        "-ld", "--list-dicts",
+        default=False,
+        action="store_true",
+        help="Show currently supported dictionaries."
+    )
+
+    parser.add_argument(
         "-V", "--verbose",
         default=False,
         action="store_true",
@@ -105,6 +112,11 @@ def get_args():
 
 
 def set_args():
+    if args.list_dicts:
+        for provider in sorted(dictionary_map, key=lambda x: x if x != 'yahoo' else ''):
+            print('{}: {}'.format(provider, dictionary_map[provider]().title))
+        exit()
+
     args.dict = args.dict.split(',')
 
     if 'all' in args.dict:

@@ -12,6 +12,10 @@ class UrbanDict(DictBase):
     def provider(self):
         return 'urban'
 
+    @property
+    def title(self):
+        return 'Urban Dictionary'
+
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
