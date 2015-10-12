@@ -27,6 +27,7 @@ class ColorConst(type):
         ('INDIGO', 36),
         ('WHITE', 37),
     )
+    _colorize = False
 
     def __getattr__(cls, color):
         '''
@@ -46,14 +47,16 @@ class ColorConst(type):
             )
         )
 
+    @property
+    def colorize(cls, force_color=True):
+        return cls._colorize or sys.stdout.isatty()
+
+    @colorize.setter
+    def colorize(cls, force_color=True):
+        cls._colorize = force_color
+
 
 class Color(metaclass=ColorConst):
-    _force_color = False
-
-    @classmethod
-    def set_force_color (cls, force_color=True):
-        cls._force_color = force_color
-
     @classmethod
     def format(self, s, color='org', indent=0):
         '''
@@ -68,13 +71,11 @@ class Color(metaclass=ColorConst):
         if s is None:
             return
 
-        colorize = self._force_color or sys.stdout.isatty()
-
         return '{indent}{color}{s}{org}'.format(
             indent=' ' * indent,
-            color=getattr(self, color, '') if colorize else '',
+            color=getattr(self, color, '') if self.colorize else '',
             s=s,
-            org=self.ORG if colorize else '',
+            org=self.ORG if self.colorize else '',
         )
 
     @classmethod

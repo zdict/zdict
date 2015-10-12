@@ -125,8 +125,7 @@ def set_args():
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
 
-    if args.force_color:
-        utils.Color.set_force_color()
+    utils.Color.colorize = args.force_color
 
     args.dict = args.dict.split(',')
 
