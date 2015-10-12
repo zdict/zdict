@@ -32,34 +32,37 @@ Usage
 
 ::
 
-   usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-sp] [-su]
-                [-dt yahoo,urban,moe,all] [-V]
-                [word [word ...]]
+  usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-sp] [-su]
+              [-dt urban,yahoo,moe,all] [-ld] [-V] [-c]
+              [word [word ...]]
 
-   positional arguments:
-     word                  Words for searching its translation
+  positional arguments:
+    word                  Words for searching its translation
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     -v, --version         show program's version number and exit
-     -d, --disable-db-cache
-                           Temporarily not using the result from db cache. (still
-                           save the result into db)
-     -t QUERY_TIMEOUT, --query-timeout QUERY_TIMEOUT
-                           Set timeout for every query. default is 5 seconds.
-     -sp, --show-provider  Show the dictionary provider of the queried word
-     -su, --show-url       Show the url of the queried word
-     -dt yahoo,urban,moe,all, --dict yahoo,urban,moe,all
-                           Must be seperated by comma and no spaces after each
-                           comma. Choose the dictionary you want. (default:
-                           yahoo) Use 'all' for qureying all dictionaries. If
-                           'all' or more than 1 dictionaries been chosen, --show-
-                           provider will be set to True in order to provide more
-                           understandable output.
-     -V, --verbose         Show more information for the queried word. (If the
-                           chosen dictionary have implemented verbose related
-                           functions)
-
+  optional arguments:
+    -h, --help            show this help message and exit
+    -v, --version         show program's version number and exit
+    -d, --disable-db-cache
+                          Temporarily not using the result from db cache. (still
+                          save the result into db)
+    -t QUERY_TIMEOUT, --query-timeout QUERY_TIMEOUT
+                          Set timeout for every query. default is 5 seconds.
+    -sp, --show-provider  Show the dictionary provider of the queried word
+    -su, --show-url       Show the url of the queried word
+    -dt urban,yahoo,moe,all, --dict urban,yahoo,moe,all
+                          Must be seperated by comma and no spaces after each
+                          comma. Choose the dictionary you want. (default:
+                          yahoo) Use 'all' for qureying all dictionaries. If
+                          'all' or more than 1 dictionaries been chosen, --show-
+                          provider will be set to True in order to provide more
+                          understandable output.
+    -ld, --list-dicts     Show currently supported dictionaries.
+    -V, --verbose         Show more information for the queried word. (If the
+                          chosen dictionary have implemented verbose related
+                          functions)
+    -c, --force-color     Force color printing (zdict automatically disable
+                          color printing when output is not a tty, use this
+                          option to force color printing)
 
 
 Screenshots
