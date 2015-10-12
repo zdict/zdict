@@ -21,6 +21,11 @@ class TestColor:
 
     @patch('zdict.utils.sys.stdout.isatty', return_value=False)
     def test_format_not_tty(self, isatty):
+        Color.colorize = True
+        assert '\33[31;1mtest\33[0m' == self.color.format('test', 'lred')
+        assert '\33[31mtest\33[0m' == self.color.format('test', 'red')
+        assert '  \33[31mtest\33[0m' == self.color.format('test', 'red', indent=2)
+        Color.colorize = False
         assert '  test' == self.color.format('test', 'red', indent=2)
         assert isatty.called
 

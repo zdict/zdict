@@ -125,6 +125,8 @@ def set_args():
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
 
+    # zdict automatically disable color when output is not a tty.
+    # utils.Color.colorize encapsulates ``force_color`` and ``isatty()`` logics
     utils.Color.colorize = args.force_color
 
     args.dict = args.dict.split(',')

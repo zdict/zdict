@@ -48,11 +48,11 @@ class ColorConst(type):
         )
 
     @property
-    def colorize(cls, force_color=True):
+    def colorize(cls):
         return cls._colorize or sys.stdout.isatty()
 
     @colorize.setter
-    def colorize(cls, force_color=True):
+    def colorize(cls, force_color):
         cls._colorize = force_color
 
 
