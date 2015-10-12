@@ -108,6 +108,14 @@ def get_args():
         (If the chosen dictionary have implemented verbose related functions)"
     )
 
+    parser.add_argument(
+        "-c", "--force-color",
+        default=False,
+        action="store_true",
+        help="Force color printing (zdict automatically disable color printing \
+        when output is not a tty, use this option to force color printing)"
+    )
+
     return parser.parse_args()
 
 
@@ -116,6 +124,9 @@ def set_args():
         for provider in sorted(dictionary_map, key=lambda x: x if x != 'yahoo' else ''):
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
+
+    if args.force_color:
+        utils.Color.set_force_color()
 
     args.dict = args.dict.split(',')
 

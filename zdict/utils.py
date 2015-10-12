@@ -48,6 +48,12 @@ class ColorConst(type):
 
 
 class Color(metaclass=ColorConst):
+    _force_color = False
+
+    @classmethod
+    def set_force_color (cls, force_color=True):
+        cls._force_color = force_color
+
     @classmethod
     def format(self, s, color='org', indent=0):
         '''
@@ -62,13 +68,13 @@ class Color(metaclass=ColorConst):
         if s is None:
             return
 
-        isatty = sys.stdout.isatty()
+        colorize = self._force_color or sys.stdout.isatty()
 
         return '{indent}{color}{s}{org}'.format(
             indent=' ' * indent,
-            color=getattr(self, color, '') if isatty else '',
+            color=getattr(self, color, '') if colorize else '',
             s=s,
-            org=self.ORG if isatty else '',
+            org=self.ORG if colorize else '',
         )
 
     @classmethod
