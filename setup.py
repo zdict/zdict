@@ -26,7 +26,6 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-import sys
 
 setup(
     packages=find_packages(exclude=['scripts']),
@@ -34,7 +33,7 @@ setup(
     install_requires=[
         'beautifulsoup4',
         'peewee',
-        ['readline', 'gnureadline'][sys.platform == 'darwin'],
+        'readline',
         'requests',
     ],
 
