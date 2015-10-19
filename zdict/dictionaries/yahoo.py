@@ -99,11 +99,10 @@ class YahooDict(DictBase):
         # handle pronounce
         pronu_value = data.find('span', id='pronunciation_pos').text
         if pronu_value:
-            p = re.compile('(\w+)(\[.*\])')
             content['pronounce'] = []
-            for pronu in pronu_value.split():
-                m = p.match(pronu)
-                content['pronounce'].append(m.group(1, 2))
+            for m in re.finditer('(\w+)(\[.*?\])', pronu_value):
+                if m:
+                    content['pronounce'].append(m.group(1, 2))
 
         # handle sound
         pronu_sound = data.find(class_='proun_sound')
