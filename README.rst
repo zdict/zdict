@@ -153,7 +153,9 @@ Related Projects
 ------------------------------
 
 * `zdict.vim <https://github.com/zdict/zdict.vim>`_
-    * A vim plugin for `zdict`
+    * A vim plugin integrate with zdict.
+* `zdict.sh <https://github.com/zdict/zdict.sh>`_
+    * A collection of shell completion scripts for zdict.
 
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
