@@ -1,16 +1,11 @@
 import locale
-import sys
-
-if sys.platform == 'darwin':
-    import gnureadline as readline
-else:
-    import readline
 
 from argparse import ArgumentParser
 
 from . import constants, utils
 from .completer import DictCompleter
 from .loader import get_dictionary_map
+from .utils import readline
 
 
 def check_zdict_dir_and_db():
