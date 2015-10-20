@@ -38,7 +38,7 @@ setup(
         'requests',
     ],
 
-    tests_require=['coverage', 'pytest', 'pytest-cov'],
+    tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline'],
     cmdclass={'test': PyTest},
 
     name='zdict',
