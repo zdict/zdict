@@ -1,5 +1,6 @@
 from ..utils import (Color, create_zdict_db_if_not_exists,
-                     create_zdict_dir_if_not_exists)
+                     create_zdict_dir_if_not_exists,
+                     import_readline)
 
 from pytest import raises
 from unittest.mock import patch
@@ -54,3 +55,21 @@ def test_create_zdict_db_if_not_exists(exists, constants, open):
 
     exists.assert_called_with('/mock')
     assert open.called
+
+
+@patch('zdict.utils.sys')
+def test_platform_readline(sys):
+    '''
+    Check the imported readline module on different platforms
+    '''
+    sys.platform = 'linux'
+    readline = import_readline()
+    assert readline.__name__ == 'readline'
+
+    sys.platform = 'darwin'
+    readline = import_readline()
+    assert readline.__name__ == 'gnureadline'
+
+    sys.platform = 'foo'
+    readline = import_readline()
+    assert readline.__name__ == 'readline'

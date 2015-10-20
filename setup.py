@@ -26,6 +26,7 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+import sys
 
 setup(
     packages=find_packages(exclude=['scripts']),
@@ -33,11 +34,11 @@ setup(
     install_requires=[
         'beautifulsoup4',
         'peewee',
-        'readline',
+        ['readline', 'gnureadline'][sys.platform == 'darwin'],
         'requests',
     ],
 
-    tests_require=['coverage', 'pytest', 'pytest-cov'],
+    tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline'],
     cmdclass={'test': PyTest},
 
     name='zdict',

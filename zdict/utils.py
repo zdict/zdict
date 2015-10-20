@@ -80,3 +80,14 @@ class Color(metaclass=ColorConst):
     @classmethod
     def print(self, *args, end='\n', **kwargs):
         print(self.format(*args, **kwargs), end=end)
+
+
+def import_readline():
+    if sys.platform == 'darwin':
+        import gnureadline as readline
+    else:
+        import readline
+    return readline
+
+
+readline = import_readline()
