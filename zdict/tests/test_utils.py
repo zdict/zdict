@@ -1,3 +1,5 @@
+import sys
+
 from ..utils import (Color, create_zdict_db_if_not_exists,
                      create_zdict_dir_if_not_exists,
                      import_readline)
@@ -57,19 +59,23 @@ def test_create_zdict_db_if_not_exists(exists, constants, open):
     assert open.called
 
 
-@patch('zdict.utils.sys')
-def test_platform_readline(sys):
+def test_platform_readline():
     '''
     Check the imported readline module on different platforms
     '''
-    sys.platform = 'linux'
-    readline = import_readline()
-    assert readline.__name__ == 'readline'
+    with patch.object(sys, 'platform', new='linux'):
+        readline = import_readline()
+        assert readline.__name__ == 'readline'
 
-    sys.platform = 'darwin'
-    readline = import_readline()
-    assert readline.__name__ == 'gnureadline'
+    with patch.object(sys, 'platform', new='darwin'):
+        with patch.object(sys, 'version_info', new=(3, 4)):
+            readline = import_readline()
+            assert readline.__name__ == 'gnureadline'
 
-    sys.platform = 'foo'
-    readline = import_readline()
-    assert readline.__name__ == 'readline'
+        with patch.object(sys, 'version_info', new=(3, 5)):
+            readline = import_readline()
+            assert readline.__name__ == 'readline'
+
+    with patch.object(sys, 'platform', new='foo'):
+        readline = import_readline()
+        assert readline.__name__ == 'readline'
