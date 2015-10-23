@@ -68,7 +68,10 @@ def test_platform_readline(sys):
 
     sys.platform = 'darwin'
     readline = import_readline()
-    assert readline.__name__ == 'gnureadline'
+    if sys.version_info < (3, 5):
+        assert readline.__name__ == 'gnureadline'
+    else:
+        assert readline.__name__ == 'readline'
 
     sys.platform = 'foo'
     readline = import_readline()

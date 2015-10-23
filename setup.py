@@ -26,18 +26,21 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
+requires = [
+    'beautifulsoup4',
+    'peewee',
+    'requests',
+]
+
 import sys
+if sys.platform == 'darwin' and sys.version_info < (3, 5):
+    requires.append('gnureadline')
+
 
 setup(
     packages=find_packages(exclude=['scripts']),
     scripts=['scripts/zdict'],
-    install_requires=[
-        'beautifulsoup4',
-        'peewee',
-        ['readline', 'gnureadline'][sys.platform == 'darwin'],
-        'requests',
-    ],
-
+    install_requires=requires,
     tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline'],
     cmdclass={'test': PyTest},
 
