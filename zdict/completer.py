@@ -16,4 +16,7 @@ class DictCompleter:
             word = record.word
             if word.startswith(text):
                 match.append(word)
-        return match[state]
+        try:
+            return match[state]
+        except IndexError:
+            return None

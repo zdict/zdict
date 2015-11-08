@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+
+from zdict import zdict_completer
+zdict_completer.main()
