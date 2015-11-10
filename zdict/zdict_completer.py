@@ -13,6 +13,9 @@ def main():
         try:
             for i in count():
                 word = completer(text, i)
+                if not isinstance(word, str):
+                    break
+
                 if word not in output_set:
                     print(word)
                     output_set.add(word)
