@@ -10,10 +10,8 @@ class DictCompleter:
         self.db.close()
 
     def complete(self, text, state):
-        match = []
+        if state == 0:  # new query
+            self.records = iter(
+                Record.select().where(Record.word.startswith(text)))
 
-        for record in Record.select():
-            word = record.word
-            if word.startswith(text):
-                match.append(word)
-        return match[state]
+        return next(self.records).word
