@@ -68,13 +68,8 @@ def test_platform_readline():
         assert readline.__name__ == 'readline'
 
     with patch.object(sys, 'platform', new='darwin'):
-        with patch.object(sys, 'version_info', new=(3, 4)):
-            readline = import_readline()
-            assert readline.__name__ == 'gnureadline'
-
-        with patch.object(sys, 'version_info', new=(3, 5)):
-            readline = import_readline()
-            assert readline.__name__ == 'readline'
+        readline = import_readline()
+        assert readline.__name__ == 'gnureadline'
 
     with patch.object(sys, 'platform', new='foo'):
         readline = import_readline()

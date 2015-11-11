@@ -32,7 +32,7 @@ requires = [
     'requests',
 ]
 
-if sys.platform == 'darwin' and sys.version_info < (3, 5):
+if sys.platform == 'darwin':
     requires.append('gnureadline')
 
 

@@ -83,7 +83,7 @@ class Color(metaclass=ColorConst):
 
 
 def import_readline():
-    if sys.platform == 'darwin' and sys.version_info < (3, 5):
+    if sys.platform == 'darwin':
         import gnureadline as readline
     else:
         import readline
