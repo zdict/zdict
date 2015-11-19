@@ -192,6 +192,18 @@ def execute_zdict():
 
 
 def main():
+    # import os
+    # _ = os.environ.get('VIRTUAL_ENV', None)
+    # print(_)
+    # import sys
+    # print(sys.path)
+    # if _:
+    #     sys.path = [ _ + '/lib/python3.5/site-packages'] + sys.path
+    #     print(sys.path)
+    #     import pyjokes
+    #     print(dir(pyjokes))
+    #     pass
+    # exit()
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
 
