@@ -101,6 +101,14 @@ Screenshots
 .. image:: http://i.imgur.com/nh62wi1.png
 
 
+`SpanishDict <http://www.spanishdict.com/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: http://i.imgur.com/Ld2QVvP.png
+
+.. image:: http://i.imgur.com/HJ9h5JO.png
+
+
 Development & Contributing
 ---------------------------
 
