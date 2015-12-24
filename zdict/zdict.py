@@ -199,11 +199,15 @@ def main():
     # print(sys.path)
     # if _:
     #     sys.path = [ _ + '/lib/python3.5/site-packages'] + sys.path
-    #     print(sys.path)
-    #     import pyjokes
-    #     print(dir(pyjokes))
-    #     pass
+    #
+    # import importlib
+    # if importlib.util.find_spec('pyjokes'):
+    #     print('pyjokes module exists')
+    # else:
+    #     print('pyjokes module does not exist')
+    #
     # exit()
+
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
 
