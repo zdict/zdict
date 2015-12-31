@@ -4,7 +4,9 @@ class QueryError(Exception):
         self.status_code = status_code
 
     def __str__(self):
-        return '"{}" query failed on http[{}].'.format(self.word, self.status_code)
+        return '"{}" query failed on http[{}].'.format(
+            self.word, self.status_code
+        )
 
 
 class NotFoundError(Exception):
@@ -23,3 +25,16 @@ class NoNetworkError(Exception):
 class TimeoutError(Exception):
     def __str__(self):
         return 'Query timeout!'
+
+
+class UnexpectedError(Exception):
+    def __init__(self):
+        print(
+            '\n'.join((
+                '',
+                "Unexpected error happened.",
+                "Please report the error message below to",
+                "https://github.com/zdict/zdict/issues",
+                '',
+            ))
+        )

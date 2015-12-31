@@ -121,7 +121,10 @@ def get_args():
 
 def set_args():
     if args.list_dicts:
-        for provider in sorted(dictionary_map, key=lambda x: x if x != 'yahoo' else ''):
+        for provider in sorted(
+            dictionary_map,
+            key=lambda x: x if x != 'yahoo' else ''
+        ):
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
 

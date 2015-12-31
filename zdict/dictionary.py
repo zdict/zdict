@@ -4,7 +4,6 @@ import json
 import requests
 
 from . import exceptions
-from . import constants
 from .models import Record, db
 from .utils import Color
 
@@ -71,7 +70,7 @@ class DictBase(metaclass=abc.ABCMeta):
     def query_db_cache(self, word: str) -> Record:
         try:
             record = Record.get(word=word, source=self.provider)
-        except Record.DoesNotExist as e:
+        except Record.DoesNotExist:
             return None
         else:
             return record
@@ -134,24 +133,27 @@ class DictBase(metaclass=abc.ABCMeta):
 
         :param word: single word
         '''
+
         try:
             res = requests.get(self._get_url(word), timeout=timeout)
-        except requests.exceptions.ConnectionError as e:
-            error_msg = str(e.args)
-
-            errs = {}
-            errs["NoNetworkError()"] = \
-                "gaierror(8, 'nodename nor servname provided, or not known')"
-            errs["TimeoutError()"] = \
-                "BlockingIOError(36, 'Operation now in progress')"
-
-            for err, msg in errs.items():
-                if msg in error_msg:
-                    r = 'exceptions.' + err
-                    raise eval(r)
         except requests.exceptions.ReadTimeout as e:
             raise exceptions.TimeoutError()
+        except requests.exceptions.ConnectionError as e:
+            errors = {
+                "BlockingIOError(36, 'Operation now in progress')":
+                    "exceptions.TimeoutError()",
+                "Failed to establish a new connection":
+                    "exceptions.NoNetworkError()",
+            }
+            for error, exception in errors.items():
+                if error in str(e.args):
+                    raise eval(exception)
+            else:
+                raise exceptions.UnexpectedError()
+        except:
+            raise exceptions.UnexpectedError()
 
         if res.status_code != 200:
             raise exceptions.QueryError(word, res.status_code)
+
         return res.text
