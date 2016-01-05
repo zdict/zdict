@@ -2,7 +2,8 @@ import sys
 
 from ..utils import (Color, create_zdict_db_if_not_exists,
                      create_zdict_dir_if_not_exists,
-                     import_readline)
+                     import_readline,
+                     import_pyjokes_module)
 
 from pytest import raises
 from unittest.mock import patch
@@ -74,3 +75,10 @@ def test_platform_readline():
     with patch.object(sys, 'platform', new='foo'):
         readline = import_readline()
         assert readline.__name__ == 'readline'
+
+
+def test_import_pyjokes_module():
+    with patch('importlib.util.find_spec', return_value=None):
+        assert import_pyjokes_module() == None
+
+    assert import_pyjokes_module().__name__ == 'pyjokes'

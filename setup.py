@@ -40,7 +40,7 @@ setup(
     packages=find_packages(exclude=['scripts']),
     scripts=['scripts/zdict'],
     install_requires=requires,
-    tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline'],
+    tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline', 'pyjokes'],
     cmdclass={'test': PyTest},
 
     name='zdict',
