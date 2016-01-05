@@ -52,7 +52,7 @@ class YahooDict(DictBase):
                         for i, s in enumerate(sentence.split('*')):
                             self.color.print(
                                 s,
-                                'lindigo' if i == 1 else 'indigo',
+                                'lindigo' if i % 2 else 'indigo',
                                 end=''
                             )
                         print()
@@ -79,7 +79,7 @@ class YahooDict(DictBase):
                                 for i, s in enumerate(sentence.split('*')):
                                     self.color.print(
                                         s,
-                                        'lindigo' if i == 1 else 'indigo',
+                                        'lindigo' if i % 2 else 'indigo',
                                         end=''
                                     )
                                 print()
