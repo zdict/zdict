@@ -6,6 +6,7 @@ from . import constants, utils
 from .completer import DictCompleter
 from .loader import get_dictionary_map
 from .utils import readline
+from .utils import pyjokes
 
 
 def check_zdict_dir_and_db():
@@ -122,9 +123,8 @@ def get_args():
 def set_args():
     if args.list_dicts:
         for provider in sorted(
-            dictionary_map,
-            key=lambda x: x if x != 'yahoo' else ''
-        ):
+                dictionary_map,
+                key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)):
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
 
@@ -145,9 +145,19 @@ def set_args():
 
 def normal_mode():
     for word in args.words:
+        pyjokes_result = ''
+        if 'pyjokes' not in args.dict and pyjokes:
+            pyjokes_dict = dictionary_map['pyjokes']()
+            pyjokes_result = pyjokes_dict.query(word.lower(), args.query_timeout, args.verbose)
+            if pyjokes_result:
+                args.show_provider = True
+
         for d in args.dict:
             zdict = dictionary_map[d]()
             zdict.lookup(word, args)
+
+        if pyjokes_result:
+            pyjokes_dict.output(pyjokes_result, args)
 
 
 class MetaInteractivePrompt():
@@ -192,22 +202,6 @@ def execute_zdict():
 
 
 def main():
-    # import os
-    # _ = os.environ.get('VIRTUAL_ENV', None)
-    # print(_)
-    # import sys
-    # print(sys.path)
-    # if _:
-    #     sys.path = [ _ + '/lib/python3.5/site-packages'] + sys.path
-    #
-    # import importlib
-    # if importlib.util.find_spec('pyjokes'):
-    #     print('pyjokes module exists')
-    # else:
-    #     print('pyjokes module does not exist')
-    #
-    # exit()
-
     if user_set_encoding_and_is_utf8():
         check_zdict_dir_and_db()
 
