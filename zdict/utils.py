@@ -91,17 +91,3 @@ def import_readline():
 
 
 readline = import_readline()
-
-
-def import_pyjokes_module():
-    v = os.environ.get('VIRTUAL_ENV', None)
-    if v:
-        sys.path = [v + '/lib/python3.5/site-packages'] + sys.path
-
-    import importlib
-    import importlib.util
-    if importlib.util.find_spec('pyjokes'):
-        return importlib.import_module('pyjokes')
-
-
-pyjokes = import_pyjokes_module()

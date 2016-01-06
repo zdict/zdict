@@ -2,11 +2,10 @@ import locale
 
 from argparse import ArgumentParser
 
-from . import constants, utils
+from . import constants, utils, easter_eggs
 from .completer import DictCompleter
 from .loader import get_dictionary_map
 from .utils import readline
-from .utils import pyjokes
 
 
 def check_zdict_dir_and_db():
@@ -145,19 +144,11 @@ def set_args():
 
 def normal_mode():
     for word in args.words:
-        pyjokes_result = ''
-        if 'pyjokes' not in args.dict and pyjokes:
-            pyjokes_dict = dictionary_map['pyjokes']()
-            pyjokes_result = pyjokes_dict.query(word.lower(), args.query_timeout, args.verbose)
-            if pyjokes_result:
-                args.show_provider = True
-
         for d in args.dict:
             zdict = dictionary_map[d]()
             zdict.lookup(word, args)
 
-        if pyjokes_result:
-            pyjokes_dict.output(pyjokes_result, args)
+    easter_eggs.lookup_pyjokes(word)
 
 
 class MetaInteractivePrompt():
