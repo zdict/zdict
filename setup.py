@@ -21,7 +21,7 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
@@ -55,8 +55,13 @@ setup(
     url='https://github.com/zdict/zdict',
     keywords="cli, dictionary, framework",
     description="The last dictionary framework you need. (?)",
-    long_description="zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.",
-    download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(zdict.__version__),
+    long_description=(
+        "zdict is a CLI dictionay framework mainly focus on "
+        "any kind of online dictionary."
+    ),
+    download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(
+        zdict.__version__
+    ),
     platforms=['Linux', 'Mac'],
     license="GPL3",
     classifiers=[
