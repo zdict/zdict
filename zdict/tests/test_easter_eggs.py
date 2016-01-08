@@ -1,8 +1,5 @@
-import sys
-
 from ..easter_eggs import (import_pyjokes_module, get_pyjoke)
 
-from pytest import raises
 from unittest.mock import patch
 
 

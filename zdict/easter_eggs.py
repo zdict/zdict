@@ -19,7 +19,8 @@ def import_pyjokes_module():
 
 
 def get_pyjoke(pyjokes, word: str):
-    if not pyjokes: return
+    if not pyjokes:
+        return
 
     try:
         # very basic string searching in jokes
@@ -32,15 +33,19 @@ def get_pyjoke(pyjokes, word: str):
                 pyjokes.get_jokes()
             ))
         )
-        return Record(word=word, content=r, source='pyjokes')
     except IndexError:
         return
+    else:
+        return Record(word=word, content=r, source='pyjokes')
 
 
 def show_pyjoke(record: Record):
-    if not record: return
+    if not record:
+        return
 
-    for i,s in enumerate(re.split(r'\b({})\b'.format(record.word), record.content)):
+    for i, s in enumerate(
+        re.split(r'\b({})\b'.format(record.word), record.content)
+    ):
         Color.print(
             s,
             'lindigo' if i % 2 else 'indigo',
@@ -52,7 +57,9 @@ def show_pyjoke(record: Record):
 
 def lookup_pyjokes(word: str):
     pyjokes = import_pyjokes_module()
-    if not pyjokes: return
+
+    if not pyjokes:
+        return
 
     record = get_pyjoke(pyjokes, word)
     if record:
