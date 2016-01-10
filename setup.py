@@ -56,7 +56,7 @@ setup(
     keywords="cli, dictionary, framework",
     description="The last dictionary framework you need. (?)",
     long_description=(
-        "zdict is a CLI dictionay framework mainly focus on "
+        "zdict is a CLI dictionary framework mainly focus on "
         "any kind of online dictionary."
     ),
     download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(
