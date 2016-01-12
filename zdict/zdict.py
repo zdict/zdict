@@ -2,7 +2,7 @@ import locale
 
 from argparse import ArgumentParser
 
-from . import constants, utils
+from . import constants, utils, easter_eggs
 from .completer import DictCompleter
 from .loader import get_dictionary_map
 from .utils import readline
@@ -122,9 +122,8 @@ def get_args():
 def set_args():
     if args.list_dicts:
         for provider in sorted(
-            dictionary_map,
-            key=lambda x: x if x != 'yahoo' else ''
-        ):
+                dictionary_map,
+                key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)):
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
         exit()
 
@@ -148,6 +147,8 @@ def normal_mode():
         for d in args.dict:
             zdict = dictionary_map[d]()
             zdict.lookup(word, args)
+
+    easter_eggs.lookup_pyjokes(word)
 
 
 class MetaInteractivePrompt():

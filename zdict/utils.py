@@ -36,7 +36,7 @@ class ColorConst(type):
         color = color.upper()
         _color = color if color[0] != 'L' else color[1:]
 
-        if not _color in d.keys():
+        if _color not in d.keys():
             raise AttributeError
 
         return cls.COLOR_TEMPLATE.format(
@@ -51,7 +51,7 @@ class Color(metaclass=ColorConst):
     _force_color = False
 
     @classmethod
-    def set_force_color (cls, force_color=True):
+    def set_force_color(cls, force_color=True):
         cls._force_color = force_color
 
     @classmethod
