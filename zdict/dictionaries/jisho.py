@@ -37,16 +37,41 @@ class JishoDict(DictBase):
                 self.color.print(reading, 'lyellow')
 
             if word:
-                self.color.print(word, 'green', indent=2)
+                self.color.print(word, 'yellow')
+            print()
 
-            for sense in data['senses']:
-                self.color.print(';'.join(sense['english_definitions']), 'green', indent=2)
+            for idx, sense in enumerate(data['senses'], 1):
 
+                if sense['parts_of_speech']:
+                    self.color.print(', '.join(sense['parts_of_speech']), 'lred')
+
+                self.color.print(str(idx) + '. ' + '; '.join(sense['english_definitions']), 'lgreen', indent=2)
+
+                if sense['see_also']:
+                    self.color.print('See also ' + ', '.join(sense['see_also']), 'blue', indent=4)
+                if sense['restrictions']:
+                    self.color.print('Only to ' + ', '.join(sense['restrictions']), 'blue', indent=4)
         print()
 
+        # there are other forms for this word.
+        if len(data['japanese']) > 1:
+
+            self.color.print('Other forms')
+            word_forms = []
+            for word_form in data['japanese'][1:]:
+                
+                reading = word_form.get('reading', '')
+                word = word_form.get('word', '')
+                word_forms.append('{word}[{reading}]'.format(word=word, reading=reading))
+
+            self.color.print(', '.join(word_forms), 'yellow', indent=2)
 
     def query(self, word: str, timeout: float, verbose=False):
         content = self._get_raw(word, timeout)
+
+        content_json = json.loads(content)
+        if not content_json['data']:
+            raise NotFoundError(word)
 
         record = Record(
                     word=word,
