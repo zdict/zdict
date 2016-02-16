@@ -38,7 +38,7 @@ if sys.platform == 'darwin':
 
 setup(
     packages=find_packages(exclude=['scripts']),
-    scripts=['scripts/zdict'],
+    scripts=['scripts/zdict', 'scripts/_zdict_dump'],
     install_requires=requires,
     tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline', 'pyjokes'],
     cmdclass={'test': PyTest},
