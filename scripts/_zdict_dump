@@ -4,10 +4,13 @@ import sys
 
 from zdict.models import Record
 
-if len(sys.argv) >= 2:
+if len(sys.argv) == 1:
+    prefix = ''
+elif len(sys.argv) == 2:
     prefix = sys.argv[1]
 else:
-    prefix = ''
+    print('Usage: {} prefix'.format(sys.argv[0]), file=sys.stderr)
+    exit(64)
 
 for record in Record.select().where(Record.word.startswith(prefix)):
     print(record.word)
