@@ -6,6 +6,7 @@ from . import constants, utils, easter_eggs
 from .completer import DictCompleter
 from .loader import get_dictionary_map
 from .utils import readline, check_zdict_dir_and_db
+from .api import dump
 
 
 def user_set_encoding_and_is_utf8():
@@ -111,6 +112,13 @@ def get_args():
         when output is not a tty, use this option to force color printing)"
     )
 
+    parser.add_argument(
+        '--dump', dest='pattern',
+        nargs='?',
+        default=None, const=r'^.*$',
+        help='Dump the querying history, can be filtered with regex'
+    )
+
     return parser.parse_args()
 
 
@@ -120,6 +128,11 @@ def set_args():
                 dictionary_map,
                 key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)):
             print('{}: {}'.format(provider, dictionary_map[provider]().title))
+        exit()
+
+    if args.pattern:
+        for word in dump(pattern=args.pattern):
+            print(word)
         exit()
 
     if args.force_color:
