@@ -1,4 +1,5 @@
 from ...dictionaries.yahoo import YahooDict
+from ...utils import check_zdict_dir_and_db
 
 
 class TestyDict:

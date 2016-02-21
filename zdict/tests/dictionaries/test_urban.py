@@ -1,6 +1,7 @@
 from ...dictionaries.urban import UrbanDict
 from ...exceptions import NotFoundError
 from ...models import Record
+from ...utils import check_zdict_dir_and_db
 
 from pytest import raises
 from unittest.mock import Mock, patch
