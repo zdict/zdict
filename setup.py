@@ -4,9 +4,6 @@ import zdict
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
-zdict.utils.create_zdict_dir_if_not_exists()
-zdict.utils.create_zdict_db_if_not_exists()
-
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
