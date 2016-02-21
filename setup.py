@@ -1,8 +1,19 @@
 import sys
-import zdict
+import os
 
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
+
+
+constants_file_path = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    'zdict/constants.py'
+)
+with open(constants_file_path) as constants:
+    for line in constants:
+        if line.startswith('VERSION'):
+            code = compile(line, '<string>', 'single')
+            version = code.co_consts[0]
 
 
 class PyTest(TestCommand):
@@ -41,7 +52,7 @@ setup(
     cmdclass={'test': PyTest},
 
     name='zdict',
-    version=zdict.__version__,
+    version=version,
     author='Shun-Yi Jheng',
     author_email='M157q.tw@gmail.com',
     maintainer='Shun-Yi Jheng, Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
@@ -57,7 +68,7 @@ setup(
         "any kind of online dictionary."
     ),
     download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(
-        zdict.__version__
+        version
     ),
     platforms=['Linux', 'Mac'],
     license="GPL3",
