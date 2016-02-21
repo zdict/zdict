@@ -14,6 +14,11 @@ def create_zdict_db_if_not_exists():
         open(constants.DB_FILE, 'a').close()
 
 
+def check_zdict_dir_and_db():
+    create_zdict_dir_if_not_exists()
+    create_zdict_db_if_not_exists()
+
+
 class ColorConst(type):
     COLOR_TEMPLATE = "\33[{}m"
     COLOR_LIST = (

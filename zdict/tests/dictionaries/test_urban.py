@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 class TestUrbanDict:
     def setup_method(self, method):
+        check_zdict_dir_and_db()
         self.dict = UrbanDict()
 
     def teardown_method(self, method):
