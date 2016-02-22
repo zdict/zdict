@@ -5,16 +5,20 @@ from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 
-constants_file_path = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    'zdict/constants.py'
-)
-with open(constants_file_path) as constants:
-    for line in constants:
-        if line.startswith('VERSION'):
-            code = compile(line, '<string>', 'single')
-            version = code.co_consts[0]
+def get_zdict_version():
+    constants_file_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        'zdict/constants.py'
+    )
+    with open(constants_file_path) as constants:
+        for line in constants:
+            if line.startswith('VERSION'):
+                code = compile(line, '<string>', 'single')
+                version = code.co_consts[0]
 
+        return version
+
+version = get_zdict_version()
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
