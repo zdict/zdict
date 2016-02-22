@@ -1,6 +1,7 @@
 from ...dictionaries.urban import UrbanDict
 from ...exceptions import NotFoundError
 from ...models import Record
+from ...utils import check_zdict_dir_and_db
 
 from pytest import raises
 from unittest.mock import Mock, patch
@@ -8,6 +9,7 @@ from unittest.mock import Mock, patch
 
 class TestUrbanDict:
     def setup_method(self, method):
+        check_zdict_dir_and_db()
         self.dict = UrbanDict()
 
     def teardown_method(self, method):

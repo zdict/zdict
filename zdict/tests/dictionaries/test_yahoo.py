@@ -1,8 +1,10 @@
 from ...dictionaries.yahoo import YahooDict
+from ...utils import check_zdict_dir_and_db
 
 
 class TestyDict:
     def setup_method(self, method):
+        check_zdict_dir_and_db()
         self.dict = YahooDict()
 
     def teardown_method(self, method):

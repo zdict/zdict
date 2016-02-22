@@ -1,6 +1,7 @@
 from ...dictionaries.moe import MoeDict
 from ...exceptions import NotFoundError, QueryError
 from ...models import Record
+from ...utils import check_zdict_dir_and_db
 
 from pytest import raises
 from unittest.mock import Mock, patch
@@ -8,6 +9,7 @@ from unittest.mock import Mock, patch
 
 class TestMoeDict:
     def setup_method(self, method):
+        check_zdict_dir_and_db()
         self.dict = MoeDict()
 
     def teardown_method(self, method):
@@ -48,7 +50,7 @@ class TestMoeDict:
                     "type": "形",
                     "synonyms": "尛",
                     "antonyms": "萌"
-                }], 
+                }],
                 "pinyin": "yàn"
             }],
             "non_radical_stroke_count": 15,

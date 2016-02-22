@@ -5,12 +5,7 @@ from argparse import ArgumentParser
 from . import constants, utils, easter_eggs
 from .completer import DictCompleter
 from .loader import get_dictionary_map
-from .utils import readline
-
-
-def check_zdict_dir_and_db():
-    utils.create_zdict_dir_if_not_exists()
-    utils.create_zdict_db_if_not_exists()
+from .utils import readline, check_zdict_dir_and_db
 
 
 def user_set_encoding_and_is_utf8():
