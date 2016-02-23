@@ -6,7 +6,8 @@ python:
     - "nightly"
 
 install:
-    - "pip install python-coveralls"
+    - "pip install -U pip"
+    - "pip install -U pytest python-coveralls"
     - "pip install ."
 
 script:
