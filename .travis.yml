@@ -3,11 +3,14 @@ language: python
 python:
     - "3.4"
     - "3.5"
+    - "3.5.1"
     - "nightly"
 
 install:
-    - "pip install python-coveralls"
+    - "pip install -U pip"
+    - "pip install -U pytest python-coveralls"
     - "pip install ."
+    - "pip freeze"
 
 script:
     - python setup.py test
@@ -23,3 +26,4 @@ notifications:
 matrix:
     allow_failures:
         - python: "nightly"
+        - python: "3.5"  # maybe there is a bug of sqlite3 in 3.5.0
