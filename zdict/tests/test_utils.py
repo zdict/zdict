@@ -1,10 +1,10 @@
 import sys
 
-from ..utils import (Color, create_zdict_db_if_not_exists,
-                     create_zdict_dir_if_not_exists,
-                     import_readline)
+from zdict.utils import (Color, create_zdict_db_if_not_exists,
+                         create_zdict_dir_if_not_exists,
+                         import_readline)
 
-from pytest import raises
+from pytest import mark, raises
 from unittest.mock import patch
 
 
@@ -59,6 +59,8 @@ def test_create_zdict_db_if_not_exists(exists, constants, open):
     assert open.called
 
 
+@mark.skipif(sys.platform.startswith('freebsd'),
+             reason="gnureadline installation failed on freebsd")
 def test_platform_readline():
     '''
     Check the imported readline module on different platforms

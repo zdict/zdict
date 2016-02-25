@@ -18,6 +18,14 @@ def get_zdict_version():
 
         return version
 
+def get_test_req():
+    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes']
+
+    if not sys.platform.startswith('freebsd'):
+        reqs.append('gnureadline')
+
+    return reqs
+
 version = get_zdict_version()
 
 class PyTest(TestCommand):
@@ -52,7 +60,7 @@ setup(
     packages=find_packages(exclude=['scripts']),
     scripts=['scripts/zdict'],
     install_requires=requires,
-    tests_require=['coverage', 'pytest', 'pytest-cov', 'gnureadline', 'pyjokes'],
+    tests_require=get_test_req(),
     cmdclass={'test': PyTest},
 
     name='zdict',
