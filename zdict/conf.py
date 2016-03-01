@@ -8,17 +8,27 @@ simply.
 Usage:
 
 >>> from zdict.conf import conf, start_conf_thread
+
 >>> start_conf_thread()
+
 >>> conf.foo
 'bar'
+
 >>> conf.truth = 42
+
+>>> conf
+zdict.conf.conf:
+foo     = bar
+truth   = 42
+
 >>> iter(conf)
-dict_items([('foo', 'bar')])
+dict_items([('foo', 'bar'), ('truth', 42)])
 '''
 
 import logging
 
 from copy import deepcopy
+from itertools import starmap
 from queue import Queue
 from threading import Event, Thread
 
@@ -56,7 +66,7 @@ class _ConfWorker:
 
             elif msg.method == 'get_iter':
                 # msg.value is a _Future object
-                msg.value.set(deepcopy(conf).items())
+                msg.value.set(iter(deepcopy(conf).items()))
 
             elif msg.method == 'set':
                 conf[msg.name] = msg.value
@@ -121,6 +131,10 @@ class _Conf:
 
     def __iter__(self):
         return self.__worker.get(method='get_iter', name=None)
+
+    def __repr__(self):
+        return 'zdict.conf.conf:\n{content}'.format(
+            content='\n'.join(starmap('{}\t= {}'.format, iter(self))))
 
 
 class _Future(Event):
