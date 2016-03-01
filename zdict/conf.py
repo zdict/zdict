@@ -12,6 +12,8 @@ Usage:
 >>> conf.foo
 'bar'
 >>> conf.truth = 42
+>>> iter(conf)
+dict_items([('foo', 'bar')])
 '''
 
 import logging
@@ -51,6 +53,11 @@ class _ConfWorker:
                     msg.value.set_error()
                     continue
                 msg.value.set(deepcopy(conf[msg.name]))
+
+            elif msg.method == 'get_iter':
+                # msg.value is a _Future object
+                msg.value.set(deepcopy(conf).items())
+
             elif msg.method == 'set':
                 conf[msg.name] = msg.value
 
@@ -68,8 +75,8 @@ class _ConfWorker:
         return cls._conf_thread
 
     @classmethod
-    def get(cls, name):
-        msg = _Message('get', name)
+    def get(cls, name, method='get'):
+        msg = _Message(method, name)
         cls.mq.put(msg)
 
         ret = msg.value.result  # msg.value is a _Future object
@@ -113,7 +120,7 @@ class _Conf:
         self.__worker.set(name, value)
 
     def __iter__(self):
-        raise NotImplemented()
+        return self.__worker.get(method='get_iter', name=None)
 
 
 class _Future(Event):
@@ -134,28 +141,29 @@ class _Future(Event):
     def set_error(self):
         super().set()
         self.error = True
-        self._value = None
+        self._value = None  # set something, avoid blocking ``self.wait``
 
 
 class _Message:
     '''
     The message object to communicate with config thread via ``Queue``
 
-    We have two format for message:
+    We have following message formats:
     - ('get', name, _Future)
+    - ('get_iter', name, _Future)
     - ('set', name, value)
 
-    :param method: the action ``get`` or ``set``
+    :param method: the action ``get.*`` or ``set``
     :param str name: the config property name
     :param value: required arg for ``set``
     '''
-    def __init__(self, method: 'get' or 'set', name, value=None):
-        if method not in ('get', 'set'):
+    def __init__(self, method: 'get.*' or 'set', name, value=None):
+        if not any(map(method.startswith, ('get', 'set'))):
             raise TypeError('Invalide method {}'.format(method))
 
         self.method = method
         self.name = name
-        self.value = _Future() if self.method == 'get' else value
+        self.value = _Future() if self.method.startswith('get') else value
 
     def __repr__(self):
         return '_Message: ({}, {}, {})'.format(
