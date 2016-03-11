@@ -118,10 +118,13 @@ class DictBase(metaclass=abc.ABCMeta):
             record = self.query(word, args.query_timeout, args.verbose)
         except exceptions.NoNetworkError as e:
             self.color.print(e, 'red')
+            print()
         except exceptions.TimeoutError as e:
             self.color.print(e, 'red')
+            print()
         except exceptions.NotFoundError as e:
             self.color.print(e, 'yellow')
+            print()
         else:
             self.save(record, word)
             self.show(record, args.verbose)
