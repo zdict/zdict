@@ -24,8 +24,6 @@ class JishoDict(DictBase):
     def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
 
-        self.color.print('This dictionary is still WIP', 'lred')
-
         #for data in content['data']:
         for data in (content['data'][0],):
 
@@ -59,7 +57,7 @@ class JishoDict(DictBase):
             self.color.print('Other forms')
             word_forms = []
             for word_form in data['japanese'][1:]:
-                
+
                 reading = word_form.get('reading', '')
                 word = word_form.get('word', '')
                 word_forms.append('{word}[{reading}]'.format(word=word, reading=reading))
