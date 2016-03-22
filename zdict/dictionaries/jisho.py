@@ -14,6 +14,10 @@ class JishoDict(DictBase):
     @property
     def provider(self):
         # Change `template` to the short name of the new dictionary.
+        return 'jisho'
+
+    @property
+    def title(self):
         return 'Jisho'
 
 
