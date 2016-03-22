@@ -20,15 +20,13 @@ class JishoDict(DictBase):
     def title(self):
         return 'Jisho'
 
-
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
-
 
     def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
 
-        #for data in content['data']:
+        # for data in content['data']:
         for data in (content['data'][0],):
 
             # print word
@@ -45,14 +43,32 @@ class JishoDict(DictBase):
             for idx, sense in enumerate(data['senses'], 1):
 
                 if sense['parts_of_speech']:
-                    self.color.print(', '.join(sense['parts_of_speech']), 'lred')
+                    self.color.print(
+                        ', '.join(sense['parts_of_speech']),
+                        'lred',
+                    )
 
-                self.color.print(str(idx) + '. ' + '; '.join(sense['english_definitions']), 'lgreen', indent=2)
+                self.color.print(
+                    "{}. {}".format(
+                        idx,
+                        '; '.join(sense['english_definitions'])
+                    ),
+                    'lgreen',
+                    indent=2,
+                )
 
                 if sense['see_also']:
-                    self.color.print('See also ' + ', '.join(sense['see_also']), 'blue', indent=4)
+                    self.color.print(
+                        "See also {}".format(', '.join(sense['see_also'])),
+                        'blue',
+                        indent=4,
+                    )
                 if sense['restrictions']:
-                    self.color.print('Only to ' + ', '.join(sense['restrictions']), 'blue', indent=4)
+                    self.color.print(
+                        "Only to {}".format(', '.join(sense['restrictions'])),
+                        'blue',
+                        indent=4
+                    )
         print()
 
         # there are other forms for this word.
@@ -64,7 +80,9 @@ class JishoDict(DictBase):
 
                 reading = word_form.get('reading', '')
                 word = word_form.get('word', '')
-                word_forms.append('{word}[{reading}]'.format(word=word, reading=reading))
+                word_forms.append(
+                    '{word}[{reading}]'.format(word=word, reading=reading)
+                )
 
             self.color.print(', '.join(word_forms), 'yellow', indent=2)
 
