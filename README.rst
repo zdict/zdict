@@ -33,8 +33,9 @@ Usage
 ::
 
   usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-sp] [-su]
-              [-dt urban,yahoo,moe,all] [-ld] [-V] [-c]
-              [word [word ...]]
+               [-dt spanish,jisho,moe,yahoo,urban,all] [-ld] [-V] [-c]
+               [--dump [PATTERN]]
+               [word [word ...]]
 
   positional arguments:
     word                  Words for searching its translation
@@ -49,7 +50,7 @@ Usage
                           Set timeout for every query. default is 5 seconds.
     -sp, --show-provider  Show the dictionary provider of the queried word
     -su, --show-url       Show the url of the queried word
-    -dt urban,yahoo,moe,all, --dict urban,yahoo,moe,all
+    -dt spanish,jisho,moe,yahoo,urban,all, --dict spanish,jisho,moe,yahoo,urban,all
                           Must be seperated by comma and no spaces after each
                           comma. Choose the dictionary you want. (default:
                           yahoo) Use 'all' for qureying all dictionaries. If
@@ -63,6 +64,7 @@ Usage
     -c, --force-color     Force color printing (zdict automatically disable
                           color printing when output is not a tty, use this
                           option to force color printing)
+    --dump [PATTERN]      Dump the querying history, can be filtered with regex
 
 
 Screenshots
