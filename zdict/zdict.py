@@ -74,11 +74,14 @@ def get_args():
         help="Show the url of the queried word"
     )
 
+    available_dictionaries = list(dictionary_map.keys())
+    available_dictionaries.append('all')
     parser.add_argument(
         "-dt", "--dict",
         default="yahoo",
         action="store",
-        metavar=','.join(list(dictionary_map.keys()) + ['all']),
+        choices=available_dictionaries,
+        metavar=','.join(available_dictionaries),
         help="""
             Must be seperated by comma and no spaces after each comma.
             Choose the dictionary you want. (default: yahoo)
