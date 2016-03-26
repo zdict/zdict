@@ -26,9 +26,7 @@ class JishoDict(DictBase):
     def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
 
-        # for data in content['data']:
-        for data in (content['data'][0],):
-
+        for data in content['data']:
             # print word
             reading = data['japanese'][0].get('reading', '')
             word = data['japanese'][0].get('word', '')
@@ -69,26 +67,27 @@ class JishoDict(DictBase):
                         'blue',
                         indent=4
                     )
+
+            # there are other forms for this word.
+            if len(data['japanese']) > 1:
+                self.color.print('Other forms')
+                word_forms = []
+                for word_form in data['japanese'][1:]:
+
+                    reading = word_form.get('reading', '')
+                    word = word_form.get('word', '')
+                    word_forms.append(
+                        '{word}[{reading}]'.format(word=word, reading=reading)
+                    )
+
+                self.color.print(', '.join(word_forms), 'yellow', indent=2)
+
+            if not verbose:
+                break
         print()
-
-        # there are other forms for this word.
-        if len(data['japanese']) > 1:
-
-            self.color.print('Other forms')
-            word_forms = []
-            for word_form in data['japanese'][1:]:
-
-                reading = word_form.get('reading', '')
-                word = word_form.get('word', '')
-                word_forms.append(
-                    '{word}[{reading}]'.format(word=word, reading=reading)
-                )
-
-            self.color.print(', '.join(word_forms), 'yellow', indent=2)
 
     def query(self, word: str, timeout: float, verbose=False):
         content = self._get_raw(word, timeout)
-
         content_json = json.loads(content)
         if not content_json['data']:
             raise NotFoundError(word)
@@ -98,5 +97,4 @@ class JishoDict(DictBase):
                     content=content,
                     source=self.provider,
                  )
-
         return record
