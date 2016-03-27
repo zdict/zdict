@@ -159,6 +159,20 @@ or::
     $ py.test --pdb
 
 
+Bug Report
+^^^^^^^^^^^
+
+Feel free to send a bug report to https://github.com/zdict/zdict/issues
+Please attach the error message and describe how to reproduce the bug.
+PR is also welcome.
+
+Please use the ``-d/--disable-db-cache`` option to query before sending the bug report.
+Sometimes we modify the data schema in database for a dictionary,
+but the default qeury of zdict uses the cache in the database which is an old scheme.
+This might cause an error while showing the result.
+Just use the ``-d/--disable-db-cache`` to update the cache in database.
+
+
 Related Projects
 ------------------------------
 
