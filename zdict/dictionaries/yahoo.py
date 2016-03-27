@@ -37,7 +37,10 @@ class YahooDict(DictBase):
         print()
 
         # print explain
-        main_explanations = content.get('explain')
+        main_explanations = content.get('explain', [])
+        if verbose:
+            main_explanations.extend(content.get('verbose', []))
+
         for speech in main_explanations:
             self.color.print(speech[0], 'lred')
             for meaning in speech[1:]:
@@ -57,33 +60,6 @@ class YahooDict(DictBase):
                             )
                         print()
         print()
-
-        if verbose:
-            # print verbose
-            try:
-                more_explanations = content.get('verbose')
-            except:
-                return
-            else:
-                for speech in more_explanations:
-                    self.color.print(speech[0], 'lred')
-                    for meaning in speech[1:]:
-                        self.color.print(
-                            '{text}'.format(text=meaning[0]),
-                            'org',
-                            indent=2
-                        )
-                        for sentence in meaning[1:]:
-                            if sentence:
-                                print(' ' * 4, end='')
-                                for i, s in enumerate(sentence.split('*')):
-                                    self.color.print(
-                                        s,
-                                        'lindigo' if i % 2 else 'indigo',
-                                        end=''
-                                    )
-                                print()
-                print()
 
     def query(self, word: str, timeout: float, verbose=False):
         webpage = self._get_raw(word, timeout)
@@ -124,7 +100,9 @@ class YahooDict(DictBase):
         if main_explanations:
             main_explanations = itertools.zip_longest(
                 main_explanations.find_all(class_='compTitle mb-10'),
-                main_explanations.find_all(class_='compArticleList mb-15 ml-10')
+                main_explanations.find_all(
+                    class_='compArticleList mb-15 ml-10',
+                )
             )
         else:
             main_explanations = ""
@@ -136,7 +114,10 @@ class YahooDict(DictBase):
             for item in meaning.find_all('li', class_='ov-a'):
                 pack = [item.find('h4').text]
 
-                for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
+                for example in (
+                    tag for tag in item.find_all('span')
+                    if 'line-height: 17px;' not in tag['style']
+                ):
                     sentence = ''
 
                     for w in example.contents:
@@ -152,8 +133,9 @@ class YahooDict(DictBase):
                 node.append(pack)
             content['explain'].append(node)
 
-        if verbose:
+            # verbose info
             part_of_speech_list, meaning_list = [], []
+            content['verbose'] = []
 
             variation_explanations = data.find(
                 class_='dd algo variation fst DictionaryResults'
@@ -181,14 +163,16 @@ class YahooDict(DictBase):
                 part_of_speech_list, meaning_list
             )
 
-            content['verbose'] = []
             for part_of_speech, meaning in more_explanations:
                 node = [part_of_speech.text] if part_of_speech else ['']
 
                 for item in meaning.find_all('li', class_='ov-a'):
                     pack = [item.find('h4').text]
 
-                    for example in (tag for tag in item.find_all('span') if 'line-height: 17px;' not in tag['style']):
+                    for example in (
+                        tag for tag in item.find_all('span')
+                        if 'line-height: 17px;' not in tag['style']
+                    ):
                         sentence = ''
 
                         for w in example.contents:
