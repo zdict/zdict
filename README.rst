@@ -24,7 +24,18 @@ So, we decided to create a new project.
 Installation
 ------------------------------
 
-``pip install git+https://github.com/zdict/zdict.git``
+from `PyPi <https://pypi.python.org/pypi>`_ :
+
+.. code-block:: sh
+
+    pip install zdict
+
+
+from `GitHub <https://github.com/zdict/zdict.git>`_ :
+
+.. code-block:: sh
+
+    pip install git+https://github.com/zdict/zdict.git
 
 
 Usage
@@ -109,6 +120,14 @@ Screenshots
 .. image:: http://i.imgur.com/Ld2QVvP.png
 
 .. image:: http://i.imgur.com/HJ9h5JO.png
+
+
+`Jisho Japanese Dictionary <http://jisho.org/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: http://i.imgur.com/63n3qmH.png
+
+.. image:: http://i.imgur.com/UMP8k4e.png
 
 
 Development & Contributing
