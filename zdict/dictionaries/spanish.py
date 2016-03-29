@@ -96,7 +96,7 @@ class SpanishDict(DictBase):
         pattern2 = {'class': 'dictionary-neodict-indent-2'}
         pattern3 = {'class': 'dictionary-neodict-indent-3'}
         pattern_order = {'class': 'dictionary-neodict-translation'}
-        pattern_example = {'class': 'click-to-translate-section'}
+        pattern_example = {'class': 'dictionary-neodict-example'}
         pattern1_en = {'class': 'dictionary-neoharrap-indent-1'}
         pattern2_en = {'class': 'dictionary-neoharrap-indent-2'}
         pattern_order_en = {'class': 'dictionary-neoharrap-translation'}
@@ -135,7 +135,8 @@ class SpanishDict(DictBase):
                 examples = explain.find_all(attrs=pattern3)
 
                 for (example, index) in zip(examples, indices):
-                    (spanish, english) = map(lambda x: x.text, example.find_all(attrs=pattern_example))
+                    t = tuple(example.find(attrs=pattern_example))
+                    (spanish, english) = (t[0].text, t[2].text)
                     explains.append((index, spanish, english))
 
                 if (not examples) and (len(indices) > 0):
