@@ -78,7 +78,10 @@ class SpanishDict(DictBase):
             data = translate_en
 
         card = data.find('div', attrs={'class': 'card'})
-        entry = card.find(attrs={'class': 'dictionary-entry'})    # just get the first one
+        entry = card.find(
+            # just get the first one
+            attrs={'class': 'dictionary-entry'}
+        )
 
         if not entry:
             raise NotFoundError(word)
@@ -100,8 +103,10 @@ class SpanishDict(DictBase):
 
         speeches = card.find_all(attrs={'class': 'part_of_speech'})
 
-        for (speech, category) in zip(speeches, entry.find_all(attrs=pattern1) or
-                                                entry.find_all(attrs=pattern1_en)):
+        for (speech, category) in zip(
+            speeches,
+            entry.find_all(attrs=pattern1) or entry.find_all(attrs=pattern1_en)
+        ):
             result = []
             content['explains'].append([speech.text, result])
             context = category.find(attrs={'class': 'context'}).text
@@ -118,7 +123,12 @@ class SpanishDict(DictBase):
                     #
                     #   ('a. forgiveness', 'b. pardon (law)')
                     #
-                    indices = tuple(map(lambda x: x.text.replace('\xa0', ' ').strip(), orders))
+                    indices = tuple(
+                        map(
+                            lambda x: x.text.replace('\xa0', ' ').strip(),
+                            orders
+                        )
+                    )
                 else:
                     continue
 
@@ -134,9 +144,10 @@ class SpanishDict(DictBase):
 
             result.append([context, explains])
 
-        record = Record(word=word,
-                        content=json.dumps(content),
-                        source=self.provider,
-                 )
+        record = Record(
+            word=word,
+            content=json.dumps(content),
+            source=self.provider,
+        )
 
         return record
