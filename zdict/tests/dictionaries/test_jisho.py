@@ -133,7 +133,6 @@ class TestJishoDict:
 
     def test_show(self):
         content = json.dumps(self.content)
-        print(content)
         r = Record(word='Japanese', content=content, source=self.dict.provider)
 
         # god bless this method, hope that it do not raise any exception
