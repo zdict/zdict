@@ -78,7 +78,10 @@ class SpanishDict(DictBase):
             data = translate_en
 
         card = data.find('div', attrs={'class': 'card'})
-        entry = card.find(attrs={'class': 'dictionary-entry'})    # just get the first one
+        entry = card.find(
+            # just get the first one
+            attrs={'class': 'dictionary-entry'}
+        )
 
         if not entry:
             raise NotFoundError(word)
@@ -93,15 +96,17 @@ class SpanishDict(DictBase):
         pattern2 = {'class': 'dictionary-neodict-indent-2'}
         pattern3 = {'class': 'dictionary-neodict-indent-3'}
         pattern_order = {'class': 'dictionary-neodict-translation'}
-        pattern_example = {'class': 'click-to-translate-section'}
+        pattern_example = {'class': 'dictionary-neodict-example'}
         pattern1_en = {'class': 'dictionary-neoharrap-indent-1'}
         pattern2_en = {'class': 'dictionary-neoharrap-indent-2'}
         pattern_order_en = {'class': 'dictionary-neoharrap-translation'}
 
         speeches = card.find_all(attrs={'class': 'part_of_speech'})
 
-        for (speech, category) in zip(speeches, entry.find_all(attrs=pattern1) or
-                                                entry.find_all(attrs=pattern1_en)):
+        for (speech, category) in zip(
+            speeches,
+            entry.find_all(attrs=pattern1) or entry.find_all(attrs=pattern1_en)
+        ):
             result = []
             content['explains'].append([speech.text, result])
             context = category.find(attrs={'class': 'context'}).text
@@ -118,14 +123,20 @@ class SpanishDict(DictBase):
                     #
                     #   ('a. forgiveness', 'b. pardon (law)')
                     #
-                    indices = tuple(map(lambda x: x.text.replace('\xa0', ' ').strip(), orders))
+                    indices = tuple(
+                        map(
+                            lambda x: x.text.replace('\xa0', ' ').strip(),
+                            orders
+                        )
+                    )
                 else:
                     continue
 
                 examples = explain.find_all(attrs=pattern3)
 
                 for (example, index) in zip(examples, indices):
-                    (spanish, english) = map(lambda x: x.text, example.find_all(attrs=pattern_example))
+                    t = tuple(example.find(attrs=pattern_example))
+                    (spanish, english) = (t[0].text, t[2].text)
                     explains.append((index, spanish, english))
 
                 if (not examples) and (len(indices) > 0):
@@ -134,9 +145,10 @@ class SpanishDict(DictBase):
 
             result.append([context, explains])
 
-        record = Record(word=word,
-                        content=json.dumps(content),
-                        source=self.provider,
-                 )
+        record = Record(
+            word=word,
+            content=json.dumps(content),
+            source=self.provider,
+        )
 
         return record
