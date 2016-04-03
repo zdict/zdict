@@ -19,7 +19,8 @@ def get_zdict_version():
         return version
 
 def get_test_req():
-    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes']
+    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes', 'flake8',
+            'pytest-flake8']
 
     if not sys.platform.startswith('freebsd'):
         reqs.append('gnureadline')
