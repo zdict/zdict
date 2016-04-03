@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 def test_import_pyjokes_module():
     with patch('importlib.util.find_spec', return_value=None):
-        assert import_pyjokes_module() == None
+        assert import_pyjokes_module() is None
 
     assert import_pyjokes_module().__name__ == 'pyjokes'
 

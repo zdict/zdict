@@ -19,16 +19,13 @@ class TemplateDict(DictBase):
         # Change `template` to the short name of the new dictionary.
         return 'template'
 
-
     @property
     def title(self):
-        # Change `Template Dictionary` to the brief title of the new dictionary.
+        # Change `Template Dictionary` to the title of the new dictionary.
         return 'Template Dictionary'
-
 
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
-
 
     def show(self, record: Record, verbose=False):
         content = json.loads(record.content)
@@ -46,7 +43,6 @@ class TemplateDict(DictBase):
             else:
                 # Define how to print the additional information
                 print()
-
 
     def query(self, word: str, timeout: float, verbose=False):
         webpage = self._get_raw(word, timeout)
@@ -66,9 +62,10 @@ class TemplateDict(DictBase):
             # Store the additonal information for the verbose option.
             pass
 
-        record = Record(word=word,
-                        content=json.dumps(content),
-                        source=self.provider,
-                 )
+        record = Record(
+            word=word,
+            content=json.dumps(content),
+            source=self.provider,
+         )
 
         return record

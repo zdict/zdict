@@ -35,7 +35,8 @@ class ColorConst(type):
 
     def __getattr__(cls, color):
         '''
-        Magic! @ http://stackoverflow.com/questions/3155436/getattr-for-static-class-variables-in-python
+        Magic!
+        http://stackoverflow.com/questions/3155436
         '''
         d = dict(cls.COLOR_LIST)
         color = color.upper()
