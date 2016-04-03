@@ -4,9 +4,9 @@ import os
 from pytest import raises
 from unittest.mock import Mock, patch
 
-from ....dictionaries.spanish import SpanishDict
-from ....exceptions import NotFoundError
-from ....models import Record
+from zdict.dictionaries.spanish import SpanishDict
+from zdict.exceptions import NotFoundError
+from zdict.models import Record
 
 
 RAW_HTML_TEST_DATA = os.path.join(os.path.dirname(__file__), 'testdata.html')

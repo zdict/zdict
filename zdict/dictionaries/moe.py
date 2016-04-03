@@ -1,8 +1,8 @@
 import json
 
-from ..dictionary import DictBase
-from ..exceptions import QueryError, NotFoundError
-from ..models import Record
+from zdict.dictionary import DictBase
+from zdict.exceptions import QueryError, NotFoundError
+from zdict.models import Record
 
 
 class MoeDict(DictBase):

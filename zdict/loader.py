@@ -5,8 +5,8 @@ from inspect import getmembers
 from importlib import find_loader, import_module
 from itertools import chain
 
-from . import dictionaries
-from .dictionary import DictBase
+from zdict import dictionaries
+from zdict.dictionary import DictBase
 
 
 def get_dictionary_map():

@@ -1,4 +1,4 @@
-from ..easter_eggs import (import_pyjokes_module, get_pyjoke)
+from zdict.easter_eggs import (import_pyjokes_module, get_pyjoke)
 
 from unittest.mock import patch
 

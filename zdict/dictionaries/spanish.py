@@ -2,9 +2,9 @@ import json
 
 from bs4 import BeautifulSoup
 
-from ..dictionary import DictBase
-from ..exceptions import NotFoundError
-from ..models import Record
+from zdict.dictionary import DictBase
+from zdict.exceptions import NotFoundError
+from zdict.models import Record
 
 
 # [TODO]

@@ -1,6 +1,6 @@
-from ...dictionaries.urban import UrbanDict
-from ...exceptions import NotFoundError
-from ...models import Record
+from zdict.dictionaries.urban import UrbanDict
+from zdict.exceptions import NotFoundError
+from zdict.models import Record
 
 from pytest import raises
 from unittest.mock import Mock, patch

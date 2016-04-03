@@ -1,5 +1,5 @@
-from ..loader import _is_dict, get_dictionary_map
-from ..dictionary import DictBase
+from zdict.loader import _is_dict, get_dictionary_map
+from zdict.dictionary import DictBase
 
 from unittest.mock import MagicMock, Mock, patch
 
@@ -39,7 +39,7 @@ def test_get_dictionary_map(listdir, import_module, getmembers):
         'not_a_py.rst',
     ]
     getmembers.return_value = [('mock', MockDict)]
-    
+
     dict_map = get_dictionary_map()
 
     assert dict_map == {'mock': MockDict}

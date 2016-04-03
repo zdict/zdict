@@ -1,6 +1,6 @@
 import peewee
 
-from .constants import DB_FILE
+from zdict.constants import DB_FILE
 
 
 db = peewee.SqliteDatabase(DB_FILE)

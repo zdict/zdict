@@ -1,4 +1,4 @@
-from ...dictionaries.yahoo import YahooDict
+from zdict.dictionaries.yahoo import YahooDict
 
 
 class TestyDict:

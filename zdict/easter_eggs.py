@@ -5,8 +5,8 @@ import random
 import importlib
 import importlib.util
 
-from .models import Record
-from .utils import Color
+from zdict.models import Record
+from zdict.utils import Color
 
 
 def import_pyjokes_module():

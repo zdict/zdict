@@ -3,9 +3,9 @@ import json
 
 import requests
 
-from . import exceptions
-from .models import Record, db
-from .utils import Color
+from zdict import exceptions
+from zdict.models import Record, db
+from zdict.utils import Color
 
 
 class DictBase(metaclass=abc.ABCMeta):

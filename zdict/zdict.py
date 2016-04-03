@@ -2,11 +2,11 @@ import locale
 
 from argparse import ArgumentParser
 
-from . import constants, utils, easter_eggs
-from .completer import DictCompleter
-from .loader import get_dictionary_map
-from .utils import readline, check_zdict_dir_and_db
-from .api import dump
+from zdict import constants, utils, easter_eggs
+from zdict.api import dump
+from zdict.completer import DictCompleter
+from zdict.loader import get_dictionary_map
+from zdict.utils import readline, check_zdict_dir_and_db
 
 
 def user_set_encoding_and_is_utf8():
