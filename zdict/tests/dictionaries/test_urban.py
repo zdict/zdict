@@ -34,9 +34,7 @@ class TestUrbanDict:
     @patch('zdict.dictionaries.urban.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{"mock": true}')
-
-        r = self.dict.query('mock', timeout=666)
-
+        self.dict.query('mock', timeout=666)
         Record.assert_called_with(
             word='mock',
             content='{"mock": true}',

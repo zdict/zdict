@@ -19,7 +19,8 @@ class TestColor:
     def test_format_in_tty(self, isatty):
         assert '\33[31;1mtest\33[0m' == self.color.format('test', 'lred')
         assert '\33[31mtest\33[0m' == self.color.format('test', 'red')
-        assert '  \33[31mtest\33[0m' == self.color.format('test', 'red', indent=2)
+        assert ('  \33[31mtest\33[0m' ==
+                self.color.format('test', 'red', indent=2))
         assert isatty.called
 
     @patch('zdict.utils.sys.stdout.isatty', return_value=False)

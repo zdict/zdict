@@ -18,6 +18,7 @@ def get_zdict_version():
 
         return version
 
+
 def get_test_req():
     reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes', 'flake8',
             'pytest-flake8']
@@ -28,6 +29,7 @@ def get_test_req():
     return reqs
 
 version = get_zdict_version()
+
 
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]

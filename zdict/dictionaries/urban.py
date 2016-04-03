@@ -4,6 +4,7 @@ from zdict.dictionary import DictBase
 from zdict.exceptions import NotFoundError
 from zdict.models import Record
 
+
 class UrbanDict(DictBase):
 
     API = 'http://api.urbandictionary.com/v0/define?term={word}'
@@ -41,7 +42,6 @@ class UrbanDict(DictBase):
             )
 
         print()
-
 
     def query(self, word: str, timeout: float, verbose=False):
         content = self._get_raw(word, timeout)

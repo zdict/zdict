@@ -29,9 +29,17 @@ class MoeDict(DictBase):
         for word in content.get('heteronyms', ''):
 
             # print pronounce
-            for key, display in (('bopomofo', '注音'), ('bopomofo2', '注音二式'), ('pinyin', '漢語拼音')):
+            for key, display in (
+                ('bopomofo', '注音'),
+                ('bopomofo2', '注音二式'),
+                ('pinyin', '漢語拼音')
+            ):
                 self.color.print(display, end='')
-                self.color.print('[' + word.get(key, '') + ']', 'lwhite', end=' ')
+                self.color.print(
+                    '[' + word.get(key, '') + ']',
+                    'lwhite',
+                    end=' ',
+                )
             print()
             print()
 
@@ -39,7 +47,10 @@ class MoeDict(DictBase):
             for count, explain in enumerate(word.get('definitions', '')):
 
                 self.color.print(
-                    '{order}. {text}'.format(order=count+1, text=explain.get('def', '')),
+                    '{order}. {text}'.format(
+                        order=count+1,
+                        text=explain.get('def', '')
+                    ),
                 )
 
                 if explain.get('synonyms'):
@@ -71,7 +82,6 @@ class MoeDict(DictBase):
                     )
 
                 print()
-
 
     def query(self, word: str, timeout: float, verbose=False):
         try:

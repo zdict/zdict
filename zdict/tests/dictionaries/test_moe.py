@@ -30,9 +30,7 @@ class TestMoeDict:
     @patch('zdict.dictionaries.moe.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{}')
-
-        record = self.dict.query('萌', timeout=666)
-
+        self.dict.query('萌', timeout=666)
         Record.assert_called_with(word='萌', content='{}', source='moe')
 
     def test_show(self):
