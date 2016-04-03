@@ -3,9 +3,9 @@ import json
 from pytest import raises
 from unittest.mock import Mock, patch
 
-from ...dictionaries.jisho import JishoDict
-from ...exceptions import NotFoundError
-from ...models import Record
+from zdict.dictionaries.jisho import JishoDict
+from zdict.exceptions import NotFoundError
+from zdict.models import Record
 
 
 class TestJishoDict:

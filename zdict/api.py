@@ -1,6 +1,6 @@
 import re
 
-from .models import Record, db
+from zdict.models import Record, db
 
 
 def dump(pattern=r'^.*$'):

@@ -1,7 +1,7 @@
 import os
 import sys
 
-from . import constants
+from zdict import constants
 
 
 def create_zdict_dir_if_not_exists():

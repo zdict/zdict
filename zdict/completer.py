@@ -1,4 +1,4 @@
-from .models import Record, db
+from zdict.models import Record, db
 
 
 class DictCompleter:

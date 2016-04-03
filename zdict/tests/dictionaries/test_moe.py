@@ -1,6 +1,6 @@
-from ...dictionaries.moe import MoeDict
-from ...exceptions import NotFoundError, QueryError
-from ...models import Record
+from zdict.dictionaries.moe import MoeDict
+from zdict.exceptions import NotFoundError, QueryError
+from zdict.models import Record
 
 from pytest import raises
 from unittest.mock import Mock, patch
