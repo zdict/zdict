@@ -1,6 +1,9 @@
 import locale
 
 from argparse import ArgumentParser
+from multiprocessing import Pool, cpu_count
+from contextlib import redirect_stdout
+from io import StringIO
 
 from zdict import constants, utils, easter_eggs
 from zdict.api import dump
@@ -58,6 +61,18 @@ def get_args():
         default=5.0,
         action="store",
         help="Set timeout for every query. default is 5 seconds."
+    )
+
+    parser.add_argument(
+        "-j", "--jobs",
+        type=int,
+        nargs="?",
+        default=-1,     # -1: not using, None: auto, N: N jobs
+        action="store",
+        help="""
+            Allow N jobs at once.
+            Do not pass any argument to use the number of CPUs in the system.
+        """
     )
 
     parser.add_argument(
@@ -153,18 +168,53 @@ def set_args():
         args.show_provider = True
 
 
+def lookup_string_wrapper(dict_class, word, args):
+    import sys
+    if args.force_color:
+        utils.Color.set_force_color()
+    else:
+        utils.Color.set_force_color(sys.stdout.isatty())
+    dictionary = dict_class()
+    f = StringIO()
+    with redirect_stdout(f):
+        dictionary.lookup(word, args)
+    return f.getvalue()
+
+
 def normal_mode():
-    for word in args.words:
-        for d in args.dict:
-            zdict = dictionary_map[d]()
-            zdict.lookup(word, args)
+    if args.jobs != -1:     # user use -j
+        if args.jobs is None or args.jobs < 0:
+            pool = Pool(cpu_count())
+        elif args.jobs > 0:
+            pool = Pool(args.jobs)
+
+        for word in args.words:
+            futures = [
+                pool.apply_async(lookup_string_wrapper,
+                                 (dictionary_map[d], word, args))
+                for d in args.dict
+            ]
+            results = [i.get() for i in futures]
+            print(''.join(results))
+    else:
+        for word in args.words:
+            for d in args.dict:
+                zdict = dictionary_map[d]()
+                zdict.lookup(word, args)
 
     easter_eggs.lookup_pyjokes(word)
 
 
 class MetaInteractivePrompt():
-    def __init__(self, dict_list):
+    def __init__(self, dict_list, jobs):
         self.dicts = tuple(dictionary_map[d]() for d in dict_list)
+        self.dict_classes = tuple(dictionary_map[d] for d in dict_list)
+        if jobs is None:
+            self.pool = Pool(cpu_count())
+        elif jobs > 0:
+            self.pool = Pool(jobs)
+        else:
+            self.pool = None
 
     def __del__(self):
         del self.dicts
@@ -173,8 +223,17 @@ class MetaInteractivePrompt():
         user_input = input('[zDict]: ').strip()
 
         if user_input:
-            for dictionary_instance in self.dicts:
-                dictionary_instance.lookup(user_input, args)
+            if self.pool:
+                futures = [
+                    self.pool.apply_async(lookup_string_wrapper,
+                                          (d, user_input, args))
+                    for d in self.dict_classes
+                ]
+                results = [i.get() for i in futures]
+                print(''.join(results))
+            else:
+                for dictionary_instance in self.dicts:
+                    dictionary_instance.lookup(user_input, args)
         else:
             return
 
@@ -192,7 +251,7 @@ def interactive_mode():
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
 
-    zdict = MetaInteractivePrompt(args.dict)
+    zdict = MetaInteractivePrompt(args.dict, args.jobs)
     zdict.loop_prompt(args)
 
 
