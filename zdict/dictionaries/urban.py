@@ -20,7 +20,7 @@ class UrbanDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record, verbose=False):
+    def show(self, record: Record):
         content = json.loads(record.content)
 
         data = content['list'][0]
@@ -43,8 +43,8 @@ class UrbanDict(DictBase):
 
         print()
 
-    def query(self, word: str, timeout: float, verbose=False):
-        content = self._get_raw(word, timeout)
+    def query(self, word: str):
+        content = self._get_raw(word)
 
         if "no_results" in content:
             raise NotFoundError(word)

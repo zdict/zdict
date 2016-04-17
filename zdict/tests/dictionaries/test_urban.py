@@ -23,19 +23,19 @@ class TestUrbanDict:
 
     def test_query_notfound(self):
         notfound_payload = '''
-        {"tags":[],"result_type":"no_results","list":[],"sounds":[]}
+            {"tags":[],"result_type":"no_results","list":[],"sounds":[]}
         '''
         self.dict._get_raw = Mock(return_value=notfound_payload)
 
         with raises(NotFoundError):
-            self.dict.query('mock', timeout=666)
+            self.dict.query('mock')
 
-        self.dict._get_raw.assert_called_with('mock', 666)
+        self.dict._get_raw.assert_called_with('mock')
 
     @patch('zdict.dictionaries.urban.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{"mock": true}')
-        self.dict.query('mock', timeout=666)
+        self.dict.query('mock')
         Record.assert_called_with(
             word='mock',
             content='{"mock": true}',

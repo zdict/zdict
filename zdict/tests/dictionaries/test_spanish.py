@@ -11,14 +11,12 @@ class TestSpansishDict:
     def setup_class(cls):
         cls.dict = SpanishDict(get_args())
         cls.word = 'Spanish'
-        cls.timeout = 5
-        cls.record = cls.dict.query(cls.word, cls.timeout)
+        cls.record = cls.dict.query(cls.word)
 
     @classmethod
     def teardown_class(cls):
         del cls.dict
         del cls.word
-        del cls.timeout
         del cls.record
 
     def test_provider(self):
@@ -37,7 +35,7 @@ class TestSpansishDict:
 
     @patch('zdict.dictionaries.spanish.Record')
     def test_query_normal(self, Record):
-        self.dict.query(self.word, self.timeout)
+        self.dict.query(self.word)
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
@@ -47,5 +45,5 @@ class TestSpansishDict:
     def test_query_not_found(self):
         self.dict._get_raw = Mock(return_value='<div class="card"><div/>')
         with raises(NotFoundError):
-            self.dict.query(self.word, self.timeout)
-        self.dict._get_raw.assert_called_with(self.word, self.timeout)
+            self.dict.query(self.word)
+        self.dict._get_raw.assert_called_with(self.word)

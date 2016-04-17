@@ -21,17 +21,17 @@ class TestMoeDict:
         assert self.dict.provider == 'moe'
 
     def test_query_timeout(self):
-        self.dict._get_raw = Mock(side_effect=QueryError('萌', 1))
+        self.dict._get_raw = Mock(side_effect=QueryError('萌', 404))
 
         with raises(NotFoundError):
-            self.dict.query('萌', timeout=666)
+            self.dict.query('萌')
 
-        self.dict._get_raw.assert_called_with('萌', 666)
+        self.dict._get_raw.assert_called_with('萌')
 
     @patch('zdict.dictionaries.moe.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{}')
-        self.dict.query('萌', timeout=666)
+        self.dict.query('萌')
         Record.assert_called_with(word='萌', content='{}', source='moe')
 
     def test_show(self):

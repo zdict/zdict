@@ -11,16 +11,12 @@ class TestJishoDict:
     def setup_class(cls):
         cls.dict = JishoDict(get_args())
         cls.word = 'apple'
-        cls.timeout = 5
-        cls.verbose = True
-        cls.record = cls.dict.query(cls.word, cls.timeout, cls.verbose)
+        cls.record = cls.dict.query(cls.word)
 
     @classmethod
     def teardown_class(cls):
         del cls.dict
         del cls.word
-        del cls.timeout
-        del cls.verbose
         del cls.record
 
     def test_provider(self):
@@ -37,15 +33,18 @@ class TestJishoDict:
 
     def test_show(self):
         # god bless this method, hope that it do not raise any exception
+        self.dict.args.verbose = False
         self.dict.show(self.record)
 
     def test_show_verbose(self):
         # god bless this method, hope that it do not raise any exception
-        self.dict.show(self.record, self.verbose)
+        self.dict.args.verbose = True
+        self.dict.show(self.record)
 
     @patch('zdict.dictionaries.jisho.Record')
     def test_query_normal(self, Record):
-        self.dict.query(self.word, self.timeout)
+        self.dict.args.verbose = False
+        self.dict.query(self.word)
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
@@ -54,7 +53,8 @@ class TestJishoDict:
 
     @patch('zdict.dictionaries.jisho.Record')
     def test_query_verbose(self, Record):
-        self.dict.query(self.word, self.timeout, self.verbose)
+        self.dict.args.verbose = True
+        self.dict.query(self.word)
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
@@ -64,5 +64,5 @@ class TestJishoDict:
     def test_query_not_found(self):
         self.dict._get_raw = Mock(return_value='{"data": []}')
         with raises(NotFoundError):
-            self.dict.query(self.word, self.timeout)
-        self.dict._get_raw.assert_called_with(self.word, self.timeout)
+            self.dict.query(self.word)
+        self.dict._get_raw.assert_called_with(self.word)

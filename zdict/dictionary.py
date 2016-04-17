@@ -56,14 +56,14 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def show(self, record: Record, verbose: bool):
+    def show(self, record: Record):
         '''
         Define how to render the result of the specific dictionary.
         '''
         ...
 
     @abc.abstractmethod
-    def query(self, word: str, timeout: float, verbose: bool) -> Record:
+    def query(self, word: str) -> Record:
         '''
         Define how to get the information from specific dictionary.
         Should return a record contains word, content and source.
@@ -114,13 +114,11 @@ class DictBase(metaclass=abc.ABCMeta):
             record = self.query_db_cache(word)
 
             if record:
-                self.show(record, self.args.verbose)
+                self.show(record)
                 return
 
         try:
-            record = self.query(
-                word, self.args.query_timeout, self.args.verbose
-            )
+            record = self.query(word)
         except exceptions.NoNetworkError as e:
             self.color.print(e, 'red')
             print()
@@ -132,10 +130,10 @@ class DictBase(metaclass=abc.ABCMeta):
             print()
         else:
             self.save(record, word)
-            self.show(record, self.args.verbose)
+            self.show(record)
             return
 
-    def _get_raw(self, word: str, timeout: float) -> str:
+    def _get_raw(self, word: str) -> str:
         '''
         Get raw data from http request
 
@@ -143,7 +141,9 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
 
         try:
-            res = requests.get(self._get_url(word), timeout=timeout)
+            res = requests.get(
+                self._get_url(word), timeout=self.args.query_timeout
+            )
         except requests.exceptions.ReadTimeout as e:
             raise exceptions.TimeoutError()
         except requests.exceptions.ConnectionError as e:
