@@ -189,6 +189,13 @@ def lookup_string_wrapper(dict_class, word, args):
     return f.getvalue()
 
 
+def init_worker():
+    # When -j been used, make subprocesses ignore KeyboardInterrupt
+    # for not showing KeyboardInterrupt traceback error message.
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
 def normal_mode():
     if args.jobs == -1:
         # user didn't use `-j`
@@ -199,7 +206,7 @@ def normal_mode():
     else:
         # user did use `-j`
         # If processes is None, os.cpu_count() is used.
-        pool = Pool(args.jobs)
+        pool = Pool(args.jobs, init_worker)
 
         for word in args.words:
             futures = [
@@ -224,7 +231,7 @@ class MetaInteractivePrompt():
         else:
             # user did use `-j`
             # If processes is None, os.cpu_count() is used.
-            self.pool = Pool(jobs)
+            self.pool = Pool(jobs, init_worker)
 
     def __del__(self):
         del self.dicts
@@ -249,11 +256,7 @@ class MetaInteractivePrompt():
 
     def loop_prompt(self, args):
         while True:
-            try:
-                self.prompt(args)
-            except (KeyboardInterrupt, EOFError):
-                print()
-                return
+            self.prompt(args)
 
 
 def interactive_mode():
@@ -266,10 +269,14 @@ def interactive_mode():
 
 
 def execute_zdict():
-    if args.words:
-        normal_mode()
-    else:
-        interactive_mode()
+    try:
+        if args.words:
+            normal_mode()
+        else:
+            interactive_mode()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        return
 
 
 def main():
