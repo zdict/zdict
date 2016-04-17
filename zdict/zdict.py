@@ -144,10 +144,17 @@ def get_args():
         help='Dump the querying history, can be filtered with regex'
     )
 
+    parser.add_argument(
+        "-D", "--debug",
+        default=False,
+        action="store_true",
+        help="Prettiy print raw html for debugging."
+    )
+
     return parser.parse_args()
 
 
-def set_args():
+def set_args(args):
     if args.list_dicts:
         for provider in sorted(
                 dictionary_map,
@@ -174,6 +181,8 @@ def set_args():
     if len(args.dict) > 1:
         args.show_provider = True
 
+    return args
+
 
 def lookup_string_wrapper(dict_class, word, args):
     import sys
@@ -181,10 +190,11 @@ def lookup_string_wrapper(dict_class, word, args):
         utils.Color.set_force_color()
     else:
         utils.Color.set_force_color(sys.stdout.isatty())
-    dictionary = dict_class()
+
+    dictionary = dict_class(args)
     f = StringIO()
     with redirect_stdout(f):
-        dictionary.lookup(word, args)
+        dictionary.lookup(word)
     return f.getvalue()
 
 
@@ -195,13 +205,13 @@ def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
-def normal_mode():
+def normal_mode(args):
     if args.jobs == 0:
         # user didn't use `-j`
         for word in args.words:
             for d in args.dict:
-                zdict = dictionary_map[d]()
-                zdict.lookup(word, args)
+                zdict = dictionary_map[d](args)
+                zdict.lookup(word)
     else:
         # user did use `-j`
         # If processes is None, os.cpu_count() is used.
@@ -220,59 +230,60 @@ def normal_mode():
 
 
 class MetaInteractivePrompt():
-    def __init__(self, dict_list, jobs):
-        self.dicts = tuple(dictionary_map[d]() for d in dict_list)
-        self.dict_classes = tuple(dictionary_map[d] for d in dict_list)
+    def __init__(self, args):
+        self.args = args
+        self.dicts = tuple(dictionary_map[d]() for d in self.args.dict)
+        self.dict_classes = tuple(dictionary_map[d] for d in self.args.dict)
 
-        if jobs == 0:
+        if self.args.jobs == 0:
             # user didn't use `-j`
             self.pool = None
         else:
             # user did use `-j`
             # If processes is None, os.cpu_count() is used.
-            self.pool = Pool(jobs, init_worker)
+            self.pool = Pool(self.args.jobs, init_worker)
 
     def __del__(self):
         del self.dicts
 
-    def prompt(self, args):
+    def prompt(self):
         user_input = input('[zDict]: ').strip()
 
         if user_input:
             if self.pool:
                 futures = [
                     self.pool.apply_async(lookup_string_wrapper,
-                                          (d, user_input, args))
+                                          (d, user_input, self.args))
                     for d in self.dict_classes
                 ]
                 results = [i.get() for i in futures]
                 print(''.join(results))
             else:
                 for dictionary_instance in self.dicts:
-                    dictionary_instance.lookup(user_input, args)
+                    dictionary_instance.lookup(user_input, self.args)
         else:
             return
 
-    def loop_prompt(self, args):
+    def loop_prompt(self):
         while True:
-            self.prompt(args)
+            self.prompt()
 
 
-def interactive_mode():
+def interactive_mode(args):
     # configure readline and completer
     readline.parse_and_bind("tab: complete")
     readline.set_completer(DictCompleter().complete)
 
-    zdict = MetaInteractivePrompt(args.dict, args.jobs)
-    zdict.loop_prompt(args)
+    zdict = MetaInteractivePrompt(args)
+    zdict.loop_prompt()
 
 
-def execute_zdict():
+def execute_zdict(args):
     try:
         if args.words:
-            normal_mode()
+            normal_mode(args)
         else:
-            interactive_mode()
+            interactive_mode(args)
     except (KeyboardInterrupt, EOFError):
         print()
         return
@@ -285,10 +296,9 @@ def main():
         global dictionary_map
         dictionary_map = get_dictionary_map()
 
-        global args
         args = get_args()
-        set_args()
+        args = set_args(args)
 
-        execute_zdict()
+        execute_zdict(args)
     else:
         exit()
