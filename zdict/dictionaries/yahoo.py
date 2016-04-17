@@ -166,26 +166,27 @@ class YahooDict(DictBase):
             for part_of_speech, meaning in more_explanations:
                 node = [part_of_speech.text] if part_of_speech else ['']
 
-                for item in meaning.find_all('li', class_='ov-a'):
-                    pack = [item.find('h4').text]
+                if meaning:
+                    for item in meaning.find_all('li', class_='ov-a'):
+                        pack = [item.find('h4').text]
 
-                    for example in (
-                        tag for tag in item.find_all('span')
-                        if 'line-height: 17px;' not in tag['style']
-                    ):
-                        sentence = ''
+                        for example in (
+                            tag for tag in item.find_all('span')
+                            if 'line-height: 17px;' not in tag['style']
+                        ):
+                            sentence = ''
 
-                        for w in example.contents:
-                            if w.name == 'b':
-                                sentence += '*' + w.text + '*'
-                            else:
-                                try:
-                                    sentence += w
-                                except:
-                                    pass
+                            for w in example.contents:
+                                if w.name == 'b':
+                                    sentence += '*' + w.text + '*'
+                                else:
+                                    try:
+                                        sentence += w
+                                    except:
+                                        pass
 
-                        pack.append((sentence.strip()))
-                    node.append(pack)
+                            pack.append((sentence.strip()))
+                        node.append(pack)
                 content['verbose'].append(node)
 
         record = Record(
