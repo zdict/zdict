@@ -148,7 +148,7 @@ def get_args():
         "-D", "--debug",
         default=False,
         action="store_true",
-        help="Prettiy print raw html for debugging."
+        help="Print raw html prettified by BeautifulSoup for debugging."
     )
 
     return parser.parse_args()
