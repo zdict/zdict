@@ -1,14 +1,15 @@
+from pytest import raises
+from unittest.mock import Mock, patch
+
 from zdict.dictionaries.moe import MoeDict
 from zdict.exceptions import NotFoundError, QueryError
 from zdict.models import Record
-
-from pytest import raises
-from unittest.mock import Mock, patch
+from zdict.zdict import get_args
 
 
 class TestMoeDict:
     def setup_method(self, method):
-        self.dict = MoeDict()
+        self.dict = MoeDict(get_args())
 
     def teardown_method(self, method):
         del self.dict
@@ -20,17 +21,17 @@ class TestMoeDict:
         assert self.dict.provider == 'moe'
 
     def test_query_timeout(self):
-        self.dict._get_raw = Mock(side_effect=QueryError('萌', 1))
+        self.dict._get_raw = Mock(side_effect=QueryError('萌', 404))
 
         with raises(NotFoundError):
-            self.dict.query('萌', timeout=666)
+            self.dict.query('萌')
 
-        self.dict._get_raw.assert_called_with('萌', 666)
+        self.dict._get_raw.assert_called_with('萌')
 
     @patch('zdict.dictionaries.moe.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{}')
-        self.dict.query('萌', timeout=666)
+        self.dict.query('萌')
         Record.assert_called_with(word='萌', content='{}', source='moe')
 
     def test_show(self):

@@ -1,14 +1,15 @@
+from pytest import raises
+from unittest.mock import Mock, patch
+
 from zdict.dictionaries.urban import UrbanDict
 from zdict.exceptions import NotFoundError
 from zdict.models import Record
-
-from pytest import raises
-from unittest.mock import Mock, patch
+from zdict.zdict import get_args
 
 
 class TestUrbanDict:
     def setup_method(self, method):
-        self.dict = UrbanDict()
+        self.dict = UrbanDict(get_args())
 
     def teardown_method(self, method):
         del self.dict
@@ -22,19 +23,19 @@ class TestUrbanDict:
 
     def test_query_notfound(self):
         notfound_payload = '''
-        {"tags":[],"result_type":"no_results","list":[],"sounds":[]}
+            {"tags":[],"result_type":"no_results","list":[],"sounds":[]}
         '''
         self.dict._get_raw = Mock(return_value=notfound_payload)
 
         with raises(NotFoundError):
-            self.dict.query('mock', timeout=666)
+            self.dict.query('mock')
 
-        self.dict._get_raw.assert_called_with('mock', 666)
+        self.dict._get_raw.assert_called_with('mock')
 
     @patch('zdict.dictionaries.urban.Record')
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{"mock": true}')
-        self.dict.query('mock', timeout=666)
+        self.dict.query('mock')
         Record.assert_called_with(
             word='mock',
             content='{"mock": true}',

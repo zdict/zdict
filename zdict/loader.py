@@ -20,7 +20,7 @@ def get_dictionary_map():
     exclude_files = ('template.py',)
 
     return {
-        cls().provider: cls
+        cls(None).provider: cls
         for _, cls in (
             chain.from_iterable(
                 getmembers(mod, predicate=_is_dict)

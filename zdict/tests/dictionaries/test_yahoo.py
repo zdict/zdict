@@ -1,9 +1,10 @@
 from zdict.dictionaries.yahoo import YahooDict
+from zdict.zdict import get_args
 
 
 class TestyDict:
     def setup_method(self, method):
-        self.dict = YahooDict()
+        self.dict = YahooDict(get_args())
 
     def teardown_method(self, method):
         del self.dict

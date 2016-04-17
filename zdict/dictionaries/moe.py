@@ -20,7 +20,7 @@ class MoeDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record, verbose=False):
+    def show(self, record: Record):
         content = json.loads(record.content)
 
         # print word
@@ -83,9 +83,9 @@ class MoeDict(DictBase):
 
                 print()
 
-    def query(self, word: str, timeout: float, verbose=False):
+    def query(self, word: str):
         try:
-            content = self._get_raw(word, timeout)
+            content = self._get_raw(word)
         except QueryError as exception:
             raise NotFoundError(exception.word)
 

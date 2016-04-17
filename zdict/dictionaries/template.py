@@ -27,14 +27,14 @@ class TemplateDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record, verbose=False):
+    def show(self, record: Record):
         content = json.loads(record.content)
 
         # Use `self.color.print()` to render the output.
         # TODO: Add the API doc of the `color.print()`
         print()
 
-        if verbose:
+        if self.args.verbose:
             try:
                 # Get the addtional information if it exists.
                 pass
@@ -44,8 +44,8 @@ class TemplateDict(DictBase):
                 # Define how to print the additional information
                 print()
 
-    def query(self, word: str, timeout: float, verbose=False):
-        webpage = self._get_raw(word, timeout)
+    def query(self, word: str):
+        webpage = self._get_raw(word)
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
@@ -57,10 +57,6 @@ class TemplateDict(DictBase):
         #    raise NotFoundError(word)
         # ```
         # while the word users try to query is not found on this dictionary.
-
-        if verbose:
-            # Store the additonal information for the verbose option.
-            pass
 
         record = Record(
             word=word,

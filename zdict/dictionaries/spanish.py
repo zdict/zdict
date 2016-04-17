@@ -32,7 +32,7 @@ class SpanishDict(DictBase):
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
 
-    def show(self, record: Record, verbose=False):
+    def show(self, record: Record):
         content = json.loads(record.content)
 
         self.color.print(content['word'], 'yellow')
@@ -64,8 +64,8 @@ class SpanishDict(DictBase):
                         )
         print()
 
-    def query(self, word: str, timeout: float, verbose=False):
-        webpage = self._get_raw(word, timeout)
+    def query(self, word: str):
+        webpage = self._get_raw(word)
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 

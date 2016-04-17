@@ -3,40 +3,39 @@ from unittest.mock import Mock, patch
 
 from zdict.dictionaries.spanish import SpanishDict
 from zdict.exceptions import NotFoundError
+from zdict.zdict import get_args
 
 
 class TestSpansishDict:
     @classmethod
     def setup_class(cls):
-        cls.d = SpanishDict()
+        cls.dict = SpanishDict(get_args())
         cls.word = 'Spanish'
-        cls.timeout = 5
-        cls.record = cls.d.query(cls.word, cls.timeout)
+        cls.record = cls.dict.query(cls.word)
 
     @classmethod
     def teardown_class(cls):
-        del cls.d
+        del cls.dict
         del cls.word
-        del cls.timeout
         del cls.record
 
     def test_provider(self):
-        assert self.d.provider == 'spanish'
+        assert self.dict.provider == 'spanish'
 
     def test_title(self):
-        assert self.d.title == 'SpanishDict'
+        assert self.dict.title == 'SpanishDict'
 
     def test__get_url(self):
         url = 'http://www.spanishdict.com/translate/{}'.format(self.word)
-        assert url == self.d._get_url(self.word)
+        assert url == self.dict._get_url(self.word)
 
     def test_show(self):
         # god bless this method, hope that it do not raise any exception
-        self.d.show(self.record)
+        self.dict.show(self.record)
 
     @patch('zdict.dictionaries.spanish.Record')
     def test_query_normal(self, Record):
-        self.d.query(self.word, self.timeout)
+        self.dict.query(self.word)
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
@@ -44,7 +43,7 @@ class TestSpansishDict:
         )
 
     def test_query_not_found(self):
-        self.d._get_raw = Mock(return_value='<div class="card"><div/>')
+        self.dict._get_raw = Mock(return_value='<div class="card"><div/>')
         with raises(NotFoundError):
-            self.d.query(self.word, self.timeout)
-        self.d._get_raw.assert_called_with(self.word, self.timeout)
+            self.dict.query(self.word)
+        self.dict._get_raw.assert_called_with(self.word)

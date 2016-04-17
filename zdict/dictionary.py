@@ -14,7 +14,8 @@ class DictBase(metaclass=abc.ABCMeta):
         Record,
     )
 
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         self.db = db
         self.db.connect()
 
@@ -25,7 +26,9 @@ class DictBase(metaclass=abc.ABCMeta):
         self.color = Color()
 
     def __del__(self):
+        del self.args
         self.db.close()
+        del self.db
 
     @property
     @abc.abstractmethod
@@ -53,14 +56,14 @@ class DictBase(metaclass=abc.ABCMeta):
         ...
 
     @abc.abstractmethod
-    def show(self, record: Record, verbose: bool):
+    def show(self, record: Record):
         '''
         Define how to render the result of the specific dictionary.
         '''
         ...
 
     @abc.abstractmethod
-    def query(self, word: str, timeout: float, verbose: bool) -> Record:
+    def query(self, word: str) -> Record:
         '''
         Define how to get the information from specific dictionary.
         Should return a record contains word, content and source.
@@ -94,28 +97,28 @@ class DictBase(metaclass=abc.ABCMeta):
     def show_url(self, word):
         self.color.print('(' + self._get_url(word) + ')', 'blue')
 
-    def lookup(self, word, args):
+    def lookup(self, word):
         '''
         Main workflow for searching a word.
         '''
 
         word = word.lower()
 
-        if args.show_provider:
+        if self.args.show_provider:
             self.show_provider()
 
-        if args.show_url:
+        if self.args.show_url:
             self.show_url(word)
 
-        if not args.disable_db_cache:
+        if not self.args.disable_db_cache:
             record = self.query_db_cache(word)
 
             if record:
-                self.show(record, args.verbose)
+                self.show(record)
                 return
 
         try:
-            record = self.query(word, args.query_timeout, args.verbose)
+            record = self.query(word)
         except exceptions.NoNetworkError as e:
             self.color.print(e, 'red')
             print()
@@ -127,10 +130,10 @@ class DictBase(metaclass=abc.ABCMeta):
             print()
         else:
             self.save(record, word)
-            self.show(record, args.verbose)
+            self.show(record)
             return
 
-    def _get_raw(self, word: str, timeout: float) -> str:
+    def _get_raw(self, word: str) -> str:
         '''
         Get raw data from http request
 
@@ -138,7 +141,9 @@ class DictBase(metaclass=abc.ABCMeta):
         '''
 
         try:
-            res = requests.get(self._get_url(word), timeout=timeout)
+            res = requests.get(
+                self._get_url(word), timeout=self.args.query_timeout
+            )
         except requests.exceptions.ReadTimeout as e:
             raise exceptions.TimeoutError()
         except requests.exceptions.ConnectionError as e:
@@ -158,5 +163,12 @@ class DictBase(metaclass=abc.ABCMeta):
 
         if res.status_code != 200:
             raise exceptions.QueryError(word, res.status_code)
+
+        if self.args.debug:
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(res.text, 'html.parser')
+            print('='*30 + ' Start of debug info ' + '='*30)
+            print(soup.prettify())
+            print('='*30 + ' End of debug info ' + '='*30)
 
         return res.text
