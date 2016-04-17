@@ -1,7 +1,7 @@
+import argparse
 import locale
 
-from argparse import ArgumentParser
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool
 from contextlib import redirect_stdout
 from io import StringIO
 
@@ -31,7 +31,7 @@ def user_set_encoding_and_is_utf8():
 
 def get_args():
     # parse args
-    parser = ArgumentParser(prog='zdict')
+    parser = argparse.ArgumentParser(prog='zdict')
 
     parser.add_argument(
         'words',
@@ -63,9 +63,17 @@ def get_args():
         help="Set timeout for every query. default is 5 seconds."
     )
 
+    def positive_int_only(value):
+        ivalue = int(value)
+        if ivalue <= 0:
+            raise argparse.ArgumentTypeError(
+                "%s is an invalid positive int value" % value
+            )
+        return ivalue
+
     parser.add_argument(
         "-j", "--jobs",
-        type=int,
+        type=positive_int_only,
         nargs="?",
         default=-1,     # -1: not using, None: auto, N: N jobs
         action="store",
@@ -182,11 +190,16 @@ def lookup_string_wrapper(dict_class, word, args):
 
 
 def normal_mode():
-    if args.jobs != -1:     # user use -j
-        if args.jobs is None or args.jobs < 0:
-            pool = Pool(cpu_count())
-        elif args.jobs > 0:
-            pool = Pool(args.jobs)
+    if args.jobs == -1:
+        # user didn't use `-j`
+        for word in args.words:
+            for d in args.dict:
+                zdict = dictionary_map[d]()
+                zdict.lookup(word, args)
+    else:
+        # user did use `-j`
+        # If processes is None, os.cpu_count() is used.
+        pool = Pool(args.jobs)
 
         for word in args.words:
             futures = [
@@ -196,11 +209,6 @@ def normal_mode():
             ]
             results = [i.get() for i in futures]
             print(''.join(results))
-    else:
-        for word in args.words:
-            for d in args.dict:
-                zdict = dictionary_map[d]()
-                zdict.lookup(word, args)
 
     easter_eggs.lookup_pyjokes(word)
 
@@ -209,12 +217,14 @@ class MetaInteractivePrompt():
     def __init__(self, dict_list, jobs):
         self.dicts = tuple(dictionary_map[d]() for d in dict_list)
         self.dict_classes = tuple(dictionary_map[d] for d in dict_list)
-        if jobs is None:
-            self.pool = Pool(cpu_count())
-        elif jobs > 0:
-            self.pool = Pool(jobs)
-        else:
+
+        if jobs == -1:
+            # user didn't use `-j`
             self.pool = None
+        else:
+            # user did use `-j`
+            # If processes is None, os.cpu_count() is used.
+            self.pool = Pool(jobs)
 
     def __del__(self):
         del self.dicts
