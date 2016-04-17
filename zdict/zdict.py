@@ -1,6 +1,5 @@
-import argparse
-import locale
-
+from argparse import ArgumentParser, ArgumentTypeError
+from locale import getdefaultlocale
 from multiprocessing import Pool
 from contextlib import redirect_stdout
 from io import StringIO
@@ -15,7 +14,7 @@ from zdict.utils import readline, check_zdict_dir_and_db
 def user_set_encoding_and_is_utf8():
     # Check user's encoding settings
     try:
-        (lang, enc) = locale.getdefaultlocale()
+        (lang, enc) = getdefaultlocale()
     except ValueError:
         print("Didn't detect your LC_ALL environment variable.")
         print("Please export LC_ALL with some UTF-8 encoding.")
@@ -31,7 +30,7 @@ def user_set_encoding_and_is_utf8():
 
 def get_args():
     # parse args
-    parser = argparse.ArgumentParser(prog='zdict')
+    parser = ArgumentParser(prog='zdict')
 
     parser.add_argument(
         'words',
@@ -66,7 +65,7 @@ def get_args():
     def positive_int_only(value):
         ivalue = int(value)
         if ivalue <= 0:
-            raise argparse.ArgumentTypeError(
+            raise ArgumentTypeError(
                 "%s is an invalid positive int value" % value
             )
         return ivalue
@@ -75,7 +74,7 @@ def get_args():
         "-j", "--jobs",
         type=positive_int_only,
         nargs="?",
-        default=-1,     # -1: not using, None: auto, N: N jobs
+        default=0,     # 0: not using, None: auto, N (1, 2, ...): N jobs
         action="store",
         help="""
             Allow N jobs at once.
@@ -189,8 +188,15 @@ def lookup_string_wrapper(dict_class, word, args):
     return f.getvalue()
 
 
+def init_worker():
+    # When -j been used, make subprocesses ignore KeyboardInterrupt
+    # for not showing KeyboardInterrupt traceback error message.
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
 def normal_mode():
-    if args.jobs == -1:
+    if args.jobs == 0:
         # user didn't use `-j`
         for word in args.words:
             for d in args.dict:
@@ -199,7 +205,7 @@ def normal_mode():
     else:
         # user did use `-j`
         # If processes is None, os.cpu_count() is used.
-        pool = Pool(args.jobs)
+        pool = Pool(args.jobs, init_worker)
 
         for word in args.words:
             futures = [
@@ -218,13 +224,13 @@ class MetaInteractivePrompt():
         self.dicts = tuple(dictionary_map[d]() for d in dict_list)
         self.dict_classes = tuple(dictionary_map[d] for d in dict_list)
 
-        if jobs == -1:
+        if jobs == 0:
             # user didn't use `-j`
             self.pool = None
         else:
             # user did use `-j`
             # If processes is None, os.cpu_count() is used.
-            self.pool = Pool(jobs)
+            self.pool = Pool(jobs, init_worker)
 
     def __del__(self):
         del self.dicts
@@ -249,11 +255,7 @@ class MetaInteractivePrompt():
 
     def loop_prompt(self, args):
         while True:
-            try:
-                self.prompt(args)
-            except (KeyboardInterrupt, EOFError):
-                print()
-                return
+            self.prompt(args)
 
 
 def interactive_mode():
@@ -266,10 +268,14 @@ def interactive_mode():
 
 
 def execute_zdict():
-    if args.words:
-        normal_mode()
-    else:
-        interactive_mode()
+    try:
+        if args.words:
+            normal_mode()
+        else:
+            interactive_mode()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        return
 
 
 def main():
