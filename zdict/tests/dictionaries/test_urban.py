@@ -1,14 +1,15 @@
+from pytest import raises
+from unittest.mock import Mock, patch
+
 from zdict.dictionaries.urban import UrbanDict
 from zdict.exceptions import NotFoundError
 from zdict.models import Record
-
-from pytest import raises
-from unittest.mock import Mock, patch
+from zdict.zdict import get_args
 
 
 class TestUrbanDict:
     def setup_method(self, method):
-        self.dict = UrbanDict()
+        self.dict = UrbanDict(get_args())
 
     def teardown_method(self, method):
         del self.dict

@@ -3,12 +3,13 @@ from unittest.mock import Mock, patch
 
 from zdict.dictionaries.jisho import JishoDict
 from zdict.exceptions import NotFoundError
+from zdict.zdict import get_args
 
 
 class TestJishoDict:
     @classmethod
     def setup_class(cls):
-        cls.dict = JishoDict()
+        cls.dict = JishoDict(get_args())
         cls.word = 'apple'
         cls.timeout = 5
         cls.verbose = True

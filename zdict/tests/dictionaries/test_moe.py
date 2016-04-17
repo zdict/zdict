@@ -1,14 +1,15 @@
+from pytest import raises
+from unittest.mock import Mock, patch
+
 from zdict.dictionaries.moe import MoeDict
 from zdict.exceptions import NotFoundError, QueryError
 from zdict.models import Record
-
-from pytest import raises
-from unittest.mock import Mock, patch
+from zdict.zdict import get_args
 
 
 class TestMoeDict:
     def setup_method(self, method):
-        self.dict = MoeDict()
+        self.dict = MoeDict(get_args())
 
     def teardown_method(self, method):
         del self.dict
