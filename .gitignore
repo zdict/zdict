@@ -4,7 +4,7 @@ MANIFEST
 *.swp
 build
 *.egg-info
-.coverage
+.coverage*
 .cache
 .eggs
 htmlcov
