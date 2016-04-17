@@ -232,7 +232,9 @@ def normal_mode(args):
 class MetaInteractivePrompt():
     def __init__(self, args):
         self.args = args
-        self.dicts = tuple(dictionary_map[d]() for d in self.args.dict)
+        self.dicts = tuple(
+            dictionary_map[d](self.args) for d in self.args.dict
+        )
         self.dict_classes = tuple(dictionary_map[d] for d in self.args.dict)
 
         if self.args.jobs == 0:
@@ -260,7 +262,7 @@ class MetaInteractivePrompt():
                 print(''.join(results))
             else:
                 for dictionary_instance in self.dicts:
-                    dictionary_instance.lookup(user_input, self.args)
+                    dictionary_instance.lookup(user_input)
         else:
             return
 

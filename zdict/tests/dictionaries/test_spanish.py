@@ -6,7 +6,7 @@ from zdict.exceptions import NotFoundError
 from zdict.zdict import get_args
 
 
-class TestSpansishDict:
+class TestSpanishDict:
     @classmethod
     def setup_class(cls):
         cls.dict = SpanishDict(get_args())
