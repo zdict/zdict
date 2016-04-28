@@ -16,18 +16,28 @@ class DictBase(metaclass=abc.ABCMeta):
 
     def __init__(self, args):
         self.args = args
-        self.db = db
-        self.db.connect()
-
-        for req in self.REQUIRED_TABLE:
-            if not req.table_exists():
-                req.create_table()
-
         self.color = Color()
+        self.db = db
+
+        try:
+            self.db.connect()
+        except:
+            self.db = None
+            raise
+        else:
+            for req in self.REQUIRED_TABLE:
+                if not req.table_exists():
+                    req.create_table()
 
     def __del__(self):
         del self.args
-        self.db.close()
+        del self.color
+
+        if self.db:
+            try:
+                self.db.close()
+            except AttributeError:
+                raise RuntimeError('db cannot be closed properly.')
         del self.db
 
     @property
