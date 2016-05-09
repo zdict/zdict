@@ -157,9 +157,15 @@ def get_args():
 def set_args(args):
     if args.list_dicts:
         for provider in sorted(
-                dictionary_map,
-                key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)):
-            print('{}: {}'.format(provider, dictionary_map[provider]().title))
+            dictionary_map,
+            key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)
+        ):
+            print(
+                '{}: {}'.format(
+                    provider,
+                    dictionary_map[provider](args).title
+                )
+            )
         exit()
 
     if args.pattern:
