@@ -1,7 +1,7 @@
 import os
 
 
-VERSION = '0.9.3'
+VERSION = '0.9.4'
 
 BASE_DIR_NAME = '.zdict'
 BASE_DIR = os.path.join(os.getenv('HOME'), BASE_DIR_NAME)
