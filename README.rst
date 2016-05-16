@@ -2,7 +2,7 @@
 zdict
 ========================================
 
-|issues| |travis| |coveralls|
+|issues| |travis| |coveralls| |pypi-dm|
 
 |license|
 
@@ -221,3 +221,6 @@ Related Projects
 
 .. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg
    :target: https://coveralls.io/github/zdict/zdict
+
+.. |pypi-dm| image:: https://img.shields.io/pypi/dm/zdict.svg
+   :target: https://pypi.python.org/pypi/zdict
