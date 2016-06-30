@@ -15,6 +15,15 @@ docker-push:
 docker-build:
 	@docker build -t "zdict/zdict:latest" .
 
+clean-pyc:
+	rm -f *.pyc
+
+clean-vim-swap-files:
+	rm -f *.sw*
+
+clean: clean-pyc clean-vim-swap-files
+	rm -rf build dist htmlcov .coverage* .cache .eggs
+
 # Make docker-zdict don't complain about no make rules for apple, bird, ...
 %:
 	@:
