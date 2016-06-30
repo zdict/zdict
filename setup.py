@@ -20,7 +20,7 @@ def get_zdict_version():
 
 
 def get_test_req():
-    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes', 'flake8',
+    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes', 'flake8<=2.6.2',
             'pytest-flake8']
 
     if not sys.platform.startswith('freebsd'):
