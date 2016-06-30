@@ -38,6 +38,19 @@ from `GitHub <https://github.com/zdict/zdict.git>`_ :
     pip install git+https://github.com/zdict/zdict.git
 
 
+from `Docker Hub <https://hub.docker.https://hub.docker.com/r/zdict/zdict/>`_ :
+
+.. code-block:: sh
+
+    # Pull image from Docker Hub
+    docker pull zdict/zdict
+
+    # Run interactive mode
+    docker run -it --rm zdict/zdict
+
+    # Run normal mode
+    docker run -it --rm zdict/zdict apple bird
+
 Usage
 ------------------------------
 

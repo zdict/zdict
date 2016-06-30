@@ -1,0 +1,19 @@
+# Docker
+Dockerfile
+.dockerignore
+
+# git
+.git
+.gitignore
+
+# .gitignore
+*.py[co]
+dist
+MANIFEST
+*.swp
+build
+*.egg-info
+.coverage*
+.cache
+.eggs
+htmlcov
