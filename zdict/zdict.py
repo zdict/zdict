@@ -22,7 +22,7 @@ def user_set_encoding_and_is_utf8():
     else:
         if enc != "UTF-8":
             print("zdict only works with encoding=UTF-8, ")
-            print("but you encoding is: {} {}".format(lang, enc))
+            print("but your encoding is: {} {}".format(lang, enc))
             print("Please export LC_ALL with some UTF-8 encoding.")
             return False
     return True
