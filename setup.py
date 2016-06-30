@@ -4,12 +4,14 @@ import os
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
+from pip.req import parse_requirements
+
+
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 def get_zdict_version():
-    constants_file_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        'zdict/constants.py'
-    )
+    constants_file_path = os.path.join(ROOT_DIR, 'zdict/constants.py')
     with open(constants_file_path) as constants:
         for line in constants:
             if line.startswith('VERSION'):
@@ -20,13 +22,15 @@ def get_zdict_version():
 
 
 def get_test_req():
-    reqs = ['coverage', 'pytest', 'pytest-cov', 'pyjokes', 'flake8<=2.6.2',
-            'pytest-flake8']
+    test_requirements = parse_requirements(
+        os.path.join(ROOT_DIR, 'test-requirements.txt'), session=False
+    )
+    test_requires = [str(tr.req) for tr in test_requirements]
 
     if not sys.platform.startswith('freebsd'):
-        reqs.append('gnureadline')
+        test_requires.append('gnureadline==6.3.3')
 
-    return reqs
+    return test_requires
 
 version = get_zdict_version()
 
@@ -49,20 +53,19 @@ class PyTest(TestCommand):
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
 
-requires = [
-    'beautifulsoup4',
-    'peewee',
-    'requests',
-]
+install_requirements = parse_requirements(
+    os.path.join(ROOT_DIR, 'requirements.txt'), session=False
+)
+install_requires = [str(ir.req) for ir in install_requirements]
 
 if sys.platform == 'darwin':
-    requires.append('gnureadline')
+    install_requires.append('gnureadline==6.3.3')
 
 
 setup(
     packages=find_packages(exclude=['scripts']),
     scripts=['scripts/zdict'],
-    install_requires=requires,
+    install_requires=install_requires,
     tests_require=get_test_req(),
     cmdclass={'test': PyTest},
 
