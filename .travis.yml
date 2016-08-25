@@ -27,3 +27,14 @@ matrix:
     allow_failures:
         - python: "nightly"
         - python: "3.5"  # maybe there is a bug of sqlite3 in 3.5.0
+
+deploy:
+    provider: pypi
+    user: M157q
+    password:
+        secure: fTh18TIYqUsyGEg4vIEmxcxYPFCW5VDp4Ma+kuUjDh6qBpcY4akS6M16iOEGJp2QLndJiFdjW2JSOY7TR+HUCBEm6VTU7uYITPlNtYbMSKo0QjTkuLM/6/rufFwUMiDaw/mGSUuW04T6/+2RGFXFU9/JrRJqa96Le3Q9FqnVaQg=
+    on:
+        branch: master
+        tags: true
+        distributions: sdist bdist_wheel
+        repo: zdict/zdict
