@@ -116,7 +116,7 @@ class YahooDict(DictBase):
 
                 for example in (
                     tag for tag in item.find_all('span')
-                    if 'line-height: 17px;' not in tag['style']
+                    if 'line-height: 17px;' not in tag.get('style', {})
                 ):
                     sentence = ''
 
