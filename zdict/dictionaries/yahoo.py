@@ -80,18 +80,34 @@ class YahooDict(DictBase):
                 content['pronounce'].append(match.group(1, 2))
 
         # handle sound
-        pronu_sound = data.find(class_='proun_sound')
-        if pronu_sound:
-            content['sound'] = [
-                ('mp3', pronu_sound.find(
-                        class_='source',
-                        attrs={'data-type': 'audio/mpeg'}
-                    ).attrs['data-src']),
-                ('ogg', pronu_sound.find(
-                        class_='source',
-                        attrs={'data-type': 'audio/ogg'}
-                    ).attrs['data-src']),
-            ]
+        proun_sound = data.find(
+            'span',
+            style="display: none;",
+            id="iconStyle",
+            class_="tri",
+            title="http://product.dreye.com.tw/",
+        )
+        if proun_sound:
+            content['sound'] = {}
+            d = json.loads(proun_sound.text)
+
+            sound_types_and_urls = (
+                d.get('sound_url_1', []) + d.get('sound_url_2', [])
+            )
+            sound_accents = (
+                d.get('sound_type_1', []) + d.get('sound_type_2', [])
+            )
+
+            for sound_type_and_url, sound_accent in zip(
+                sound_types_and_urls, sound_accents
+            ):
+                if sound_type_and_url:
+                    sound_type, sound_url = list(sound_type_and_url.items())[0]
+                    content['sound'].setdefault(
+                        sound_type, {}
+                    ).setdefault(
+                        sound_accent, []
+                    ).append(sound_url)
 
         # Handle explain
         main_explanations = data.find(
