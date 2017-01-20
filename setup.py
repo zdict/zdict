@@ -58,7 +58,7 @@ install_requirements = parse_requirements(
 )
 install_requires = [str(ir.req) for ir in install_requirements]
 
-if sys.platform == 'darwin':
+if sys.platform == 'darwin' and sys.version_info <= (3, 5):
     install_requires.append('gnureadline==6.3.3')
 
 

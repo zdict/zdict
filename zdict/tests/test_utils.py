@@ -72,7 +72,8 @@ def test_platform_readline():
 
     with patch.object(sys, 'platform', new='darwin'):
         readline = import_readline()
-        assert readline.__name__ == 'gnureadline'
+        expect = 'gnureadline' if sys.version_info <= (3, 5) else 'readline'
+        assert readline.__name__ == expect
 
     with patch.object(sys, 'platform', new='foo'):
         readline = import_readline()
