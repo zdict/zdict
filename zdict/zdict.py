@@ -5,6 +5,7 @@ from contextlib import redirect_stdout
 from io import StringIO
 
 from zdict import constants, utils, easter_eggs
+from zdict import http as zhttp
 from zdict.api import dump
 from zdict.completer import DictCompleter
 from zdict.loader import get_dictionary_map
@@ -151,6 +152,13 @@ def get_args():
         help="Print raw html prettified by BeautifulSoup for debugging."
     )
 
+    parser.add_argument(
+        '--http', dest='http',
+        default=False,
+        action='store_true',
+        help='Simple http interactive'
+    )
+
     return parser.parse_args()
 
 
@@ -281,6 +289,9 @@ def execute_zdict(args):
                 )
             )
         exit()
+
+    if args.http:
+        return zhttp.main(normal_mode, args)
 
     if args.pattern:
         for word in dump(pattern=args.pattern):
