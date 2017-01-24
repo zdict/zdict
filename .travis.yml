@@ -1,10 +1,37 @@
 language: python
 
-python:
-    - "3.4"
-    - "3.5"
-    - "3.5.1"
-    - "nightly"
+matrix:
+    include:
+        - os: linux
+          python: 3.4
+        - os: linux
+          python: 3.5
+        - os: linux
+          python: 3.6
+        - os: linux
+          python: nightly
+
+        # Python runtime is not yet available on OS X
+        # https://github.com/travis-ci/travis-ci/issues/2312
+        - os: osx
+          language: generic
+          env: PYTHON_VERSION=3.4.6
+        - os: osx
+          language: generic
+          env: PYTHON_VERSION=3.5.3
+        - os: osx
+          language: generic
+          env: PYTHON_VERSION=3.6.0
+
+    allow_failures:
+        - python: "nightly"
+        - os: osx
+          language: generic
+          env: PYTHON_VERSION=3.4.6
+
+before_install:
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then source ~/venv/bin/activate; fi
 
 install:
     - "pip install -U pip"
@@ -22,11 +49,6 @@ notifications:
     webhooks:
         urls:
             - https://webhooks.gitter.im/e/7498c1d7f0e50c212e1a
-
-matrix:
-    allow_failures:
-        - python: "nightly"
-        - python: "3.5"  # maybe there is a bug of sqlite3 in 3.5.0
 
 deploy:
     provider: pypi
