@@ -87,7 +87,9 @@ class TestMoeDictTaiwanese:
     def test_query_normal(self, Record):
         self.dict._get_raw = Mock(return_value='{}')
         self.dict.query('木耳')
-        Record.assert_called_with(word='木耳', content='{}', source='moe-taiwanese')
+        Record.assert_called_with(word='木耳',
+                                  content='{}',
+                                  source='moe-taiwanese')
 
     def test_show(self):
         content = '''
@@ -96,7 +98,7 @@ class TestMoeDictTaiwanese:
                 "T": "bo̍k-ní",
                 "_": "928",
                 "d": [{
-                    "f": "蕈`菇~`類~。`生長~`在~`朽~`腐~`的~`樹~`幹~`上~，`成~`片~`狀~，`一邊~`黏~`在~`腐~`木~`上~，`表面~`向~`上~`突出~，菌`絲~`體~`生長~`後~，`生~`子~`實體~，`形狀~`長~`得~`像~`人~`的~`耳~朵，`徑~`大約~`一~`公~`寸~，`內面~`平~`滑~，`呈現~`暗~褐`色~，`外面~`有~`柔軟~`的~`短~`毛~，`呈~`淡~褐`色~。`可以~`供~`食用~。",
+                    "f": "蕈`菇~`類~。`生長~`在~`朽~`腐~`的~`樹~`幹~`上~ ...",
                     "type": "`名~"
                 }]
             }],
