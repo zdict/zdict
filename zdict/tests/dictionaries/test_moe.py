@@ -1,7 +1,7 @@
 from pytest import raises
 from unittest.mock import Mock, patch
 
-from zdict.dictionaries.moe import MoeDict
+from zdict.dictionaries.moe import MoeDict, MoeDictTaiwanese
 from zdict.exceptions import NotFoundError, QueryError
 from zdict.models import Record
 from zdict.zdict import get_args
@@ -57,6 +57,53 @@ class TestMoeDict:
         }
         '''
         r = Record(word='贗', content=content, source=self.dict.provider)
+
+        # god bless this method, hope that it do not raise any exception
+        self.dict.show(r)
+
+
+class TestMoeDictTaiwanese:
+    def setup_method(self, method):
+        self.dict = MoeDictTaiwanese(get_args())
+
+    def teardown_method(self, method):
+        del self.dict
+
+    def test__get_url(self):
+        assert 'https://www.moedict.tw/t/木耳.json' == self.dict._get_url('木耳')
+
+    def test_provider(self):
+        assert self.dict.provider == 'moe-taiwanese'
+
+    def test_query_timeout(self):
+        self.dict._get_raw = Mock(side_effect=QueryError('木耳', 404))
+
+        with raises(NotFoundError):
+            self.dict.query('木耳')
+
+        self.dict._get_raw.assert_called_with('木耳')
+
+    @patch('zdict.dictionaries.moe.Record')
+    def test_query_normal(self, Record):
+        self.dict._get_raw = Mock(return_value='{}')
+        self.dict.query('木耳')
+        Record.assert_called_with(word='木耳', content='{}', source='moe-taiwanese')
+
+    def test_show(self):
+        content = '''
+        {
+            "h": [{
+                "T": "bo̍k-ní",
+                "_": "928",
+                "d": [{
+                    "f": "蕈`菇~`類~。`生長~`在~`朽~`腐~`的~`樹~`幹~`上~，`成~`片~`狀~，`一邊~`黏~`在~`腐~`木~`上~，`表面~`向~`上~`突出~，菌`絲~`體~`生長~`後~，`生~`子~`實體~，`形狀~`長~`得~`像~`人~`的~`耳~朵，`徑~`大約~`一~`公~`寸~，`內面~`平~`滑~，`呈現~`暗~褐`色~，`外面~`有~`柔軟~`的~`短~`毛~，`呈~`淡~褐`色~。`可以~`供~`食用~。",
+                    "type": "`名~"
+                }]
+            }],
+            "t": "`木~`耳~"
+        }
+        '''
+        r = Record(word='木耳', content=content, source=self.dict.provider)
 
         # god bless this method, hope that it do not raise any exception
         self.dict.show(r)
