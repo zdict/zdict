@@ -20,7 +20,7 @@ class DictBase(metaclass=abc.ABCMeta):
         self.db = db
 
         try:
-            self.db.connect()
+            self.db.get_conn()
         except:
             self.db = None
             raise

@@ -14,7 +14,7 @@ def test_DictCompleter_db_connect(db):
     '''
     # init
     completer = DictCompleter()
-    assert db.connect.called
+    assert db.get_conn.called
 
     # del
     del completer
