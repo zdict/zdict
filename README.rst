@@ -57,8 +57,8 @@ Usage
 ::
 
     usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt jisho,yahoo,urban,moe,spanish,all] [-ld] [-V] [-c]
-                 [--dump [PATTERN]] [-D]
+                 [-dt moe,moe-taiwanese,spanish,jisho,yahoo,urban,all] [-ld] [-V]
+                 [-c] [--dump [PATTERN]] [-D]
                  [word [word ...]]
 
     positional arguments:
@@ -77,7 +77,7 @@ Usage
                             the number of CPUs in the system.
       -sp, --show-provider  Show the dictionary provider of the queried word
       -su, --show-url       Show the url of the queried word
-      -dt jisho,yahoo,urban,moe,spanish,all, --dict jisho,yahoo,urban,moe,spanish,all
+      -dt moe,moe-taiwanese,spanish,jisho,yahoo,urban,all, --dict moe,moe-taiwanese,spanish,jisho,yahoo,urban,all
                             Must be seperated by comma and no spaces after each
                             comma. Choose the dictionary you want. (default:
                             yahoo) Use 'all' for qureying all dictionaries. If
