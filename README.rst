@@ -38,7 +38,7 @@ from `GitHub <https://github.com/zdict/zdict.git>`_ :
     pip install git+https://github.com/zdict/zdict.git
 
 
-from `Docker Hub <https://hub.docker.https://hub.docker.com/r/zdict/zdict/>`_ :
+from `Docker Hub <https://hub.docker.com/r/zdict/zdict/>`_ :
 
 .. code-block:: sh
 
