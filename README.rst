@@ -11,7 +11,7 @@ zdict
 *Note: This project is working in progress.*
 
 zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.
-This project originly forked from https://github.com/chenpc/ydict, which is a CLI tool for the Yahoo! online dictionary.
+This project originally forked from https://github.com/chenpc/ydict, which is a CLI tool for the Yahoo! online dictionary.
 After heavily refactoring the original project including:
 
 1. Change from Python 2 to Python 3
@@ -214,7 +214,7 @@ Related Projects
 ------------------------------
 
 * `zdict.vim <https://github.com/zdict/zdict.vim>`_
-    * A vim plugin integrate with zdict.
+    * A vim plugin integrates with zdict.
 * `zdict.sh <https://github.com/zdict/zdict.sh>`_
     * A collection of shell completion scripts for zdict.
 
