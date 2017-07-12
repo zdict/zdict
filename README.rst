@@ -10,12 +10,12 @@ zdict
 
 *Note: This project is working in progress.*
 
-zdict is a CLI dictionay framework mainly focus on any kind of online dictionary.
+zdict is a CLI dictionary framework mainly focus on any kind of online dictionary.
 This project originally forked from https://github.com/chenpc/ydict, which is a CLI tool for the Yahoo! online dictionary.
 After heavily refactoring the original project including:
 
 1. Change from Python 2 to Python 3
-2. Focus on being a flexible framework for any kind online dicitionaries, not only just a CLI tool for querying Yahoo! online dictionay.
+2. Focus on being a flexible framework for any kind online dicitionaries, not only just a CLI tool for querying Yahoo! online dictionary.
 3. Based on an open source project skeleton.
 
 So, we decided to create a new project.
