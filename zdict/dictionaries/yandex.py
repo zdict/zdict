@@ -1,7 +1,7 @@
 import json
 
 from zdict.dictionary import DictBase
-from zdict.exceptions import NotFoundError
+from zdict.exceptions import NotFoundError, QueryError
 from zdict.models import Record
 
 
@@ -50,10 +50,14 @@ class YandexDict(DictBase):
         print()
 
     def query(self, word: str):
-        content = self._get_raw(word)
+        try:
+            content = self._get_raw(word)
+        except QueryError as exception:
+            raise NotFoundError(exception.word)
+
         content_json = json.loads(content)
 
-        if not content_json['code'] != '200':
+        if content_json.get('code') != 200:
             # TODO: handle response codes for different situation
             raise NotFoundError(word)
 
