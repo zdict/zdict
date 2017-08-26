@@ -148,6 +148,12 @@ Screenshots
 .. image:: http://i.imgur.com/UMP8k4e.png
 
 
+`Yandex Translate <https://translate.yandex.com/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://user-images.githubusercontent.com/2716047/29741879-ca1a3826-8a3a-11e7-9701-4a7e9a15971a.png
+
+
 Development & Contributing
 ---------------------------
 
