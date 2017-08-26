@@ -5,8 +5,10 @@ from zdict.exceptions import NotFoundError
 from zdict.models import Record
 
 
-# The daily request limit is 1,000,000 characters. The monthly limit is 10,000,000 characters.
-API_KEY = 'trnsl.1.1.20170826T075621Z.6dfcaff242c6caa8.e2b9cf136d451d9d6eb69516ec97b827e8c8229b'
+# The daily request limit is 1,000,000 characters
+# The monthly limit is 10,000,000 characters
+API_KEY = 'trnsl.1.1.20170826T075621Z.' \
+          '6dfcaff242c6caa8.e2b9cf136d451d9d6eb69516ec97b827e8c8229b'
 
 
 # Change `Template` to the name of new dictionary. like xxxDict.
@@ -23,7 +25,8 @@ class YandexDict(DictBase):
     # Need to keep the `{word}` for `_get_url()` usage.
     # TODO: support different translate direction
     # TODO: use Dictionary API
-    API = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key={api_key}&text={word}&lang=ru-en'
+    API = 'https://translate.yandex.net/api/v1.5/tr.json/translate?' \
+          'key={api_key}&text={word}&lang=ru-en'
 
     @property
     def provider(self):
@@ -43,7 +46,7 @@ class YandexDict(DictBase):
         print()
 
         for index, data in enumerate(content['text']):
-            self.color.print('{}. {}'.format(index+1, data), 'org')
+            self.color.print('{}. {}'.format(index + 1, data), 'org')
 
         print()
 
@@ -59,6 +62,5 @@ class YandexDict(DictBase):
             word=word,
             content=content,
             source=self.provider,
-         )
-
+        )
         return record
