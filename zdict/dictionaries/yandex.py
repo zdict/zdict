@@ -11,7 +11,6 @@ API_KEY = 'trnsl.1.1.20170826T075621Z.' \
           '6dfcaff242c6caa8.e2b9cf136d451d9d6eb69516ec97b827e8c8229b'
 
 
-# Change `Template` to the name of new dictionary. like xxxDict.
 class YandexDict(DictBase):
     """
     Docs:
