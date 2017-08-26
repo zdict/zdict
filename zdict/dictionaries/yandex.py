@@ -27,6 +27,16 @@ class YandexDict(DictBase):
     API = 'https://translate.yandex.net/api/v1.5/tr.json/translate?' \
           'key={api_key}&text={word}&lang=ru-en'
 
+    status_code = {
+        200: 'Operation completed successfully',
+        401: 'Invalid API key',
+        402: 'Blocked API key',
+        404: 'Exceeded the daily limit on the amount of translated text',
+        413: 'Exceeded the maximum text size',
+        422: 'The text cannot be translated',
+        501: 'The specified translation direction is not supported',
+    }
+
     @property
     def provider(self):
         return 'yandex'
@@ -57,8 +67,14 @@ class YandexDict(DictBase):
 
         content_json = json.loads(content)
 
-        if content_json.get('code') != 200:
-            # TODO: handle response codes for different situation
+        status = content_json.get('code')
+        if status != 200:
+            # https://tech.yandex.com/translate/doc/dg/reference/translate-docpage/#codes
+            message = self.status_code.get(
+                status,
+                'Some bad thing happened with Yandex'
+            )
+            print('Yandex: ' + message)
             raise NotFoundError(word)
 
         record = Record(
