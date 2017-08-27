@@ -50,9 +50,9 @@ class UrbanDict(DictBase):
             raise NotFoundError(word)
 
         record = Record(
-                    word=word,
-                    content=content,
-                    source=self.provider,
-                 )
+            word=word,
+            content=content,
+            source=self.provider,
+        )
 
         return record

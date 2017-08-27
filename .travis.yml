@@ -15,25 +15,23 @@ matrix:
         # https://github.com/travis-ci/travis-ci/issues/2312
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.4.6
+          env: PYTHON_VERSION=3.4.7
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.5.3
+          env: PYTHON_VERSION=3.5.4
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.6.0
+          env: PYTHON_VERSION=3.6.2
 
     allow_failures:
         - python: "nightly"
-        - os: osx
-          language: generic
-          env: PYTHON_VERSION=3.4.6
 
 before_install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then source ~/venv/bin/activate; fi
 
 install:
+    - "pip install -U setuptools"   # for upgrade issue with setuptools and CPython 3.6 on Travis CI
     - "pip install -U pip"
     - "pip install -U pytest coveralls"
     - "pip install ."

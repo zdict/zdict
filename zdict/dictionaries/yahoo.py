@@ -206,8 +206,8 @@ class YahooDict(DictBase):
                 content['verbose'].append(node)
 
         record = Record(
-                    word=word,
-                    content=json.dumps(content),
-                    source=self.provider,
-                 )
+            word=word,
+            content=json.dumps(content),
+            source=self.provider,
+        )
         return record

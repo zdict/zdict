@@ -32,6 +32,7 @@ def get_test_req():
 
     return test_requires
 
+
 version = get_zdict_version()
 
 
@@ -52,6 +53,7 @@ class PyTest(TestCommand):
         import pytest
         errno = pytest.main(self.pytest_args)
         sys.exit(errno)
+
 
 install_requirements = parse_requirements(
     os.path.join(ROOT_DIR, 'requirements.txt'), session=False
