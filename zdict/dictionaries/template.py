@@ -62,6 +62,6 @@ class TemplateDict(DictBase):
             word=word,
             content=json.dumps(content),
             source=self.provider,
-         )
+        )
 
         return record

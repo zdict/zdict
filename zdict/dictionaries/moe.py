@@ -49,7 +49,7 @@ class MoeDict(DictBase):
 
                 self.color.print(
                     '{order}. {text}'.format(
-                        order=count+1,
+                        order=count + 1,
                         text=explain.get('def', '')
                     ),
                 )
@@ -91,10 +91,10 @@ class MoeDict(DictBase):
             raise NotFoundError(exception.word)
 
         record = Record(
-                    word=word,
-                    content=content,
-                    source=self.provider,
-                 )
+            word=word,
+            content=content,
+            source=self.provider,
+        )
 
         return record
 
@@ -161,7 +161,7 @@ class MoeDictTaiwanese(DictBase):
             # print explain
             for count, explain in enumerate(word.get('d', '')):
 
-                self.color.print('{order}. '.format(order=count+1), end='')
+                self.color.print('{order}. '.format(order=count + 1), end='')
                 type = clean(explain.get('type', ''))
                 if type:
                     self.color.print(
@@ -190,9 +190,9 @@ class MoeDictTaiwanese(DictBase):
             raise NotFoundError(exception.word)
 
         record = Record(
-                    word=word,
-                    content=content,
-                    source=self.provider,
-                 )
+            word=word,
+            content=content,
+            source=self.provider,
+        )
 
         return record

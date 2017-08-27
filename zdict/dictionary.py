@@ -177,8 +177,8 @@ class DictBase(metaclass=abc.ABCMeta):
         if self.args.debug:
             from bs4 import BeautifulSoup
             soup = BeautifulSoup(res.text, 'html.parser')
-            print('='*30 + ' Start of debug info ' + '='*30)
+            print('=' * 30 + ' Start of debug info ' + '=' * 30)
             print(soup.prettify())
-            print('='*30 + ' End of debug info ' + '='*30)
+            print('=' * 30 + ' End of debug info ' + '=' * 30)
 
         return res.text
