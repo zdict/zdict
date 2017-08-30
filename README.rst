@@ -57,8 +57,8 @@ Usage
 ::
 
     usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt moe,moe-taiwanese,spanish,jisho,yahoo,urban,all] [-ld] [-V]
-                 [-c] [--dump [PATTERN]] [-D]
+                 [-dt moe,moe-taiwanese,yahoo,jisho,spanish,yandex,urban,all]
+                 [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
                  [word [word ...]]
 
     positional arguments:
@@ -77,7 +77,7 @@ Usage
                             the number of CPUs in the system.
       -sp, --show-provider  Show the dictionary provider of the queried word
       -su, --show-url       Show the url of the queried word
-      -dt moe,moe-taiwanese,spanish,jisho,yahoo,urban,all, --dict moe,moe-taiwanese,spanish,jisho,yahoo,urban,all
+      -dt moe,moe-taiwanese,yahoo,jisho,spanish,yandex,urban,all, --dict moe,moe-taiwanese,yahoo,jisho,spanish,yandex,urban,all
                             Must be seperated by comma and no spaces after each
                             comma. Choose the dictionary you want. (default:
                             yahoo) Use 'all' for qureying all dictionaries. If
@@ -146,6 +146,12 @@ Screenshots
 .. image:: http://i.imgur.com/63n3qmH.png
 
 .. image:: http://i.imgur.com/UMP8k4e.png
+
+
+`Yandex Translate <https://translate.yandex.com/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://user-images.githubusercontent.com/2716047/29741879-ca1a3826-8a3a-11e7-9701-4a7e9a15971a.png
 
 
 Development & Contributing
