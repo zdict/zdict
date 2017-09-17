@@ -42,14 +42,36 @@ from `Docker Hub <https://hub.docker.com/r/zdict/zdict/>`_ :
 
 .. code-block:: sh
 
-    # Pull image from Docker Hub
+    # Pull the image of latest commit of master branch from Docker Hub
     docker pull zdict/zdict
 
+    # Pull the image of latest release from Docker Hub
+    docker pull zdict/zdict:release
+
+    # Pull the image of specific release version from Docker Hub
+    docker pull zdict/zdict:${version}
+    docker pull zdict/zdict:v0.10.0
+
+
+How to run the zdict docker image
+
+.. code-block:: sh
+
     # Run interactive mode
-    docker run -it --rm zdict/zdict
+    docker run -it --rm zdict/zdict         # latest commit
+    docker run -it --rm zdict/zdict:release # latest release
+    docker run -it --rm zdict/zdict:v0.10.0 # use zdict v0.10.0
+    docker run -it --rm zdict/zdict:$tag    # with specific tag
 
     # Run normal mode
-    docker run -it --rm zdict/zdict apple bird
+    docker run -it --rm zdict/zdict apple bird         # latest commit
+    docker run -it --rm zdict/zdict:release apple bird # latest release
+    docker run -it --rm zdict/zdict:v0.10.0 apple bird # use zdict v0.10.0
+    docker run -it --rm zdict/zdict:$tag apple bird    # with specific tag
+
+    # You can also add the options while using docker run either interactive mode or normal mode
+    docker run -it --rm zdict/zdict:v0.10.0 -dt moe    # use moe dict in interactive mode
+    docker run -it --rm zdict/zdict:v0.10.0 -dt moe 哈 # use moe dict in normal mode
 
 Usage
 ------------------------------
