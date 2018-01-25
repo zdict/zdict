@@ -1,0 +1,7 @@
+# see https://pyup.io/docs/configuration/ for all available options
+
+requirements:
+  - requirements.txt
+  - test-requirements.txt
+  - Pipfile
+  - Pipfile.lock
