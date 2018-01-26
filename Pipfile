@@ -1,20 +1,22 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
+
 [packages]
 
-"beautifulsoup4" = "==4.6.0"
-peewee = "==2.10.1"
+beautifulsoup4 = "==4.6.0"
+peewee = "==2.10.2"
 requests = "==2.18.4"
 
 
 [dev-packages]
 
 coverage = "==4.4.1"
-"flake8" = "==3.4.1"
+flake8 = "==3.4.1"
 pyjokes = "==0.5.0"
 pytest = "==3.2.2"
-"pytest-cov" = "==2.5.1"
-"pytest-flake8" = "==0.8.1"
+pytest-cov = "==2.5.1"
+pytest-flake8 = "==0.8.1"
