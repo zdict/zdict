@@ -58,9 +58,9 @@
         },
         "peewee": {
             "hashes": [
-                "sha256:2342067f48a779e35956a44cd547df883dda35153daa9fe994d970585aaec281"
+                "sha256:77b6648f1fd19607c63968cf4fd6798a0bbcbb66ef1a99dc95e4beba74978cc5"
             ],
-            "version": "==2.10.2"
+            "version": "==3.0.5"
         },
         "requests": {
             "hashes": [
