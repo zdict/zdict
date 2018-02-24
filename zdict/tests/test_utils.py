@@ -66,14 +66,8 @@ def test_platform_readline():
     '''
     Check the imported readline module on different platforms
     '''
-    with patch.object(sys, 'platform', new='linux'):
-        readline = import_readline()
-        assert readline.__name__ == 'readline'
-
-    with patch.object(sys, 'platform', new='darwin'):
-        readline = import_readline()
-        expect = 'gnureadline' if sys.version_info <= (3, 5) else 'readline'
-        assert readline.__name__ == expect
+    readline = import_readline()
+    assert readline.__name__ == 'readline'
 
     with patch.object(sys, 'platform', new='foo'):
         readline = import_readline()

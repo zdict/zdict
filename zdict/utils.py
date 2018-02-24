@@ -91,6 +91,8 @@ class Color(metaclass=ColorConst):
 def import_readline():
     if sys.platform == 'darwin' and sys.version_info <= (3, 5):
         import gnureadline as readline
+    elif sys.platform == 'win32' or sys.platform == 'cygwin':
+        import pyreadline as readline
     else:
         import readline
     return readline
