@@ -142,7 +142,7 @@ class YahooDict(DictBase):
                         else:
                             try:
                                 sentence += w
-                            except:
+                            except:     # noqa: E722
                                 pass
 
                     pack.append((sentence.strip()))
@@ -198,7 +198,7 @@ class YahooDict(DictBase):
                                 else:
                                     try:
                                         sentence += w
-                                    except:
+                                    except:     # noqa: E722
                                         pass
 
                             pack.append((sentence.strip()))

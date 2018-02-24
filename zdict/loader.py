@@ -40,5 +40,5 @@ def get_dictionary_map():
 def _is_dict(cls):
     try:
         return issubclass(cls, DictBase) and not (cls is DictBase)
-    except:
+    except:     # noqa: E722
         return False

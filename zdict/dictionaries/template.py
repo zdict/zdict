@@ -38,7 +38,7 @@ class TemplateDict(DictBase):
             try:
                 # Get the addtional information if it exists.
                 pass
-            except:
+            except:     # noqa: E722
                 return
             else:
                 # Define how to print the additional information
