@@ -4,7 +4,7 @@ from zdict.models import Record, db
 class DictCompleter:
     def __init__(self):
         self.db = db
-        self.db.get_conn()
+        self.db.connection()
 
     def __del__(self):
         self.db.close()
