@@ -21,7 +21,7 @@ class DictBase(metaclass=abc.ABCMeta):
 
         try:
             self.db.connection()
-        except:     # noqa: E722
+        except Exception:
             self.db = None
             raise
         else:
@@ -168,7 +168,7 @@ class DictBase(metaclass=abc.ABCMeta):
                     raise eval(exception)
             else:
                 raise exceptions.UnexpectedError()
-        except:     # noqa: E722
+        except Exception:
             raise exceptions.UnexpectedError()
 
         if res.status_code != 200:
