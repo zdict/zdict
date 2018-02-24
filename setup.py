@@ -27,8 +27,10 @@ def get_test_req():
     )
     test_requires = [str(tr.req) for tr in test_requirements]
 
-    if not sys.platform.startswith('freebsd'):
+    if sys.platform == 'darwin' and sys.version_info <= (3, 5):
         test_requires.append('gnureadline==6.3.3')
+    elif sys.platform == 'win32' or sys.platform == 'cygwin':
+        test_requires.append('pyreadline==2.1')
 
     return test_requires
 
