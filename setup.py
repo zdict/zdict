@@ -64,6 +64,8 @@ install_requires = [str(ir.req) for ir in install_requirements]
 
 if sys.platform == 'darwin' and sys.version_info <= (3, 5):
     install_requires.append('gnureadline==6.3.3')
+elif sys.platform == 'win32' or sys.platform == 'cygwin':
+    install_requires.append('pyreadline==2.1')
 
 
 setup(
