@@ -183,6 +183,8 @@ class YahooDict(DictBase):
             elif len(ls) == 3:  # e.g. "google"
                 _, word_, explain = ls
                 pronoun = None
+            elif len(ls) == 2:
+                raise NotFoundError(word)
 
             summary['word'] = word_.find('span').text.strip()
             if pronoun:
