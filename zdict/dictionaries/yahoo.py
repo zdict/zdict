@@ -148,7 +148,7 @@ class YahooDict(DictBase):
         #     'verbose': [(optional)],
         # }
 
-        def test(x):
+        def text(x):
             x.text
 
         # Construct summary
