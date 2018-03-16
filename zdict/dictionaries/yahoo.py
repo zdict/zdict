@@ -27,7 +27,7 @@ class YahooDict(DictBase):
         content = json.loads(record.content)
         getattr(self, 'showv{}'.format(content.get('version', 1)))(content)
 
-    def showv1(self, content):  # lagecy
+    def showv1(self, content):  # legacy
         # print word
         self.color.print(content['word'], 'yellow')
 
