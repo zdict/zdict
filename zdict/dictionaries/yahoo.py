@@ -44,8 +44,9 @@ class YahooDict(DictBase):
             self.color.print(hd, 'lred', end=' ', indent=2)
             print(tl)
         # summary > grammar
-        print()
-        for s in summary['grammar']:
+        grammar = summary.get('grammar', [])
+        print() if grammar else None
+        for s in grammar:
             self.color.print(s, indent=2)
 
         print()
@@ -139,7 +140,7 @@ class YahooDict(DictBase):
         #     'version': 2,
         #     'summary': {
         #         'word': ...,
-        #         'pronounce': [('KK', '...'), (...)],
+        #         'pronounce': [('KK', '...'), (...)],  // optional
         #         'explain': [...],
         #         'grammar': [(optional)],
         #     },
