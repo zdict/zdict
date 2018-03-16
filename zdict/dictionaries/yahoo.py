@@ -11,7 +11,7 @@ from zdict.models import Record
 
 class YahooDict(DictBase):
 
-    API = 'https://tw.dictionary.search.yahoo.com/search?p={word}'
+    API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
 
     @property
     def provider(self):
@@ -26,7 +26,57 @@ class YahooDict(DictBase):
 
     def show(self, record: Record):
         content = json.loads(record.content)
+        getattr(self, 'showv{}'.format(content.get('version', 1)))(content)
 
+    def showv2(self, content):
+        # summary
+        summary = content['summary']
+        # summary > word
+        self.color.print(summary['word'], 'yellow')
+        # summary > pronounce
+        for k, v in summary.get('pronounce', []):
+            self.color.print(k, end='')
+            self.color.print(v, 'lwhite', end=' ')
+        print()
+        # summary > explain
+        for s in summary.get('explain', []):
+            hd, _, tl = s.partition(' ')
+            self.color.print(hd, 'lred', end=' ', indent=2)
+            print(tl)
+        # summary > grammar
+        print()
+        for s in summary['grammar']:
+            self.color.print(s, indent=2)
+
+        print()
+        # explain
+        for exp in content.get('explain', []):
+            type_ = exp['type']
+            if type_ == 'PoS':
+                self.color.print(exp['text'], 'lred')
+            elif type_ == 'item':
+                self.color.print(exp['text'], indent=2)
+                sentence = exp.get('sentence')
+                if sentence:
+                    indent = True
+                    for s in sentence:
+                        if isinstance(s, str) and s != '\n':
+                            self.color.print(s, 'indigo', end='',
+                                             indent=indent * 4)
+                        elif isinstance(s, list) and s[0] == 'b':
+                            self.color.print(s[1], 'lindigo', end='',
+                                             indent=indent * 4)
+                        elif s == '\n':
+                            print()
+                            indent = True
+                            continue
+
+                        indent = False
+
+
+        print()
+
+    def showv1(self, content):  # lagecy
         # print word
         self.color.print(content['word'], 'yellow')
 
@@ -66,144 +116,98 @@ class YahooDict(DictBase):
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
-        # handle record.word
+        # Please bump version if format changed again.
+        # the `show` function will act with respect to version number.
+
+        content['version'] = 2
+
+        # Here are details of each version.
+        #
+        # The original one, in the old era, there isn't any concept of
+        # version number:
+        # content = {
+        #     'word': ...,
+        #     'pronounce': ...,
+        #     'sound': (optional),
+        #     'explain': [...],
+        #     'verbose': [...],
+        # }
+        #
+        # Verion 2, yahoo dictionary content is provided by Dy.eye
+        # at that moment:
+        # content = {
+        #     'version': 2,
+        #     'summary': {
+        #         'word': ...,
+        #         'pronounce': [('KK', '...'), (...)],
+        #         'explain': [...],
+        #         'grammar': [(optional)],
+        #     },
+        #     'explain': [...],
+        #     'verbose': [(optional)],
+        # }
+
+        text = lambda x: x.text
+
+        # Construct summary
+        summary = content['summary'] = {}
+        sum_ = data.select_one('div#web ol > li > div')
+        if not sum_:
+            raise NotFoundError(word)
         try:
-            content['word'] = data.find('span', id='term').text
-        except AttributeError:
+            ls = sum_.select('div')
+            summary['word'] = ls[1].find('span').text.strip()
+            summary['pronounce'] = ls[2].find('ul').text.strip().split()
+            summary['explain'] = list(
+                map(lambda x: x.text, ls[4].find('ul').find_all('li')))
+
+            grammar = data.select('div#web div.dictionaryWordCard > ul > li')
+            summary['grammar'] = list(map(text, grammar))
+        except AttributeError as e:
             raise NotFoundError(word)
 
-        # handle pronounce
-        pronu_value = data.find('span', id='pronunciation_pos').text
-        if pronu_value:
-            content['pronounce'] = []
-            for match in re.finditer('(\w+)(\[.*?\])', pronu_value):
-                content['pronounce'].append(match.group(1, 2))
-
-        # handle sound
-        proun_sound = data.find(
-            'span',
-            style="display: none;",
-            id="iconStyle",
-            class_="tri",
-            title="http://product.dreye.com.tw/",
-        )
-        if proun_sound:
-            content['sound'] = {}
-            d = json.loads(proun_sound.text)
-
-            sound_types_and_urls = (
-                d.get('sound_url_1', []) + d.get('sound_url_2', [])
-            )
-            sound_accents = (
-                d.get('sound_type_1', []) + d.get('sound_type_2', [])
-            )
-
-            for sound_type_and_url, sound_accent in zip(
-                sound_types_and_urls, sound_accents
-            ):
-                if sound_type_and_url:
-                    sound_type, sound_url = list(sound_type_and_url.items())[0]
-                    content['sound'].setdefault(
-                        sound_type, {}
-                    ).setdefault(
-                        sound_accent, []
-                    ).append(sound_url)
+        # Post-process summary
+        summary['pronounce'] = list(map(
+            lambda x: re.match('(.*)(\[.*\])', x).groups(),
+            summary['pronounce']))
 
         # Handle explain
-        main_explanations = data.find(
-            class_='dd algo explain mt-20 lst DictionaryResults'
-        )
-        if main_explanations:
-            main_explanations = itertools.zip_longest(
-                main_explanations.find_all(class_='compTitle mb-10'),
-                main_explanations.find_all(
-                    class_='compArticleList mb-15 ml-10',
-                )
-            )
-        else:
-            main_explanations = ""
-
         content['explain'] = []
-        for part_of_speech, meaning in main_explanations:
-            node = [part_of_speech.text] if part_of_speech else ['']
+        try:
+            nodes = data.select('div.tab-content-explanation ul li')
 
-            for item in meaning.find_all('li', class_='ov-a'):
-                pack = [item.find('h4').text]
+            for node in nodes:
+                if re.match('\d', node.text.strip()):
+                    s = node.select_one('span')
+                    exp = {
+                        'type': 'item',
+                        'text': s.text,
+                    }
 
-                for example in (
-                    tag for tag in item.find_all('span')
-                    if 'line-height: 17px;' not in tag.get('style', {})
-                ):
-                    sentence = ''
+                    exp['sentence'] = []
+                    for s in node.select('p'):
+                        sentence = list(map(
+                            lambda x: ('b', x.text) if x.name == 'b' else str(x),
+                            s.span.contents))
+                        if isinstance(sentence[-1], str):
+                            hd, _, tl = sentence.pop().rpartition(' ')
+                            sentence.extend([hd, '\n', tl])
+                        sentence.append('\n')
+                        exp['sentence'].extend(sentence)
+                else:
+                    exp = {
+                        'type': 'PoS',  # part of speech
+                        'text': node.text.strip(),
+                    }
+                content['explain'].append(exp)
+        except IndexError:
+            raise NotFoundError(word)
 
-                    for w in example.contents:
-                        if w.name == 'b':
-                            sentence += '*' + w.text + '*'
-                        else:
-                            try:
-                                sentence += w
-                            except Exception:
-                                pass
-
-                    pack.append((sentence.strip()))
-                node.append(pack)
-            content['explain'].append(node)
-
-            # verbose info
-            part_of_speech_list, meaning_list = [], []
-            content['verbose'] = []
-
-            variation_explanations = data.find(
-                class_='dd algo variation fst DictionaryResults'
-            )
-            if variation_explanations:
-                part_of_speech_list.extend(
-                    variation_explanations.find_all(class_='compTitle')
-                )
-                meaning_list.extend(
-                    variation_explanations.find_all(class_='compArticleList')
-                )
-
-            additional_explanations = data.find(
-                class_='dd algo othersNew lst DictionaryResults'
-            )
-            if additional_explanations:
-                part_of_speech_list.extend(
-                    additional_explanations.find_all(class_='compTitle mt-26')
-                )
-                meaning_list.extend(
-                    additional_explanations.find_all(class_='compArticleList')
-                )
-
-            more_explanations = itertools.zip_longest(
-                part_of_speech_list, meaning_list
-            )
-
-            for part_of_speech, meaning in more_explanations:
-                node = [part_of_speech.text] if part_of_speech else ['']
-
-                if meaning:
-                    for item in meaning.find_all('li', class_='ov-a'):
-                        pack = [item.find('h4').text]
-
-                        for example in (
-                            tag for tag in item.find_all('span')
-                            if 'line-height: 17px;' not in tag['style']
-                        ):
-                            sentence = ''
-
-                            for w in example.contents:
-                                if w.name == 'b':
-                                    sentence += '*' + w.text + '*'
-                                else:
-                                    try:
-                                        sentence += w
-                                    except Exception:
-                                        pass
-
-                            pack.append((sentence.strip()))
-                        node.append(pack)
-                content['verbose'].append(node)
+        # Extract verbose
+        content['verbose'] = []
+        synonyms = data.select_one('div.tab-content-synonyms')
+        if synonyms:
+            content['verbose'].extend(list(map(text, synonyms.select('> *'))))
 
         record = Record(
             word=word,
