@@ -27,6 +27,41 @@ class YahooDict(DictBase):
         content = json.loads(record.content)
         getattr(self, 'showv{}'.format(content.get('version', 1)))(content)
 
+    def showv1(self, content):  # lagecy
+        # print word
+        self.color.print(content['word'], 'yellow')
+
+        # print pronounce
+        for k, v in content.get('pronounce', []):
+            self.color.print(k, end='')
+            self.color.print(v, 'lwhite', end=' ')
+        print()
+
+        # print explain
+        main_explanations = content.get('explain', [])
+        if self.args.verbose:
+            main_explanations.extend(content.get('verbose', []))
+
+        for speech in main_explanations:
+            self.color.print(speech[0], 'lred')
+            for meaning in speech[1:]:
+                self.color.print(
+                    '{text}'.format(text=meaning[0]),
+                    'org',
+                    indent=2
+                )
+                for sentence in meaning[1:]:
+                    if sentence:
+                        print(' ' * 4, end='')
+                        for i, s in enumerate(sentence.split('*')):
+                            self.color.print(
+                                s,
+                                'lindigo' if i % 2 else 'indigo',
+                                end=''
+                            )
+                        print()
+        print()
+
     def showv2(self, content):
         # summary
         summary = content['summary']
@@ -74,41 +109,6 @@ class YahooDict(DictBase):
 
                         indent = False
 
-        print()
-
-    def showv1(self, content):  # lagecy
-        # print word
-        self.color.print(content['word'], 'yellow')
-
-        # print pronounce
-        for k, v in content.get('pronounce', []):
-            self.color.print(k, end='')
-            self.color.print(v, 'lwhite', end=' ')
-        print()
-
-        # print explain
-        main_explanations = content.get('explain', [])
-        if self.args.verbose:
-            main_explanations.extend(content.get('verbose', []))
-
-        for speech in main_explanations:
-            self.color.print(speech[0], 'lred')
-            for meaning in speech[1:]:
-                self.color.print(
-                    '{text}'.format(text=meaning[0]),
-                    'org',
-                    indent=2
-                )
-                for sentence in meaning[1:]:
-                    if sentence:
-                        print(' ' * 4, end='')
-                        for i, s in enumerate(sentence.split('*')):
-                            self.color.print(
-                                s,
-                                'lindigo' if i % 2 else 'indigo',
-                                end=''
-                            )
-                        print()
         print()
 
     def query(self, word: str):
