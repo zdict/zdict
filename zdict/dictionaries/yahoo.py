@@ -74,10 +74,14 @@ class YahooDict(DictBase):
             self.color.print(v, 'lwhite', end=' ')
         print() if pronounce else None
         # summary > explain
-        for s in summary.get('explain', []):
-            hd, _, tl = s.partition(' ')
-            self.color.print(hd, 'lred', end=' ', indent=2)
-            print(tl)
+        indent = True
+        for (t, s) in summary.get('explain', []):
+            if t == 'e':
+                self.color.print(s, indent=2 * indent)
+                indent = True
+            elif t == 'p':
+                self.color.print(s, 'lred', end=' ', indent=2 * indent)
+                indent = False
         # summary > grammar
         grammar = summary.get('grammar', [])
         print() if grammar else None
@@ -151,6 +155,19 @@ class YahooDict(DictBase):
         def text(x):
             return x.text
 
+        def explain_text(x: 'bs4 node'):
+            def f(n):
+                def g(ks):
+                    if 'pos_button' in ks:
+                        return 'p'
+                    elif 'dictionaryExplanation' in ks:
+                        return 'e'
+                    else:
+                        return '?'
+                ret = list(map(lambda m: (g(m.attrs['class']), m.text), n.select('div')))
+                return ret
+            return sum(map(f, x.select('ul > li')), [])
+
         # Construct summary
         summary = content['summary'] = {}
         sum_ = data.select_one('div#web ol.searchCenterMiddle > li > div')
@@ -170,8 +187,7 @@ class YahooDict(DictBase):
             summary['word'] = word_.find('span').text.strip()
             if pronoun:
                 summary['pronounce'] = pronoun.find('ul').text.strip().split()
-            summary['explain'] = list(
-                map(lambda x: x.text, explain.find('ul').find_all('li')))
+            summary['explain'] = explain_text(explain)
 
             grammar = data.select('div#web div.dictionaryWordCard > ul > li')
             summary['grammar'] = list(map(text, grammar))
