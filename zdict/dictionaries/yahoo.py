@@ -34,10 +34,11 @@ class YahooDict(DictBase):
         # summary > word
         self.color.print(summary['word'], 'yellow')
         # summary > pronounce
-        for k, v in summary.get('pronounce', []):
+        pronounce = summary.get('pronounce', [])
+        for k, v in pronounce:
             self.color.print(k, end='')
             self.color.print(v, 'lwhite', end=' ')
-        print()
+        print() if pronounce else None
         # summary > explain
         for s in summary.get('explain', []):
             hd, _, tl = s.partition(' ')
@@ -140,7 +141,8 @@ class YahooDict(DictBase):
         #     'version': 2,
         #     'summary': {
         #         'word': ...,
-        #         'pronounce': [('KK', '...'), (...)],  // optional
+        #         'pronounce': [('KK', '...'), (...)],  // optional.
+        #                                               // e.g. 'google'
         #         'explain': [...],
         #         'grammar': [(optional)],
         #     },
@@ -156,11 +158,18 @@ class YahooDict(DictBase):
         if not sum_:
             raise NotFoundError(word)
         try:
-            ls = sum_.select('div')
-            summary['word'] = ls[1].find('span').text.strip()
-            summary['pronounce'] = ls[2].find('ul').text.strip().split()
+            ls = sum_.select('> div')
+            if len(ls) == 5:
+                _, word_, pronoun, _, explain = ls
+            elif len(ls) == 3:  # e.g. "google"
+                _, word_, explain = ls
+                pronoun = None
+
+            word = summary['word'] = word_.find('span').text.strip()
+            if pronoun:
+                summary['pronounce'] = pronoun.find('ul').text.strip().split()
             summary['explain'] = list(
-                map(lambda x: x.text, ls[4].find('ul').find_all('li')))
+                map(lambda x: x.text, explain.find('ul').find_all('li')))
 
             grammar = data.select('div#web div.dictionaryWordCard > ul > li')
             summary['grammar'] = list(map(text, grammar))
@@ -168,9 +177,10 @@ class YahooDict(DictBase):
             raise NotFoundError(word)
 
         # Post-process summary
-        summary['pronounce'] = list(map(
-            lambda x: re.match('(.*)(\[.*\])', x).groups(),
-            summary['pronounce']))
+        if summary.get('pronounce'):
+            summary['pronounce'] = list(map(
+                lambda x: re.match('(.*)(\[.*\])', x).groups(),
+                summary['pronounce']))
 
         # Handle explain
         content['explain'] = []
