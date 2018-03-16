@@ -160,6 +160,9 @@ class YahooDict(DictBase):
             ls = sum_.select('> div')
             if len(ls) == 5:
                 _, word_, pronoun, _, explain = ls
+            elif len(ls) == 4:  # e.g. "hold on"
+                _, word_, _, explain = ls
+                pronoun = None
             elif len(ls) == 3:  # e.g. "google"
                 _, word_, explain = ls
                 pronoun = None
