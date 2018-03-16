@@ -153,7 +153,7 @@ class YahooDict(DictBase):
 
         # Construct summary
         summary = content['summary'] = {}
-        sum_ = data.select_one('div#web ol > li > div')
+        sum_ = data.select_one('div#web ol.searchCenterMiddle > li > div')
         if not sum_:
             raise NotFoundError(word)
         try:
@@ -167,7 +167,7 @@ class YahooDict(DictBase):
                 _, word_, explain = ls
                 pronoun = None
 
-            word = summary['word'] = word_.find('span').text.strip()
+            summary['word'] = word_.find('span').text.strip()
             if pronoun:
                 summary['pronounce'] = pronoun.find('ul').text.strip().split()
             summary['explain'] = list(
