@@ -1,4 +1,3 @@
-import itertools
 import json
 import re
 
@@ -75,7 +74,6 @@ class YahooDict(DictBase):
 
                         indent = False
 
-
         print()
 
     def showv1(self, content):  # lagecy
@@ -150,7 +148,8 @@ class YahooDict(DictBase):
         #     'verbose': [(optional)],
         # }
 
-        text = lambda x: x.text
+        def test(x):
+            x.text
 
         # Construct summary
         summary = content['summary'] = {}
@@ -198,7 +197,8 @@ class YahooDict(DictBase):
                     exp['sentence'] = []
                     for s in node.select('p'):
                         sentence = list(map(
-                            lambda x: ('b', x.text) if x.name == 'b' else str(x),
+                            lambda x:
+                                ('b', x.text) if x.name == 'b' else str(x),
                             s.span.contents))
                         if isinstance(sentence[-1], str):
                             hd, _, tl = sentence.pop().rpartition(' ')
