@@ -149,7 +149,7 @@ class YahooDict(DictBase):
         # }
 
         def text(x):
-            x.text
+            return x.text
 
         # Construct summary
         summary = content['summary'] = {}
