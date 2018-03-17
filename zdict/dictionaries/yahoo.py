@@ -158,21 +158,18 @@ class YahooDict(DictBase):
 
         # Construct summary (required)
         try:
-            summary = content['summary'] = self.parse_summary(data)
+            content['summary'] = self.parse_summary(data)
         except AttributeError:
             raise NotFoundError(word)
 
-        # Handle explain
+        # Handle explain (required)
         try:
             content['explain'] = self.parse_explain(data)
         except IndexError:
             raise NotFoundError(word)
 
-        # Extract verbose
-        content['verbose'] = []
-        synonyms = data.select_one('div.tab-content-synonyms')
-        if synonyms:
-            content['verbose'].extend(list(map(text, synonyms.select('> *'))))
+        # Extract verbose (optional)
+        content['verbose'] = self.parse_verbose(data)
 
         record = Record(
             word=word,
@@ -255,4 +252,10 @@ class YahooDict(DictBase):
 
             ret.append(exp)
 
+        return ret
+
+    def parse_verbose(self, data):
+        ret = []
+        synonyms = data.select_one('div.tab-content-synonyms')
+        ret.extend(list(map(text, synonyms.select('> *'))) if synonyms else [])
         return ret
