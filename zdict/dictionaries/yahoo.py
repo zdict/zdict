@@ -124,17 +124,16 @@ class YahooDict(DictBase):
                 for s in sentence:
                     if isinstance(s, str) and s != '\n':
                         self.color.print(s, 'indigo', end='',
-                                            indent=indent * 4)
+                                         indent=indent * 4)
                     elif isinstance(s, list) and s[0] == 'b':
                         self.color.print(s[1], 'lindigo', end='',
-                                            indent=indent * 4)
+                                         indent=indent * 4)
                     elif s == '\n':
                         print()
                         indent = True
                         continue
 
                     indent = False
-
 
     def show_v2_verbose(self, verbose):
         if not self.args.verbose:
@@ -301,7 +300,7 @@ class YahooDict(DictBase):
                 if cls is None:
                     continue
 
-                s  = node.span.text.strip()
+                s = node.span.text.strip()
                 'fw-xl' in cls and ret.append(('title', s))
                 'fw-500' in cls and ret.append(('explain', s))
 
