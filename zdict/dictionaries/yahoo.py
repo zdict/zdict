@@ -228,7 +228,8 @@ class YahooDict(DictBase):
                 p.find('ul').text.strip().split()))
 
         def getg(d):
-            s = 'div#web ol.searchCenterMiddle div.dictionaryWordCard > ul > li'
+            s = ('div#web ol.searchCenterMiddle '
+                 'div.dictionaryWordCard > ul > li')
             return list(map(text, data.select(s)))
 
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
