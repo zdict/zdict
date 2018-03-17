@@ -227,7 +227,10 @@ class YahooDict(DictBase):
                 lambda x: re.match('(.*)(\[.*\])', x).groups(),
                 p.find('ul').text.strip().split()))
 
-        ret = {}
+        def getg(d):
+            s = 'div#web ol.searchCenterMiddle div.dictionaryWordCard > ul > li'
+            return list(map(text, data.select(s)))
+
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
         node = node.select('> div')
 
@@ -241,15 +244,9 @@ class YahooDict(DictBase):
         elif len(node) <= 2:  # e.g. "fabor"
             raise NotFoundError(word)
 
-        # summary > word
-        ret['word'] = w.find('span').text.strip()
-        # summary > pronounce (optional)
-        ret['pronounce'] = getp(p) if p else []
-        # summary > explain
-        ret['explain'] = gete(e)
-        # summary > grammar
-        grammar = data.select(
-            'div#web ol.searchCenterMiddle div.dictionaryWordCard > ul > li')
-        ret['grammar'] = list(map(text, grammar))
-
-        return ret
+        return {
+            'word': w.find('span').text.strip(),
+            'pronounce': getp(p) if p else [],  # optional
+            'explain': gete(e),
+            'grammar': getg(data),  # optional
+        }
