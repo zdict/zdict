@@ -162,12 +162,6 @@ class YahooDict(DictBase):
         except AttributeError as e:
             raise NotFoundError(word)
 
-        # Post-process summary
-        if summary.get('pronounce'):
-            summary['pronounce'] = list(map(
-                lambda x: re.match('(.*)(\[.*\])', x).groups(),
-                summary['pronounce']))
-
         # Handle explain
         content['explain'] = []
         try:
@@ -228,6 +222,11 @@ class YahooDict(DictBase):
                 return ret
             return sum(map(f, x.select('ul > li')), [])
 
+        def getp(p):
+            return list(map(
+                lambda x: re.match('(.*)(\[.*\])', x).groups(),
+                p.find('ul').text.strip().split()))
+
         ret = {}
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
         node = node.select('> div')
@@ -245,7 +244,7 @@ class YahooDict(DictBase):
         # summary > word
         ret['word'] = w.find('span').text.strip()
         # summary > pronounce (optional)
-        ret['pronounce'] = p.find('ul').text.strip().split() if p else []
+        ret['pronounce'] = getp(p) if p else []
         # summary > explain
         ret['explain'] = explain_text(e)
         # summary > grammar
