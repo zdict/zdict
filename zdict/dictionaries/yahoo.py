@@ -92,9 +92,10 @@ class YahooDict(DictBase):
         for s in grammar:
             self.color.print(s, indent=2)
 
-        print()
+        explain = content.get('explain', [])
+        print() if explain else None
         # explain
-        for exp in content.get('explain', []):
+        for exp in explain:
             type_ = exp['type']
             if type_ == 'PoS':
                 self.color.print(exp['text'], 'lred')
@@ -149,7 +150,7 @@ class YahooDict(DictBase):
         #         'word': ...,
         #         'pronounce': [('KK', '...'), (...)],  // optional.
         #                                               // e.g. 'google'
-        #         'explain': [...],
+        #         'explain': [(optional)],  # 'hospitalized' is summary-only
         #         'grammar': [(optional)],
         #     },
         #     'explain': [...],
