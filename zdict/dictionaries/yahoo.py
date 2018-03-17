@@ -118,6 +118,16 @@ class YahooDict(DictBase):
 
                         indent = False
 
+        verbose = content.get('verbose')
+        if self.args.verbose and verbose:
+            print()
+            color = {'title': 'lred', 'explain': 'org', 'item': 'indigo'}
+            indent = {'title': 0, 'explain': 2, 'item': 4}
+            list(map(
+                lambda x: self.color.print(x[1], color[x[0]], indent[x[0]]),
+                verbose))
+            del color, indent
+
         print()
 
     def query(self, word: str):
@@ -260,6 +270,22 @@ class YahooDict(DictBase):
 
     def parse_verbose(self, data):
         ret = []
-        synonyms = data.select_one('div.tab-content-synonyms')
-        ret.extend(list(map(text, synonyms.select('> *'))) if synonyms else [])
+        nodes = data.select_one('div.tab-content-synonyms')
+        for node in nodes if nodes else []:
+            name = node.name
+            if name == 'div':
+                if node.span is None:
+                    continue
+
+                cls = node.span.attrs.get('class')
+                if cls is None:
+                    continue
+
+                s  = node.span.text.strip()
+                'fw-xl' in cls and ret.append(('title', s))
+                'fw-500' in cls and ret.append(('explain', s))
+
+            elif name == 'ul':
+                for li in node.select('> li'):
+                    ret.append(('item', li.span.text))
         return ret
