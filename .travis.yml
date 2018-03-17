@@ -15,13 +15,13 @@ matrix:
         # https://github.com/travis-ci/travis-ci/issues/2312
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.4.7
+          env: PYTHON_VERSION=3.4.8
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.5.4
+          env: PYTHON_VERSION=3.5.5
         - os: osx
           language: generic
-          env: PYTHON_VERSION=3.6.2
+          env: PYTHON_VERSION=3.6.4
 
     allow_failures:
         - python: "nightly"
