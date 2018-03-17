@@ -1,6 +1,8 @@
 import json
 import re
 
+from collections import deque
+
 from bs4 import BeautifulSoup
 
 from zdict.dictionary import DictBase
@@ -10,6 +12,10 @@ from zdict.models import Record
 
 def text(x):
     return x.text
+
+
+def foreach(f: 'function', i: iter) -> None:
+    deque(map(f, i), 0)
 
 
 class YahooDict(DictBase):
@@ -118,17 +124,22 @@ class YahooDict(DictBase):
 
                         indent = False
 
-        verbose = content.get('verbose')
-        if self.args.verbose and verbose:
-            print()
-            color = {'title': 'lred', 'explain': 'org', 'item': 'indigo'}
-            indent = {'title': 0, 'explain': 2, 'item': 4}
-            list(map(
-                lambda x: self.color.print(x[1], color[x[0]], indent[x[0]]),
-                verbose))
-            del color, indent
+        self.show_v2_verbose(content.get('verbose'))
 
         print()
+
+    def show_v2_verbose(self, verbose):
+        if not self.args.verbose:
+            return
+        if not verbose:
+            return
+
+        print()
+        color = {'title': 'lred', 'explain': 'org', 'item': 'indigo'}
+        indent = {'title': 0, 'explain': 2, 'item': 4}
+        foreach(
+            lambda x: self.color.print(x[1], color[x[0]], indent[x[0]]),
+            verbose)
 
     def query(self, word: str):
         webpage = self._get_raw(word)
