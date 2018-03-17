@@ -29,9 +29,9 @@ class YahooDict(DictBase):
 
     def show(self, record: Record):
         content = json.loads(record.content)
-        getattr(self, 'showv{}'.format(content.get('version', 1)))(content)
+        getattr(self, 'show_v{}'.format(content.get('version', 1)))(content)
 
-    def showv1(self, content):  # legacy
+    def show_v1(self, content):  # legacy
         # print word
         self.color.print(content['word'], 'yellow')
 
@@ -66,7 +66,7 @@ class YahooDict(DictBase):
                         print()
         print()
 
-    def showv2(self, content):
+    def show_v2(self, content):
         # summary
         summary = content['summary']
         # summary > word
