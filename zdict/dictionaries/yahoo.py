@@ -73,17 +73,21 @@ class YahooDict(DictBase):
         print()
 
     def show_v2(self, content):
-        # summary
-        summary = content['summary']
-        # summary > word
+        self.show_v2_summary(content['summary'])
+        self.show_v2_explain(content.get('explain'))
+        self.show_v2_verbose(content.get('verbose'))
+        print()
+
+    def show_v2_summary(self, summary):
+        # word
         self.color.print(summary['word'], 'yellow')
-        # summary > pronounce
+        # pronounce
         pronounce = summary.get('pronounce', [])
         for k, v in pronounce:
             self.color.print(k, end='')
             self.color.print(v, 'lwhite', end=' ')
         print() if pronounce else None
-        # summary > explain
+        # explain
         indent = True
         for (t, s) in summary.get('explain', []):
             if t == 'e':
@@ -92,41 +96,45 @@ class YahooDict(DictBase):
             elif t == 'p':
                 self.color.print(s, 'lred', end=' ', indent=2 * indent)
                 indent = False
-        # summary > grammar
+        # grammar
         grammar = summary.get('grammar', [])
         print() if grammar else None
         for s in grammar:
             self.color.print(s, indent=2)
 
-        explain = content.get('explain', [])
-        print() if explain else None
+    def show_v2_explain(self, explain):
+        if not explain:
+            return
+
+        print()
         # explain
         for exp in explain:
             type_ = exp['type']
             if type_ == 'PoS':
                 self.color.print(exp['text'], 'lred')
+
             elif type_ == 'item':
                 self.color.print(exp['text'], indent=2)
                 sentence = exp.get('sentence')
-                if sentence:
-                    indent = True
-                    for s in sentence:
-                        if isinstance(s, str) and s != '\n':
-                            self.color.print(s, 'indigo', end='',
-                                             indent=indent * 4)
-                        elif isinstance(s, list) and s[0] == 'b':
-                            self.color.print(s[1], 'lindigo', end='',
-                                             indent=indent * 4)
-                        elif s == '\n':
-                            print()
-                            indent = True
-                            continue
 
-                        indent = False
+                if not sentence:
+                    continue
 
-        self.show_v2_verbose(content.get('verbose'))
+                indent = True
+                for s in sentence:
+                    if isinstance(s, str) and s != '\n':
+                        self.color.print(s, 'indigo', end='',
+                                            indent=indent * 4)
+                    elif isinstance(s, list) and s[0] == 'b':
+                        self.color.print(s[1], 'lindigo', end='',
+                                            indent=indent * 4)
+                    elif s == '\n':
+                        print()
+                        indent = True
+                        continue
 
-        print()
+                    indent = False
+
 
     def show_v2_verbose(self, verbose):
         if not self.args.verbose:
