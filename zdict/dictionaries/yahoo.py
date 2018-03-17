@@ -153,14 +153,14 @@ class YahooDict(DictBase):
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
-        # Please bump version if format changed again.
+        # Please bump version if the format changes again.
         # the `show` function will act with respect to version number.
 
         content['version'] = 2
 
         # Here are details of each version.
         #
-        # The original one, in the old era, there isn't any concept of
+        # The original one, in the old era, there wasn't any concept of
         # version number:
         # content = {
         #     'word': ...,
