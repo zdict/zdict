@@ -209,7 +209,7 @@ class YahooDict(DictBase):
         return record
 
     def parse_summary(self, data):
-        def explain_text(x: 'bs4 node'):
+        def gete(x: 'bs4 node'):
             def f(n):
                 def g(ks):
                     if 'pos_button' in ks:
@@ -218,8 +218,8 @@ class YahooDict(DictBase):
                         return 'e'
                     else:
                         return '?'
-                ret = list(map(lambda m: (g(m.attrs['class']), m.text), n.select('div')))
-                return ret
+                return list(map(
+                    lambda m: (g(m.attrs['class']), m.text), n.select('div')))
             return sum(map(f, x.select('ul > li')), [])
 
         def getp(p):
@@ -246,7 +246,7 @@ class YahooDict(DictBase):
         # summary > pronounce (optional)
         ret['pronounce'] = getp(p) if p else []
         # summary > explain
-        ret['explain'] = explain_text(e)
+        ret['explain'] = gete(e)
         # summary > grammar
         grammar = data.select(
             'div#web ol.searchCenterMiddle div.dictionaryWordCard > ul > li')
