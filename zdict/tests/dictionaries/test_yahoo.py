@@ -26,7 +26,7 @@ class TestyDict:
         assert self.dict.title == 'Yahoo Dictionary'
 
     def test__get_url(self):
-        url = 'https://tw.dictionary.search.yahoo.com/search?p=test'
+        url = 'https://tw.dictionary.yahoo.com/dictionary?p=test'
         assert url == self.dict._get_url('test')
 
     def test_show(self):
