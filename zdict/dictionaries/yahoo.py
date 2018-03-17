@@ -8,6 +8,10 @@ from zdict.exceptions import NotFoundError
 from zdict.models import Record
 
 
+def text(x):
+    return x.text
+
+
 class YahooDict(DictBase):
 
     API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
@@ -152,47 +156,9 @@ class YahooDict(DictBase):
         #     'verbose': [(optional)],
         # }
 
-        def text(x):
-            return x.text
-
-        def explain_text(x: 'bs4 node'):
-            def f(n):
-                def g(ks):
-                    if 'pos_button' in ks:
-                        return 'p'
-                    elif 'dictionaryExplanation' in ks:
-                        return 'e'
-                    else:
-                        return '?'
-                ret = list(map(lambda m: (g(m.attrs['class']), m.text), n.select('div')))
-                return ret
-            return sum(map(f, x.select('ul > li')), [])
-
-        # Construct summary
-        summary = content['summary'] = {}
-        sum_ = data.select_one('div#web ol.searchCenterMiddle > li > div')
-        if not sum_:
-            raise NotFoundError(word)
+        # Construct summary: required
         try:
-            ls = sum_.select('> div')
-            if len(ls) == 5:
-                _, word_, pronoun, _, explain = ls
-            elif len(ls) == 4:  # e.g. "hold on"
-                _, word_, _, explain = ls
-                pronoun = None
-            elif len(ls) == 3:  # e.g. "google"
-                _, word_, explain = ls
-                pronoun = None
-            elif len(ls) <= 2:  # e.g. "fabor"
-                raise NotFoundError(word)
-
-            summary['word'] = word_.find('span').text.strip()
-            if pronoun:
-                summary['pronounce'] = pronoun.find('ul').text.strip().split()
-            summary['explain'] = explain_text(explain)
-
-            grammar = data.select('div#web div.dictionaryWordCard > ul > li')
-            summary['grammar'] = list(map(text, grammar))
+            summary = content['summary'] = self.parse_summary(data)
         except AttributeError as e:
             raise NotFoundError(word)
 
@@ -247,3 +213,44 @@ class YahooDict(DictBase):
             source=self.provider,
         )
         return record
+
+    def parse_summary(self, data):
+        def explain_text(x: 'bs4 node'):
+            def f(n):
+                def g(ks):
+                    if 'pos_button' in ks:
+                        return 'p'
+                    elif 'dictionaryExplanation' in ks:
+                        return 'e'
+                    else:
+                        return '?'
+                ret = list(map(lambda m: (g(m.attrs['class']), m.text), n.select('div')))
+                return ret
+            return sum(map(f, x.select('ul > li')), [])
+
+        ret = {}
+        node = data.select_one('div#web ol.searchCenterMiddle > li > div')
+        node = node.select('> div')
+
+        p = None  # optional
+        if len(node) == 5:
+            _, w, p, _, e = node
+        elif len(node) == 4:  # e.g. "hold on"
+            _, w, _, e = node
+        elif len(node) == 3:  # e.g. "google"
+            _, w, e = node
+        elif len(node) <= 2:  # e.g. "fabor"
+            raise NotFoundError(word)
+
+        # summary > word
+        ret['word'] = w.find('span').text.strip()
+        # summary > pronounce (optional)
+        ret['pronounce'] = p.find('ul').text.strip().split() if p else []
+        # summary > explain
+        ret['explain'] = explain_text(e)
+        # summary > grammar
+        grammar = data.select(
+            'div#web ol.searchCenterMiddle div.dictionaryWordCard > ul > li')
+        ret['grammar'] = list(map(text, grammar))
+
+        return ret
