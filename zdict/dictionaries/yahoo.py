@@ -90,10 +90,10 @@ class YahooDict(DictBase):
         # explain
         indent = True
         for (t, s) in summary.get('explain', []):
-            if t == 'e':
+            if t == 'explain':
                 self.color.print(s, indent=2 * indent)
                 indent = True
-            elif t == 'p':
+            elif t == 'pos':
                 self.color.print(s, 'lred', end=' ', indent=2 * indent)
                 indent = False
         # grammar
@@ -209,17 +209,15 @@ class YahooDict(DictBase):
 
     def parse_summary(self, data, word):
         def gete(x: 'bs4 node'):
-            def f(n):
-                def g(ks):
-                    if 'pos_button' in ks:
-                        return 'p'
-                    elif 'dictionaryExplanation' in ks:
-                        return 'e'
-                    else:
-                        return '?'
-                return list(map(
-                    lambda m: (g(m.attrs['class']), m.text), n.select('div')))
-            return sum(map(f, x.select('ul > li')), [])
+            def f(ks):
+                return (
+                    'pos' if 'pos_button' in ks else
+                    'explain' if 'dictionaryExplanation' in ks else
+                    '?')
+
+            return [
+                (f(m.attrs['class']), m.text)
+                for n in x.select('ul > li') for m in n.select('div')]
 
         def getp(p):
             return list(map(
