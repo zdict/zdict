@@ -156,42 +156,15 @@ class YahooDict(DictBase):
         #     'verbose': [(optional)],
         # }
 
-        # Construct summary: required
+        # Construct summary (required)
         try:
             summary = content['summary'] = self.parse_summary(data)
-        except AttributeError as e:
+        except AttributeError:
             raise NotFoundError(word)
 
         # Handle explain
-        content['explain'] = []
         try:
-            nodes = data.select('div.tab-content-explanation ul li')
-
-            for node in nodes:
-                if re.match('\d', node.text.strip()):
-                    s = node.select_one('span')
-                    exp = {
-                        'type': 'item',
-                        'text': s.text,
-                    }
-
-                    exp['sentence'] = []
-                    for s in node.select('p'):
-                        sentence = list(map(
-                            lambda x:
-                                ('b', x.text) if x.name == 'b' else str(x),
-                            s.span.contents))
-                        if isinstance(sentence[-1], str):
-                            hd, _, tl = sentence.pop().rpartition(' ')
-                            sentence.extend([hd, '\n', tl])
-                        sentence.append('\n')
-                        exp['sentence'].extend(sentence)
-                else:
-                    exp = {
-                        'type': 'PoS',  # part of speech
-                        'text': node.text.strip(),
-                    }
-                content['explain'].append(exp)
+            content['explain'] = self.parse_explain(data)
         except IndexError:
             raise NotFoundError(word)
 
@@ -250,3 +223,36 @@ class YahooDict(DictBase):
             'explain': gete(e),
             'grammar': getg(data),  # optional
         }
+
+    def parse_explain(self, data):
+        ret = []
+        nodes = data.select('div.tab-content-explanation ul li')
+
+        for node in nodes:
+            if re.match('\d', node.text.strip()):
+                s = node.select_one('span')
+                exp = {
+                    'type': 'item',
+                    'text': s.text,
+                }
+
+                exp['sentence'] = []
+                for s in node.select('p'):
+                    sentence = list(map(
+                        lambda x:
+                            ('b', x.text) if x.name == 'b' else str(x),
+                        s.span.contents))
+                    if isinstance(sentence[-1], str):
+                        hd, _, tl = sentence.pop().rpartition(' ')
+                        sentence.extend([hd, '\n', tl])
+                    sentence.append('\n')
+                    exp['sentence'].extend(sentence)
+            else:
+                exp = {
+                    'type': 'PoS',  # part of speech
+                    'text': node.text.strip(),
+                }
+
+            ret.append(exp)
+
+        return ret
