@@ -56,5 +56,4 @@ deploy:
     on:
         branch: master
         tags: true
-        distributions: sdist bdist_wheel
-        repo: zdict/zdict
+        distributions: "sdist bdist_wheel"
