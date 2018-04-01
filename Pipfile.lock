@@ -57,10 +57,10 @@
             "version": "==2.6"
         },
         "peewee": {
-            "hashes": [
-                "sha256:34000900eedfcce5a38eb84d8d197f41a537e10a36419aba0c407215dd87afeb"
+            "hashes": 
+                "sha256:ac72ea1e4c2060d10de6c6f6b5fefb6c0434f9fd60766227d8b8e44b1898e1ba"
             ],
-            "version": "==3.2.0"
+            "version": "==3.2.1"
         },
         "requests": {
             "hashes": [
