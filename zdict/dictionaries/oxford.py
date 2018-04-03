@@ -1,14 +1,43 @@
 import json
+import os
 
+from zdict.constants import BASE_DIR
 from zdict.dictionary import DictBase
-from zdict.exceptions import NotFoundError, QueryError
+from zdict.exceptions import NotFoundError, QueryError, ApiKeyError
 from zdict.models import Record
 
 
-# The request limit per minute is 60
-# The monthly limit is 3,000 requests
-API_ID = 'YOUR_API_ID'
-API_KEY = 'YOUR_API_KEY'
+KEY_FILE = 'oxford.key'
+
+
+class OxfordApiKeyStore(object):
+    """
+    The Oxford dictionary should use the API key to query.
+    But the request limit is too low to share the key for all.
+
+    The API key should placed in ``KEY_FILE`` in the ``~/.zdict`` with the format:
+    .. code::
+        app_id,app_key
+
+    .. note::
+        request limit: per minute is 60, per month is 3000.
+    """
+
+    def __init__(self):
+        key_file = os.path.join(BASE_DIR, KEY_FILE)
+
+        if not os.path.exists(key_file):
+            raise ApiKeyError('Oxford: API key not found.')
+
+        with open(key_file) as fp:
+            keys = fp.read()
+
+        keys = keys.strip().replace(' ','').split(',')
+        if len(keys) != 2:
+            raise ApiKeyError('Oxford: API key file format not correct.')
+
+        self.id = keys[0]
+        self.key = keys[1]
 
 
 class OxfordDictionary(DictBase):
@@ -116,10 +145,11 @@ class OxfordDictionary(DictBase):
                 self._show_sense(subsense, line_prefix, indent=indent + 1)
 
     def query(self, word: str):
+        app_key = OxfordApiKeyStore()
         try:
             content = self._get_raw(word, headers={
-                'app_id': API_ID,
-                'app_key': API_KEY
+                'app_id': app_key.id,
+                'app_key': app_key.key
             })
         except QueryError as exception:
             raise NotFoundError(exception.word)
