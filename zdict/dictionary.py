@@ -143,7 +143,7 @@ class DictBase(metaclass=abc.ABCMeta):
             self.show(record)
             return
 
-    def _get_raw(self, word: str) -> str:
+    def _get_raw(self, word: str, **kwargs) -> str:
         '''
         Get raw data from http request
 
@@ -152,7 +152,7 @@ class DictBase(metaclass=abc.ABCMeta):
 
         try:
             res = requests.get(
-                self._get_url(word), timeout=self.args.query_timeout
+                self._get_url(word), timeout=self.args.query_timeout, **kwargs
             )
         except requests.exceptions.ReadTimeout as e:
             raise exceptions.TimeoutError()
