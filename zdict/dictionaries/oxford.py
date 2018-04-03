@@ -15,7 +15,8 @@ class OxfordApiKeyStore(object):
     The Oxford dictionary should use the API key to query.
     But the request limit is too low to share the key for all.
 
-    The API key should placed in ``KEY_FILE`` in the ``~/.zdict`` with the format:
+    The API key should placed in ``KEY_FILE`` in the ``~/.zdict`` with the
+    format:
     .. code::
         app_id,app_key
 
@@ -32,7 +33,7 @@ class OxfordApiKeyStore(object):
         with open(key_file) as fp:
             keys = fp.read()
 
-        keys = keys.strip().replace(' ','').split(',')
+        keys = keys.strip().replace(' ', '').split(',')
         if len(keys) != 2:
             raise ApiKeyError('Oxford: API key file format not correct.')
 
