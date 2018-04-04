@@ -21,13 +21,13 @@ class TestOxfordDictionary:
         uri = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/mock'
         assert self.dict._get_url('mock') == uri
 
-    def test__get_app_key(self):
-        key_file_data = """
+    @patch('os.path.exists')
+    def test__get_app_key(self, exists):
+        key_file = mock_open(read_data="""
             test_app_id,
-            test_app_key """
-        key_file = mock_open(read_data=key_file_data)
+            test_app_key """)
 
-        with patch('zdict.dictionaries.oxford.open', key_file):
+        with patch('builtins.open', key_file):
             app_id, app_key = self.dict._get_app_key()
 
         assert app_id == 'test_app_id'
