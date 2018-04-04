@@ -50,6 +50,22 @@ class OxfordDictionary(DictBase):
 
     API = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/{word}'
 
+    # https://developer.oxforddictionaries.com/documentation/response-codes
+    status_code = {
+        200: 'Success!',
+        400: 'The request was invalid or cannot be otherwise served.',
+        403: 'The request failed due to invalid credentials.',
+        404: 'No entry is found.',
+        500: 'Something is broken. Please contact the Oxford Dictionaries '
+             'API team to investigate.',
+        502: 'Oxford Dictionaries API is down or being upgraded.',
+        503: 'The Oxford Dictionaries API servers are up, but overloaded '
+             'with requests. Please try again later.',
+        504: 'The Oxford Dictionaries API servers are up, but the request '
+             'couldn’t be serviced due to some failure within our stack. '
+             'Please try again later.'
+    }
+
     @property
     def provider(self):
         return 'oxford'
@@ -153,6 +169,9 @@ class OxfordDictionary(DictBase):
                 'app_key': app_key.key
             })
         except QueryError as exception:
+            msg = self.status_code.get(exception.status_code,
+                                       'Some bad thing happened')
+            self.color.print('Oxford: ' + msg, 'red')
             raise NotFoundError(exception.word)
 
         record = Record(
