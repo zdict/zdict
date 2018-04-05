@@ -126,7 +126,7 @@ class OxfordDictionary(DictBase):
             self.color.print(example['text'], 'indigo', indent=indent+2)
 
         # subsenses
-        if 'subsenses' in sense:
+        if self.args.verbose and 'subsenses' in sense:
             for idx, subsense in enumerate(sense['subsenses'], 1):
                 line_prefix = '{prefix}{idx}.'.format(prefix=prefix, idx=idx)
                 self._show_sense(subsense, line_prefix, indent=indent + 1)
