@@ -50,11 +50,11 @@ class OxfordDictionary(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        # word
-        self.color.print(record.word, 'lyellow')
-
         # results
         for headword in content['results']:
+            # word
+            self.color.print(headword['word'], 'lyellow')
+
             for lex_ent in headword['lexicalEntries']:
                 # lexical category
                 print()
