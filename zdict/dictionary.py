@@ -135,7 +135,7 @@ class DictBase(metaclass=abc.ABCMeta):
         except exceptions.TimeoutError as e:
             self.color.print(e, 'red')
             print()
-        except exceptions.ApiKeyError as e:
+        except exceptions.APIKeyError as e:
             self.color.print(e, 'red')
             print()
         except exceptions.NotFoundError as e:

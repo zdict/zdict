@@ -40,7 +40,7 @@ class UnexpectedError(Exception):
         )
 
 
-class ApiKeyError(Exception):
+class APIKeyError(Exception):
     def __init__(self, msg):
         self.msg = msg
 

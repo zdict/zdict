@@ -4,7 +4,7 @@ import re
 
 from zdict.constants import BASE_DIR
 from zdict.dictionary import DictBase
-from zdict.exceptions import NotFoundError, QueryError, ApiKeyError
+from zdict.exceptions import NotFoundError, QueryError, APIKeyError
 from zdict.models import Record
 
 
@@ -148,14 +148,14 @@ class OxfordDictionary(DictBase):
         key_file = os.path.join(BASE_DIR, KEY_FILE)
 
         if not os.path.exists(key_file):
-            raise ApiKeyError('Oxford: API key not found.')
+            raise APIKeyError('Oxford: API key not found.')
 
         with open(key_file) as fp:
             keys = fp.read()
 
         keys = re.sub('\s', '', keys).split(',')
         if len(keys) != 2:
-            raise ApiKeyError('Oxford: API key file format not correct.')
+            raise APIKeyError('Oxford: API key file format not correct.')
 
         return keys
 
