@@ -8,15 +8,14 @@ from zdict.exceptions import NotFoundError, QueryError, APIKeyError
 from zdict.models import Record
 
 
-KEY_FILE = 'oxford.key'
-
-
 class OxfordDictionary(DictBase):
     """
     Docs:
 
     * https://developer.oxforddictionaries.com/documentation/
     """
+
+    KEY_FILE = os.path.join(BASE_DIR, 'oxford.key')
 
     API = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/{word}'
 
@@ -131,8 +130,7 @@ class OxfordDictionary(DictBase):
                 line_prefix = '{prefix}{idx}.'.format(prefix=prefix, idx=idx)
                 self._show_sense(subsense, line_prefix, indent=indent + 1)
 
-    @staticmethod
-    def _get_app_key():
+    def _get_app_key(self):
         """
         Get the app id & key for query
 
@@ -145,19 +143,33 @@ class OxfordDictionary(DictBase):
         .. note:: request limit
             request limit: per minute is 60, per month is 3000.
         """
-        key_file = os.path.join(BASE_DIR, KEY_FILE)
+        if not os.path.exists(self.KEY_FILE):
+            self._show_instruction()
+            raise APIKeyError('Oxford: API key not found')
 
-        if not os.path.exists(key_file):
-            raise APIKeyError('Oxford: API key not found.')
-
-        with open(key_file) as fp:
+        with open(self.KEY_FILE) as fp:
             keys = fp.read()
 
         keys = re.sub('\s', '', keys).split(',')
         if len(keys) != 2:
+            self._show_instruction()
             raise APIKeyError('Oxford: API key file format not correct.')
 
         return keys
+
+    def _show_instruction(self):
+        """
+        Show the instruction to get API key
+        """
+        self.color.print('You can get an API key by the following steps:',
+                         'yellow')
+        print('1. Register a developer account at '
+              'https://developer.oxforddictionaries.com/')
+        print('2. Get the application id & keys in the `credentials` page')
+        print('3. Paste the API key at `{key_file}` in the foramt:'.format(
+            key_file=self.KEY_FILE
+        ))
+        print('     app_id, app_key')
 
     def query(self, word: str):
         try:

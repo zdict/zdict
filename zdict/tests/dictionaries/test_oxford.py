@@ -33,6 +33,9 @@ class TestOxfordDictionary:
         assert app_id == 'test_app_id'
         assert app_key == 'test_app_key'
 
+    def test__show_instruction(self):
+        self.dict._show_instruction()
+
     def test_query_notfound(self):
         self.dict._get_raw = Mock(side_effect=QueryError('mock', 404))
         self.dict._get_app_key = Mock(return_value=('id', 'key'))
