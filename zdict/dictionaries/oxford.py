@@ -144,7 +144,15 @@ class OxfordDictionary(DictBase):
             request limit: per minute is 60, per month is 3000.
         """
         if not os.path.exists(self.KEY_FILE):
-            self._show_instruction()
+            self.color.print('You can get an API key by the following steps:',
+                             'yellow')
+            print('1. Register a developer account at '
+                  'https://developer.oxforddictionaries.com/')
+            print('2. Get the application id & keys in the `credentials` page')
+            print('3. Paste the API key at `{key_file}` in the foramt:'.format(
+                key_file=self.KEY_FILE
+            ))
+            print('     app_id, app_key')
             raise APIKeyError('Oxford: API key not found')
 
         with open(self.KEY_FILE) as fp:
@@ -152,24 +160,11 @@ class OxfordDictionary(DictBase):
 
         keys = re.sub('\s', '', keys).split(',')
         if len(keys) != 2:
-            self._show_instruction()
+            print('The API key should be placed in the format:')
+            print('     app_id, app_key')
             raise APIKeyError('Oxford: API key file format not correct.')
 
         return keys
-
-    def _show_instruction(self):
-        """
-        Show the instruction to get API key
-        """
-        self.color.print('You can get an API key by the following steps:',
-                         'yellow')
-        print('1. Register a developer account at '
-              'https://developer.oxforddictionaries.com/')
-        print('2. Get the application id & keys in the `credentials` page')
-        print('3. Paste the API key at `{key_file}` in the foramt:'.format(
-            key_file=self.KEY_FILE
-        ))
-        print('     app_id, app_key')
 
     def query(self, word: str):
         try:
