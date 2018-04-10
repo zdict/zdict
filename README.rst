@@ -181,7 +181,7 @@ Screenshots
 
 .. image:: http://i.imgur.com/VkPEfKh.png
 
-To use this source, you should first `apply <https://developer.oxforddictionaries.com/>`_ an API key and place it under `~/.zdict/oxford.key` in the format::
+To use this source, you should first `apply <https://developer.oxforddictionaries.com/>`_ an API key and place it under ``~/.zdict/oxford.key`` in the format::
 
     app_id, app_key
 
