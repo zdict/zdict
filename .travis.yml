@@ -1,13 +1,4 @@
-branches:
-    only:
-        - master
-
 language: python
-
-stages:
-    - test
-    - name: deploy
-      if: branch = master AND tag =~ ^v\d+\.\d+\.\d+.*$ AND type IN (push, pull_request)
 
 jobs:
     fast_finish: true
@@ -28,18 +19,19 @@ jobs:
           python: "nightly"
         # Python runtime is not yet available on OS X
         # https://github.com/travis-ci/travis-ci/issues/2312
-        # - stage: test
-        #   os: osx
-        #   language: generic
-        #   env: PYTHON_VERSION=3.4.8
-        # - stage: test
-        #   os: osx
-        #   language: generic
-        #   env: PYTHON_VERSION=3.5.5
-        # - stage: test
-        #   os: osx
-        #   language: generic
-        #   env: PYTHON_VERSION=3.6.4
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.4.8
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.5.5
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.6.4
+
         - stage: deploy
           os: linux
           python: 3.4
@@ -50,6 +42,10 @@ jobs:
             password:
                 secure: fTh18TIYqUsyGEg4vIEmxcxYPFCW5VDp4Ma+kuUjDh6qBpcY4akS6M16iOEGJp2QLndJiFdjW2JSOY7TR+HUCBEm6VTU7uYITPlNtYbMSKo0QjTkuLM/6/rufFwUMiDaw/mGSUuW04T6/+2RGFXFU9/JrRJqa96Le3Q9FqnVaQg=
             distributions: "sdist bdist_wheel"
+            on:
+                branch: master
+                tags: true
+                condition: $TRAVIS_EVENT_TYPE != cron
 
 before_install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
