@@ -176,6 +176,16 @@ Screenshots
 .. image:: https://user-images.githubusercontent.com/2716047/29741879-ca1a3826-8a3a-11e7-9701-4a7e9a15971a.png
 
 
+`Oxford Dictionary <https://en.oxforddictionaries.com/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: http://i.imgur.com/VkPEfKh.png
+
+To use this source, you should first `apply <https://developer.oxforddictionaries.com/>`_ an API key and place it under ``~/.zdict/oxford.key`` in the format::
+
+    app_id, app_key
+
+
 Development & Contributing
 ---------------------------
 
