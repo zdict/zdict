@@ -53,7 +53,7 @@ deploy:
     user: M157q
     password:
         secure: fTh18TIYqUsyGEg4vIEmxcxYPFCW5VDp4Ma+kuUjDh6qBpcY4akS6M16iOEGJp2QLndJiFdjW2JSOY7TR+HUCBEm6VTU7uYITPlNtYbMSKo0QjTkuLM/6/rufFwUMiDaw/mGSUuW04T6/+2RGFXFU9/JrRJqa96Le3Q9FqnVaQg=
+    distributions: "sdist bdist_wheel"
     on:
         branch: master
         tags: true
-        distributions: "sdist bdist_wheel"
