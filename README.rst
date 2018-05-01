@@ -24,7 +24,7 @@ So, we decided to create a new project.
 Installation
 ------------------------------
 
-from `PyPi <https://pypi.python.org/pypi>`_ :
+from `PyPI <https://pypi.python.org/pypi>`_ :
 
 .. code-block:: sh
 
