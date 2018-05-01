@@ -24,7 +24,7 @@ So, we decided to create a new project.
 Installation
 ------------------------------
 
-from `PyPI <https://pypi.python.org/pypi>`_ :
+from `PyPI <https://pypi.org/project/zdict/>`_ :
 
 .. code-block:: sh
 
