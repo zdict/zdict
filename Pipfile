@@ -9,7 +9,7 @@ name = "pypi"
 
 beautifulsoup4 = "==4.6.0"
 peewee = "==3.5.0"
-requests = "==2.18.4"
+requests = "==2.19.0"
 
 
 [dev-packages]
