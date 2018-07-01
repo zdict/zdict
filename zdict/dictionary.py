@@ -141,6 +141,16 @@ class DictBase(metaclass=abc.ABCMeta):
         except exceptions.NotFoundError as e:
             self.color.print(e, 'yellow')
             print()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print()
+            print("We have problem for this word 😢")
+            print("Please report this word to https://github.com/zdict/zdict/issues")
+            print("Dictionary: {}".format(self.title))
+            print("Word: '{}'".format(word))
+            import sys
+            sys.exit(1)
         else:
             self.save(record, word)
             self.show(record)
