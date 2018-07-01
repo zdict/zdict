@@ -40,7 +40,7 @@ jobs:
             provider: pypi
             user: M157q
             password:
-                secure: fTh18TIYqUsyGEg4vIEmxcxYPFCW5VDp4Ma+kuUjDh6qBpcY4akS6M16iOEGJp2QLndJiFdjW2JSOY7TR+HUCBEm6VTU7uYITPlNtYbMSKo0QjTkuLM/6/rufFwUMiDaw/mGSUuW04T6/+2RGFXFU9/JrRJqa96Le3Q9FqnVaQg=
+                secure: SxXAmsEixEw9bIiSTFiRxU4JiILsLZ/wMRys+w5zwmHftyI6+div5j1FcwtxsmAGcSSzsNgKvF9OBCcKuaJ6rlHf87pf13CxsCeZubKKHod7aMywjTtSKRGA70fKB5h+p0qomRgpV1njvgPwLcLeEbr9rHTxjIXBiE77P4E59zk=
             distributions: "sdist bdist_wheel"
             on:
                 branch: master
