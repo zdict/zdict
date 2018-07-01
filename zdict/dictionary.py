@@ -144,9 +144,10 @@ class DictBase(metaclass=abc.ABCMeta):
         except Exception as e:
             import traceback
             traceback.print_exc()
+            url = "https://github.com/zdict/zdict/issues"
             print()
             print("We have problem for this word 😢")
-            print("Please report this word to https://github.com/zdict/zdict/issues")
+            print("Please report this word to {}".format(url))
             print("Dictionary: {}".format(self.title))
             print("Word: '{}'".format(word))
             import sys
