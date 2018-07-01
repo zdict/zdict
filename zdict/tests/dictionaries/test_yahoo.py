@@ -10,14 +10,14 @@ class TestyDict:
     @classmethod
     def setup_class(cls):
         cls.dict = YahooDict(get_args())
-        cls.word = 'style'
-        cls.record = cls.dict.query(cls.word)
+        cls.words = ['style', 'metadata']
+        cls.records = [cls.dict.query(word) for word in cls.words]
 
     @classmethod
     def teardown_class(cls):
         del cls.dict
-        del cls.word
-        del cls.record
+        del cls.words
+        del cls.records
 
     def test_provider(self):
         assert self.dict.provider == 'yahoo'
@@ -32,35 +32,43 @@ class TestyDict:
     def test_show(self):
         # god bless this method, hope that it do not raise any exception
         self.dict.args.verbose = False
-        self.dict.show(self.record)
+
+        for record in self.records:
+            self.dict.show(record)
 
     def test_show_verbose(self):
         # god bless this method, hope that it do not raise any exception
         self.dict.args.verbose = True
-        self.dict.show(self.record)
+
+        for record in self.records:
+            self.dict.show(record)
 
     @patch('zdict.dictionaries.yahoo.Record')
     def test_query_normal(self, Record):
         self.dict.args.verbose = False
-        self.dict.query(self.word)
-        Record.assert_called_with(
-            word=self.word,
-            content=self.record.content,
-            source='yahoo',
-        )
+
+        for i, word in enumerate(self.words):
+            self.dict.query(word)
+            Record.assert_called_with(
+                word=word,
+                content=self.records[i].content,
+                source='yahoo',
+            )
 
     @patch('zdict.dictionaries.yahoo.Record')
     def test_query_verbose(self, Record):
         self.dict.args.verbose = True
-        self.dict.query(self.word)
-        Record.assert_called_with(
-            word=self.word,
-            content=self.record.content,
-            source='yahoo',
-        )
+
+        for i, word in enumerate(self.words):
+            self.dict.query(word)
+            Record.assert_called_with(
+                word=word,
+                content=self.records[i].content,
+                source='yahoo',
+            )
 
     def test_query_not_found(self):
         self.dict._get_raw = Mock(return_value='{"data": []}')
         with raises(NotFoundError):
-            self.dict.query(self.word)
-        self.dict._get_raw.assert_called_with(self.word)
+            self.dict.query(self.words[0])
+        self.dict._get_raw.assert_called_with(self.words[0])
