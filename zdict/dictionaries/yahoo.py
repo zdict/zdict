@@ -233,7 +233,9 @@ class YahooDict(DictBase):
         node = node.select('> div')
 
         p = None  # optional
-        if len(node) == 5:
+        if len(node) == 6:    # e.g. "metadata"
+            _, w, p, _, _, e = node
+        elif len(node) == 5:
             _, w, p, _, e = node
         elif len(node) == 4:  # e.g. "hold on"
             _, w, _, e = node
