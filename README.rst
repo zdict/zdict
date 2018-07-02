@@ -269,7 +269,7 @@ Related Projects
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/issues
 
-.. |travis| image:: https://img.shields.io/travis/zdict/zdict.svg
+.. |travis| image:: https://api.travis-ci.org/zdict/zdict.svg?branch=master
    :target: https://travis-ci.org/zdict/zdict
 
 .. |license| image:: https://img.shields.io/github/license/zdict/zdict.svg
