@@ -8,13 +8,7 @@ zdict
 
 |gitter|
 
-
 ----
-
-.. contents:: Table of Contents
-
-----
-
 
 *Note: This project is working in progress.*
 
@@ -27,6 +21,13 @@ After heavily refactoring the original project including:
 3. Based on an open source project skeleton.
 
 So, we decided to create a new project.
+
+
+----
+
+.. contents:: Table of Contents
+
+----
 
 
 Installation
