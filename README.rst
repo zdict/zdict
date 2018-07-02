@@ -8,6 +8,14 @@ zdict
 
 |gitter|
 
+
+----
+
+.. contents:: Table of Contents
+
+----
+
+
 *Note: This project is working in progress.*
 
 zdict is a CLI dictionary framework mainly focus on any kind of online dictionary.
