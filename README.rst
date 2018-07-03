@@ -266,6 +266,12 @@ Related Projects
     * A collection of shell completion scripts for zdict.
 
 
+Stargazers over time
+---------------------
+
+|stargazers|
+
+
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/issues
 
@@ -281,3 +287,6 @@ Related Projects
 
 .. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg
    :target: https://coveralls.io/github/zdict/zdict
+
+.. |stargazers| image:: https://starcharts.herokuapp.com/zdict/zdict.svg
+   :target: https://starcharts.herokuapp.com/zdict/zdict
