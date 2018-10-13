@@ -148,10 +148,10 @@
         },
         "py": {
             "hashes": [
-                "sha256:50402e9d1c9005d759426988a492e0edaadb7f4e68bcddfea586bc7432d009c6",
-                "sha256:06a30435d058473046be836d3fc4f27167fd84c45b99704f2fb5509ef61f9af1"
+                "sha256:e76826342cefe3c3d5f7e8ee4316b80d1dd8a300781612ddbc765c17ba25a6c6",
+                "sha256:bf92637198836372b520efcba9e020c330123be8ce527e535d185ed4b6f45694"
             ],
-            "version": "==1.6.0"
+            "version": "==1.7.0"
         },
         "pycodestyle": {
             "hashes": [
