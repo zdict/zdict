@@ -11,11 +11,13 @@ class TestJishoDict:
     def setup_class(cls):
         cls.dict = JishoDict(get_args())
         cls.word = 'apple'
+        cls.source = 'jisho'
         cls.record = cls.dict.query(cls.word)
 
     @classmethod
     def teardown_class(cls):
         del cls.dict
+        del cls.source
         del cls.word
         del cls.record
 
@@ -48,7 +50,7 @@ class TestJishoDict:
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
-            source='jisho',
+            source=self.source,
         )
 
     @patch('zdict.dictionaries.jisho.Record')
@@ -58,7 +60,7 @@ class TestJishoDict:
         Record.assert_called_with(
             word=self.word,
             content=self.record.content,
-            source='jisho',
+            source=self.source,
         )
 
     def test_query_not_found(self):
