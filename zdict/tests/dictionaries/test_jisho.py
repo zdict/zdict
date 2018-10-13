@@ -10,7 +10,7 @@ class TestJishoDict:
     @classmethod
     def setup_class(cls):
         cls.dict = JishoDict(get_args())
-        cls.word = 'apple'
+        cls.word = 'bird'
         cls.source = 'jisho'
         cls.record = cls.dict.query(cls.word)
 
