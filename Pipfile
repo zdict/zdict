@@ -7,7 +7,7 @@ name = "pypi"
 
 [packages]
 
-beautifulsoup4 = "==4.6.1"
+beautifulsoup4 = "==4.6.3"
 peewee = "==3.7.1"
 requests = "==2.19.1"
 
