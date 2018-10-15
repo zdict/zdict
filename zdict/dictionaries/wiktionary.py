@@ -25,16 +25,10 @@ class WiktionaryDict(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        # Get the first definition string from json.
-        definition = content['en'][0]['definitions'][0]['definition']
-
-        # Clean the definition string from html tags.
-        definition = BeautifulSoup(definition, "html.parser").text
-
         # Render the output.
         self.color.print(record.word, 'yellow')
         self.color.print(
-            definition,
+            content['definition'],
             'org',
             indent=2,
         )
@@ -45,9 +39,23 @@ class WiktionaryDict(DictBase):
         except QueryError as exception:
             raise NotFoundError(exception.word)
 
+        content = json.loads(content)
+
+        try:
+            # Get the first definition string from json.
+            definition = content['en'][0]['definitions'][0]['definition']
+        except KeyError as exception:
+            # API can return json that does not contain 'en' language.
+            raise NotFoundError(word)
+        else:
+            # Clean the definition string from html tags.
+            definition = BeautifulSoup(definition, "html.parser").text
+            content = {}
+            content['definition'] = definition
+
         record = Record(
             word=word,
-            content=content,
+            content=json.dumps(content),
             source=self.provider,
         )
 

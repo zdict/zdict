@@ -31,38 +31,19 @@ class TestWiktionaryDict:
 
     @patch('zdict.dictionaries.wiktionary.Record')
     def test_query_normal(self, Record):
-        self.dict._get_raw = Mock(return_value='{"mock": true}')
+        content = '{"en":[{"definitions":[{"definition":"string"}]}]}'
+        self.dict._get_raw = Mock(return_value=content)
         self.dict.query('mock')
         Record.assert_called_with(
             word='mock',
-            content='{"mock": true}',
+            content='{"definition": "string"}',
             source='wiktionary'
         )
 
     def test_show(self):
-        content = '''
-        {
-           "en":[
-              {
-                 "partOfSpeech":"string",
-                 "language":"string",
-                 "definitions":[
-                    {
-                       "definition":"string",
-                       "parsedExamples":[
-                          {
-                             "example":"string"
-                          }
-                       ],
-                       "examples":[
-                          "string"
-                       ]
-                    }]
-                }]
-        }
-        '''
+        content = '{"definition": "string"}'
 
-        r = Record(word='string',
+        r = Record(word="string",
                    content=content,
                    source=self.dict.provider)
         self.dict.show(r)
