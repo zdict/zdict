@@ -3,7 +3,7 @@ import json
 from bs4 import BeautifulSoup
 
 from zdict.dictionary import DictBase
-from zdict.exceptions import NotFoundError
+from zdict.exceptions import NotFoundError, QueryError
 from zdict.models import Record
 
 
@@ -40,7 +40,10 @@ class WiktionaryDict(DictBase):
         )
 
     def query(self, word: str):
-        content = self._get_raw(word)
+        try:
+            content = self._get_raw(word)
+        except QueryError as exception:
+            raise NotFoundError(exception.word)
 
         record = Record(
             word=word,
