@@ -42,13 +42,13 @@ class WiktionaryDict(DictBase):
         content = json.loads(content)
 
         try:
-            # Get the first definition string from json.
+            # Get the first definition string from JSON.
             definition = content['en'][0]['definitions'][0]['definition']
         except KeyError as exception:
-            # API can return json that does not contain 'en' language.
+            # API can return JSON that does not contain 'en' language.
             raise NotFoundError(word)
         else:
-            # Clean the definition string from html tags.
+            # Clean the definition string from HTML tags.
             definition = BeautifulSoup(definition, "html.parser").text
             content = {}
             content['definition'] = definition
