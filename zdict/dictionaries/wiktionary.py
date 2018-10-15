@@ -29,7 +29,7 @@ class WiktionaryDict(DictBase):
         definition = content['en'][0]['definitions'][0]['definition']
 
         # Clean the definition string from html tags.
-        definition = BeautifulSoup(definition, "lxml").text
+        definition = BeautifulSoup(definition, "html.parser").text
 
         # Render the output.
         self.color.print(record.word, 'yellow')
