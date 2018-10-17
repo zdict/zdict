@@ -30,16 +30,16 @@ class WiktionaryDict(DictBase):
 
         for d in content:
             self.color.print(d['part_of_speech'], 'yellow', indent=2)
-            for i, definition in enumerate(d['definitions']):
-                self.color.print(f"{i+1}. {definition['definition']}",
+            for i, defin in enumerate(d['definitions']):
+                self.color.print("{}. {}".format(i+1, defin['definition']),
                                  'org', indent=4)
                 try:
-                    definition['examples']
+                    defin['examples']
                 except KeyError:
                     pass
                 else:
                     # self.color.print(f"Examples:", 'lindigo', indent=6)
-                    for example in definition['examples']:
+                    for example in defin['examples']:
                         self.color.print(example, 'indigo', indent=6)
 
     def query(self, word: str):
