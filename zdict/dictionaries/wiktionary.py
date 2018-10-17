@@ -26,12 +26,21 @@ class WiktionaryDict(DictBase):
         content = json.loads(record.content)
 
         # Render the output.
-        self.color.print(record.word, 'yellow')
-        self.color.print(
-            content['definition'],
-            'org',
-            indent=2,
-        )
+        self.color.print(record.word, 'lyellow')
+
+        for d in content:
+            self.color.print(d['part_of_speech'], 'yellow', indent=2)
+            for i, definition in enumerate(d['definitions']):
+                self.color.print(f"{i+1}. {definition['definition']}",
+                                 'org', indent=4)
+                try:
+                    definition['examples']
+                except KeyError:
+                    pass
+                else:
+                    # self.color.print(f"Examples:", 'lindigo', indent=6)
+                    for example in definition['examples']:
+                        self.color.print(example, 'indigo', indent=6)
 
     def query(self, word: str):
         try:
@@ -43,19 +52,44 @@ class WiktionaryDict(DictBase):
 
         try:
             # Get the first definition string from JSON.
-            definition = content['en'][0]['definitions'][0]['definition']
+            content = content['en']
         except KeyError as exception:
             # API can return JSON that does not contain 'en' language.
             raise NotFoundError(word)
-        else:
-            # Clean the definition string from HTML tags.
-            definition = BeautifulSoup(definition, "html.parser").text
-            content = {}
-            content['definition'] = definition
+
+        # Define a list that will be used to create a Record.
+        r_content = []
+
+        # For every part of speech append r_content corresponding list.
+        for i, d in enumerate(content):
+            # Add what part of speech current definitions refers to.
+            r_content.append({'part_of_speech': d['partOfSpeech']})
+
+            # Create a list that will store english_definitions
+            # of the current part of speech.
+            r_content[i]['definitions'] = []
+
+            for j, d2 in enumerate(d['definitions']):
+                # Parse definition and append definitions list.
+                definition = BeautifulSoup(d2['definition'],
+                                           "html.parser").text
+                r_content[i]['definitions'].append({'definition': definition})
+
+                # If API provides examples for the current definition
+                # create a new list and append them.
+                try:
+                    d2['examples']
+                except KeyError:
+                    pass
+                else:
+                    r_content[i]['definitions'][j]['examples'] = []
+                    for ex in d2['examples']:
+                        ex = BeautifulSoup(ex, "html.parser").text
+                        r_content[i]['definitions'][j]['examples'].append(ex)
 
         record = Record(
             word=word,
-            content=json.dumps(content),
+            content=json.dumps(r_content),
             source=self.provider,
         )
 
