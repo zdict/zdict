@@ -28,19 +28,26 @@ class WiktionaryDict(DictBase):
         # Render the output.
         self.color.print(record.word, 'lyellow')
 
-        for d in content:
+        if self.args.verbose:
+            for d in content:
+                self.color.print(d['part_of_speech'], 'yellow', indent=2)
+                for i, defin in enumerate(d['definitions']):
+                    self.color.print("{}. {}".format(i+1, defin['definition']),
+                                     'org', indent=4)
+                    try:
+                        defin['examples']
+                    except KeyError:
+                        pass
+                    else:
+                        # self.color.print(f"Examples:", 'lindigo', indent=6)
+                        for example in defin['examples']:
+                            self.color.print(example, 'indigo', indent=6)
+        else:
+            d = content[0]
             self.color.print(d['part_of_speech'], 'yellow', indent=2)
-            for i, defin in enumerate(d['definitions']):
-                self.color.print("{}. {}".format(i+1, defin['definition']),
-                                 'org', indent=4)
-                try:
-                    defin['examples']
-                except KeyError:
-                    pass
-                else:
-                    # self.color.print(f"Examples:", 'lindigo', indent=6)
-                    for example in defin['examples']:
-                        self.color.print(example, 'indigo', indent=6)
+            self.color.print(d['definitions'][0]['definition'],
+                             'org',
+                             indent=4)
 
     def query(self, word: str):
         try:
