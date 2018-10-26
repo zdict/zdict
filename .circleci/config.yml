@@ -22,7 +22,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
 
       - run:
           name: install dependencies
@@ -36,7 +36,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
 
       - run:
           name: run tests
