@@ -28,7 +28,7 @@ def get_zdict_version():
 
 def get_test_req():
     test_requirements = parse_requirements(
-        os.path.join(ROOT_DIR, 'test-requirements.txt'), session=False
+        os.path.join(ROOT_DIR, 'requirements-test.txt'), session=False
     )
     test_requires = [str(tr.req) for tr in test_requirements]
 
