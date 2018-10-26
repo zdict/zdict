@@ -7,12 +7,12 @@ workflows:
   version: 2
   test:
     jobs:
-      - test-3.7
-      - test-3.6
-      - test-3.5
-      - test-3.4
+      - linux-python-3.7
+      - linux-python-3.6
+      - linux-python-3.5
+      - linux-python-3.4
 jobs:
-  test-3.7: &test-template
+  linux-python-3.7: &test-template
     docker:
       # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
       - image: circleci/python:3.7
@@ -63,17 +63,17 @@ jobs:
             coveralls
 
 
-  test-3.6:
+  linux-python-3.6:
     <<: *test-template
     docker:
       - image: circleci/python:3.6
 
-  test-3.5:
+  linux-python-3.5:
     <<: *test-template
     docker:
       - image: circleci/python:3.5
 
-  test-3.4:
+  linux-python-3.4:
     <<: *test-template
     docker:
       - image: circleci/python:3.4
