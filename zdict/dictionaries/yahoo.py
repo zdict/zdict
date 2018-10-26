@@ -1,9 +1,8 @@
 import json
 import re
-
 from collections import deque
 
-from bs4 import BeautifulSoup
+import bs4
 
 from zdict.dictionary import DictBase
 from zdict.exceptions import NotFoundError
@@ -14,7 +13,9 @@ def text(x):
     return x.text
 
 
-def foreach(f: 'function', i: iter) -> None:
+# typing.Callable is new in Python 3.5,
+# use type(lambda: None) for function type hints
+def foreach(f: type(lambda: None), i: iter) -> None:
     deque(map(f, i), 0)
 
 
@@ -146,11 +147,12 @@ class YahooDict(DictBase):
         indent = {'title': 0, 'explain': 2, 'item': 4}
         foreach(
             lambda x: self.color.print(x[1], color[x[0]], indent[x[0]]),
-            verbose)
+            verbose,
+        )
 
     def query(self, word: str):
         webpage = self._get_raw(word)
-        data = BeautifulSoup(webpage, "html.parser")
+        data = bs4.BeautifulSoup(webpage, "html.parser")
         content = {}
 
         # Please bump version if the format changes again.
@@ -208,26 +210,28 @@ class YahooDict(DictBase):
         return record
 
     def parse_summary(self, data, word):
-        def gete(x: 'bs4 node'):
+        def get_explain(e: bs4.element.Tag):
             def f(ks):
                 return (
                     'pos' if 'pos_button' in ks else
                     'explain' if 'dictionaryExplanation' in ks else
                     '?')
-
             return [
                 (f(m.attrs['class']), m.text)
-                for n in x.select('ul > li') for m in n.select('div')]
+                for n in e.select('ul > li') for m in n.select('div')]
 
-        def getp(p):
-            return list(map(
-                lambda x: re.match('(.*)(\[.*\])', x).groups(),
-                p.find('ul').text.strip().split()))
+        def get_pronounce(p: bs4.element.Tag):
+            return list(
+                map(
+                    lambda x: re.match(r'(.*)(\[.*\])', x).groups(),
+                    p.find('ul').text.strip().split()
+                )
+            )
 
-        def getg(d):
+        def get_grammar(d: bs4.element.Tag):
             s = ('div#web ol.searchCenterMiddle '
                  'div.dictionaryWordCard > ul > li')
-            return list(map(text, data.select(s)))
+            return list(map(text, d.select(s)))
 
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
         node = node.select('> div')
@@ -246,9 +250,9 @@ class YahooDict(DictBase):
 
         return {
             'word': w.find('span').text.strip(),
-            'pronounce': getp(p) if p else [],  # optional
-            'explain': gete(e),
-            'grammar': getg(data),  # optional
+            'pronounce': get_pronounce(p) if p else [],  # optional
+            'explain': get_explain(e),
+            'grammar': get_grammar(data),  # optional
         }
 
     def parse_explain(self, data):
@@ -261,9 +265,12 @@ class YahooDict(DictBase):
             }
 
             for s in node.select('p'):
-                sentence = list(map(
-                    lambda x: ('b', x.text) if x.name == 'b' else str(x),
-                    s.span.contents))
+                sentence = list(
+                    map(
+                        lambda x: ('b', x.text) if x.name == 'b' else str(x),
+                        s.span.contents
+                    )
+                )
                 if isinstance(sentence[-1], str):
                     hd, _, tl = sentence.pop().rpartition(' ')
                     sentence.extend([hd, '\n', tl])
@@ -276,7 +283,7 @@ class YahooDict(DictBase):
         nodes = data.select('div.tab-content-explanation ul li')
 
         for node in nodes:
-            if re.match('\d', node.text.strip()):
+            if re.match(r'\d', node.text.strip()):
                 exp = getitem(node)
             else:
                 exp = {
