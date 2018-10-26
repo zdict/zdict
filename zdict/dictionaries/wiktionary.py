@@ -44,7 +44,7 @@ class WiktionaryDict(DictBase):
         try:
             # Get the first definition string from JSON.
             definition = content['en'][0]['definitions'][0]['definition']
-        except KeyError as exception:
+        except KeyError:
             # API can return JSON that does not contain 'en' language.
             raise NotFoundError(word)
         else:

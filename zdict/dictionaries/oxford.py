@@ -158,7 +158,7 @@ class OxfordDictionary(DictBase):
         with open(self.KEY_FILE) as fp:
             keys = fp.read()
 
-        keys = re.sub('\s', '', keys).split(',')
+        keys = re.sub(r'\s', '', keys).split(',')
         if len(keys) != 2:
             print('The API key should be placed in the format:')
             print('     app_id, app_key')
