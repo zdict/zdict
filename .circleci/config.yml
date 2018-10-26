@@ -23,8 +23,6 @@ jobs:
       - restore_cache:
           keys:
           - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - pip-cache-
 
       - run:
           name: install dependencies
