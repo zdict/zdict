@@ -1,0 +1,78 @@
+# eython CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.7
+      - test-3.6
+      - test-3.5
+      - test-3.4
+jobs:
+  test-3.7: &test-template
+    docker:
+      # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+      - image: circleci/python:3.7
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - pip-cache-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements-test.txt
+            pip install coveralls
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python setup.py test
+
+      - store_test_results:
+          path: test-reports
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
+
+      - store_artifacts:
+          path: htmlcov
+          destination: htmlcov
+
+      - run:
+          name: send coverage to coveralls
+          command: |
+            . venv/bin/activate
+            coveralls
+
+
+  test-3.6:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6
+
+  test-3.5:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
+
+  test-3.4:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.4
