@@ -22,11 +22,9 @@ workflows:
               only: /[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
-jobs:
-  linux-python-3.7: &test-template
-    docker:
-      # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
-      - image: circleci/python:3.7
+
+variables:
+  test-template: &test-template
     working_directory: ~/repo
     steps:
       - checkout
@@ -71,6 +69,12 @@ jobs:
             . venv/bin/activate
             coveralls
 
+jobs:
+  # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  linux-python-3.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
 
   linux-python-3.6:
     <<: *test-template
@@ -87,6 +91,7 @@ jobs:
     docker:
       - image: circleci/python:3.4
 
+  # Deploy to PyPI if semvar git tag pushed
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
   deploy:
     docker:
