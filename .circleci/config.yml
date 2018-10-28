@@ -24,6 +24,20 @@ workflows:
             branches:
               ignore: /.*/
 
+  weekly-build:
+    triggers:
+      - schedule:
+          # At 00:00 on Friday.
+          cron: "0 0 * * 5"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - linux-python-3.7
+      - linux-python-3.6
+      - linux-python-3.5
+      - linux-python-3.4
+
 variables:
   test-template: &test-template
     working_directory: ~/repo
