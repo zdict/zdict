@@ -141,7 +141,7 @@ class DictBase(metaclass=abc.ABCMeta):
         except exceptions.NotFoundError as e:
             self.color.print(e, 'yellow')
             print()
-        except Exception as e:
+        except Exception:
             import traceback
             traceback.print_exc()
             url = "https://github.com/zdict/zdict/issues"
@@ -168,7 +168,7 @@ class DictBase(metaclass=abc.ABCMeta):
             res = requests.get(
                 self._get_url(word), timeout=self.args.query_timeout, **kwargs
             )
-        except requests.exceptions.ReadTimeout as e:
+        except requests.exceptions.ReadTimeout:
             raise exceptions.TimeoutError()
         except requests.exceptions.ConnectionError as e:
             errors = {
