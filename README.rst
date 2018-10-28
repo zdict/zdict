@@ -195,6 +195,14 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
     app_id, app_key
 
 
+`Wiktionary <https://en.wiktionary.org/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://i.imgur.com/5OzIFU3.png
+
+.. image:: https://i.imgur.com/UO5nQjU.png
+
+
 Development & Contributing
 ---------------------------
 
