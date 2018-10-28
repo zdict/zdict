@@ -1,5 +1,6 @@
 from pytest import raises
 from unittest.mock import Mock, patch
+import json
 
 from zdict.dictionaries.wiktionary import WiktionaryDict
 from zdict.exceptions import NotFoundError, QueryError
@@ -31,17 +32,26 @@ class TestWiktionaryDict:
 
     @patch('zdict.dictionaries.wiktionary.Record')
     def test_query_normal(self, Record):
-        content = '{"en":[{"definitions":[{"definition":"string"}]}]}'
+        content = '''
+        {"en":[{"partOfSpeech":"part_of_speech",
+        "definitions":[{"definition":"definition","examples":["example"]}]}]}
+        '''
         self.dict._get_raw = Mock(return_value=content)
         self.dict.query('mock')
+        r_content = [{"part_of_speech": "part_of_speech",
+                      "definitions": [{"definition": "definition",
+                                       "examples": ["example"]}]}]
         Record.assert_called_with(
             word='mock',
-            content='{"definition": "string"}',
+            content=json.dumps(r_content),
             source='wiktionary'
         )
 
     def test_show(self):
-        content = '{"definition": "string"}'
+        content = '''
+        [{"part_of_speech":"part_of_speech",
+        "definitions":[{"definition": "definition","examples":["example"]}]}]
+        '''
 
         r = Record(word="string",
                    content=content,
