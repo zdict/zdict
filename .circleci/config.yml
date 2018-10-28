@@ -12,6 +12,7 @@ workflows:
       - linux-python-3.5
       - linux-python-3.4
       - deploy:
+          type: approval
           requires:
             - linux-python-3.7
             - linux-python-3.6
