@@ -1,0 +1,156 @@
+# eython CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - linux-python-3.7
+      - linux-python-3.6
+      - linux-python-3.5
+      - linux-python-3.4
+      - deploy:
+          type: approval
+          requires:
+            - linux-python-3.7
+            - linux-python-3.6
+            - linux-python-3.5
+            - linux-python-3.4
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+
+  weekly-build:
+    triggers:
+      - schedule:
+          # At 00:00 on Friday.
+          cron: "0 0 * * 5"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - linux-python-3.7
+      - linux-python-3.6
+      - linux-python-3.5
+      - linux-python-3.4
+
+variables:
+  test-template: &test-template
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            pip install -U pip
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements-test.txt
+            pip install coveralls
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            python setup.py test
+
+      - store_test_results:
+          path: test-reports
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
+
+      - store_artifacts:
+          path: htmlcov
+          destination: htmlcov
+
+      - run:
+          name: send coverage to coveralls
+          command: |
+            . venv/bin/activate
+            coveralls
+
+jobs:
+  # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  linux-python-3.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+
+  linux-python-3.6:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6
+
+  linux-python-3.5:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5
+
+  linux-python-3.4:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.4
+
+  # Deploy to PyPI if semvar git tag pushed
+  # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
+  deploy:
+    docker:
+      # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+      - image: circleci/python:3.4
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            pip install -U pip
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements-test.txt
+            pip install twine
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+
+
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = M157q" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+
+      - run:
+          name: create packages
+          command: |
+            . venv/bin/activate
+            python setup.py sdist
+            python setup.py bdist_wheel
+
+      - run:
+          name: upload to pypi
+          command: |
+            . venv/bin/activate
+            twine upload dist/*

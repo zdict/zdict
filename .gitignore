@@ -7,4 +7,5 @@ build
 .coverage*
 .cache
 .eggs
-htmlcov
+htmlcov/
+test-reports/
