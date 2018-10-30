@@ -2,11 +2,11 @@
 zdict
 ========================================
 
-|issues| |travis| |coveralls|
+|issues|
 
-|license|
+|travis| |circleci|
 
-|gitter|
+|coveralls| |license| |gitter|
 
 ----
 
@@ -285,6 +285,9 @@ Stargazers over time
 
 .. |travis| image:: https://api.travis-ci.org/zdict/zdict.svg?branch=master
    :target: https://travis-ci.org/zdict/zdict
+
+.. |circleci| image:: https://circleci.com/gh/zdict/zdict.svg?style=svg
+   :target: https://circleci.com/gh/zdict/zdict
 
 .. |license| image:: https://img.shields.io/github/license/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/blob/master/LICENSE.md
