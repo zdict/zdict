@@ -4,9 +4,9 @@ zdict
 
 |issues|
 
-|travis| |circleci|
+|travis| |circleci| |coveralls|
 
-|coveralls| |license| |gitter|
+|license| |gitter|
 
 ----
 
