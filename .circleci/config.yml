@@ -7,10 +7,22 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - linux-python-3.7
-      - linux-python-3.6
-      - linux-python-3.5
-      - linux-python-3.4
+      - linux-python-3.7:
+          filters:
+            tags:
+              only: /.*/
+      - linux-python-3.6:
+          filters:
+            tags:
+              only: /.*/
+      - linux-python-3.5:
+          filters:
+            tags:
+              only: /.*/
+      - linux-python-3.4:
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           type: approval
           requires:
