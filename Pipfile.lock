@@ -179,10 +179,10 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:c055690dfefa744992f563e8c3a654089a6aa5b8092dded9b6fafbd70b2e45a7",
-                "sha256:488c842647bbeb350029da10325cb40af0a9c7a2fdda45aeb1dda75b60048ffb"
+                "sha256:ca4761407f1acc85ffd1609f464ca20bb71a767803505bd4127d0e45c5a50e23",
+                "sha256:1d131cc532be0023ef8ae265e2a779938d0619bb6c2510f52987ffcba7fa1ee4"
             ],
-            "version": "==4.0.0"
+            "version": "==4.0.1"
         },
         "pytest-cov": {
             "hashes": [
