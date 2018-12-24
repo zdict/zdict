@@ -23,6 +23,10 @@ before_install:
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
     - if [ "$TRAVIS_OS_NAME" = "osx" ]; then source ~/venv/bin/activate; fi
 
+    # workaround for Travis CI stdout write error
+    # ref: <https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959>
+    - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+
 install:
     - "pip install -U setuptools"   # for upgrade issue with setuptools and CPython 3.6 on Travis CI
     - "pip install -U pip"
