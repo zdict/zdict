@@ -234,7 +234,6 @@ class YahooDict(DictBase):
             return list(map(text, d.select(s)))
 
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
-        node = node.select('> div')
 
         p = None  # optional
         if len(node) == 6:    # e.g. "metadata"
@@ -312,6 +311,6 @@ class YahooDict(DictBase):
                 'fw-500' in cls and ret.append(('explain', s))
 
             elif name == 'ul':
-                for li in node.select('> li'):
+                for li in node.select('li'):
                     ret.append(('item', li.span.text))
         return ret
