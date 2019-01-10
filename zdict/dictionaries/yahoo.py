@@ -234,19 +234,19 @@ class YahooDict(DictBase):
             return list(map(text, d.select(s)))
 
         node = data.select_one('div#web ol.searchCenterMiddle > li > div')
-        node = node.select('> div')
+        node = node.select(':scope > div')
 
         p = None  # optional
-        if len(node) == 6:    # e.g. "metadata"
-            _, w, p, _, _, e = node
-        elif len(node) == 5:
-            _, w, p, _, e = node
-        elif len(node) == 4:  # e.g. "hold on"
-            _, w, _, e = node
+        if node is None or len(node) <= 2:  # e.g. "fabor"
+            raise NotFoundError(word)
         elif len(node) == 3:  # e.g. "google"
             _, w, e = node
-        elif len(node) <= 2:  # e.g. "fabor"
-            raise NotFoundError(word)
+        elif len(node) == 4:  # e.g. "hold on"
+            _, w, _, e = node
+        elif len(node) == 5:
+            _, w, p, _, e = node
+        elif len(node) == 6:    # e.g. "metadata"
+            _, w, p, _, _, e = node
 
         return {
             'word': w.find('span').text.strip(),
@@ -312,6 +312,6 @@ class YahooDict(DictBase):
                 'fw-500' in cls and ret.append(('explain', s))
 
             elif name == 'ul':
-                for li in node.select('> li'):
+                for li in node.select(':scope > li'):
                     ret.append(('item', li.span.text))
         return ret
