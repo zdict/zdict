@@ -163,10 +163,10 @@
         },
         "pyflakes": {
             "hashes": [
-                "sha256:f661252913bc1dbe7fcfcbf0af0db3f42ab65aabd1a6ca68fe5d466bace94dae",
-                "sha256:9a7662ec724d0120012f6e29d6248ae3727d821bba522a0e6b356eff19126a49"
+                "sha256:f277f9ca3e55de669fba45b7393a1449009cff5a37d1af10ebb76c52765269cd",
+                "sha256:5e8c00e30c464c99e0b501dc160b13a14af7f27d4dffb529c556e30a159e231d"
             ],
-            "version": "==2.0.0"
+            "version": "==2.1.0"
         },
         "pyjokes": {
             "hashes": [
