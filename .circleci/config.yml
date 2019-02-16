@@ -63,11 +63,11 @@ variables:
       - run:
           name: install dependencies
           command: |
-            pip install -U pip
+            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements-test.txt
-            pip install coveralls
+            pip install --user -r requirements-test.txt
+            pip install --user coveralls
 
       - save_cache:
           paths:
@@ -135,11 +135,11 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip install -U pip
+            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements-test.txt
-            pip install twine
+            pip install --user -r requirements-test.txt
+            pip install --user twine
 
       - save_cache:
           paths:
