@@ -88,7 +88,7 @@ class SpanishDict(DictBase):
 
         content['explains'] = []
 
-        word_element = card.find(attrs={'class': 'source-text'})
+        word_element = card.find(attrs={'id': 'headword-en'})
         if word_element:
             content['word'] = word_element.text
 
