@@ -63,7 +63,7 @@ variables:
       - run:
           name: install dependencies
           command: |
-            pip install -U pip
+            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements-test.txt
@@ -135,7 +135,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip install -U pip
+            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements-test.txt
