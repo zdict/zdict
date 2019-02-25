@@ -45,8 +45,9 @@ class UrbanDict(DictBase):
 
     def query(self, word: str):
         content = self._get_raw(word)
+        content = json.loads(content)
 
-        if "no_results" in content:
+        if content['list'] == []:
             raise NotFoundError(word)
 
         record = Record(
