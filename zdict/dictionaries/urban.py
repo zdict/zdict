@@ -44,15 +44,15 @@ class UrbanDict(DictBase):
         print()
 
     def query(self, word: str):
-        content = self._get_raw(word)
-        content = json.loads(content)
+        content_str = self._get_raw(word)
+        content_dict = json.loads(content_str)
 
-        if content['list'] == []:
+        if content_dict['list'] == []:
             raise NotFoundError(word)
 
         record = Record(
             word=word,
-            content=content,
+            content=content_str,
             source=self.provider,
         )
 
