@@ -69,14 +69,6 @@ class SpanishDict(DictBase):
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
-        # word can be existing in both English & Spanish
-        # choose English to Spanish here
-        # 'translat-en' for English to Spanish
-        # 'translat-es' for Spanish to English
-        translate_en = data.find('div', id='translate-es')
-        if translate_en:
-            data = translate_en
-
         card = data.find('div', attrs={'class': 'card'})
         entry = card.find(
             # just get the first one
@@ -88,9 +80,14 @@ class SpanishDict(DictBase):
 
         content['explains'] = []
 
-        word_element = card.find(attrs={'id': 'headword-en'})
-        if word_element:
-            content['word'] = word_element.text
+        # word can be existing in both English & Spanish
+        word_element = (
+            card.find(attrs={'id': 'headword-en'})
+            or card.find(attrs={'id': 'headword-es'})
+        )
+        if word_element is None:
+            raise NotFoundError(word)
+        content['word'] = word_element.text
 
         pattern1 = {'class': 'dictionary-neodict-indent-1'}
         pattern2 = {'class': 'dictionary-neodict-indent-2'}
