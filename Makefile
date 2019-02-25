@@ -24,6 +24,9 @@ clean-vim-swap-files:
 clean: clean-pyc clean-vim-swap-files
 	rm -rf build dist htmlcov .coverage* .cache .eggs
 
+test:
+	python setup.py test
+
 # Make docker-zdict don't complain about no make rules for apple, bird, ...
 %:
 	@:
