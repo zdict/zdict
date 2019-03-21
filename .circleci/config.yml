@@ -157,6 +157,7 @@ jobs:
           name: create packages
           command: |
             . venv/bin/activate
+            pip install wheel
             python setup.py sdist
             python setup.py bdist_wheel
 
