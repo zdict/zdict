@@ -1,2 +1,2 @@
 include *.py
-include *requirements.txt
+include requirements*.txt
