@@ -18,12 +18,14 @@ def user_set_encoding_and_is_utf8():
     except ValueError:
         print("Didn't detect your LC_ALL environment variable.")
         print("Please export LC_ALL with some UTF-8 encoding.")
+        print("For example: `export LC_ALL=en_US.UTF-8`")
         return False
     else:
         if enc != "UTF-8":
             print("zdict only works with encoding=UTF-8, ")
             print("but your encoding is: {} {}".format(lang, enc))
             print("Please export LC_ALL with some UTF-8 encoding.")
+            print("For example: `export LC_ALL=en_US.UTF-8`")
             return False
     return True
 
