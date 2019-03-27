@@ -58,6 +58,10 @@ class TemplateDict(DictBase):
         # ```
         # while the word users try to query is not found on this dictionary.
 
+        if self.args.verbose:
+            # For verbose mode
+            pass
+
         record = Record(
             word=word,
             content=json.dumps(content),
