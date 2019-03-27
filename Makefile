@@ -1,3 +1,5 @@
+.PHONY: docker-zdict docker-run docker-pull docker-push docker-build clean-pyc clean-vim-swap-files clean test
+
 docker-zdict:
 	# Let users can use `make docker-zdict apple bird`
 	# https://stackoverflow.com/questions/6273608
