@@ -46,19 +46,27 @@ class iTaigiDict(DictBase):
         except Exception:
             return {}
 
-        '''
         try:
             chinese_sentence = _["例句"][0]["漢字"]
         except Exception:
-            raise
+            chinese_sentence = None
+
+        try:
+            taiwanese_sentence = _["例句"][0]["臺羅"]
+        except Exception:
+            taiwanese_sentence = None
+
+        try:
+            mandarin_sentence = _["例句"][0]["華語"]
+        except Exception:
+            mandarin_sentence = None
 
         d = {
-            'mandarin': mandarin_sentence,
             'chinese': chinese_sentence,
             'taiwanese': taiwanese_sentence,
+            'mandarin': mandarin_sentence,
         }
-        '''
-        return {}
+        return d
 
     def query(self, word: str):
         webpage = self._get_raw(word)
@@ -128,12 +136,29 @@ class iTaigiDict(DictBase):
 
         return record
 
+    def _show_word_sentences(self, word):
+        if not word.get('sentences'):
+            return
+        if not any(word['sentences'].values()):
+            return
+
+        self.color.print('例句', color='lred', indent=4)
+
+        if word['sentences']['chinese']:
+            self.color.print(word['sentences']['chinese'], indent=6)
+
+        if word['sentences']['taiwanese']:
+            self.color.print(word['sentences']['taiwanese'], indent=6)
+
+        if word['sentences']['mandarin']:
+            self.color.print(word['sentences']['mandarin'], indent=6)
+
+        print()
+
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        # from pprint import pprint
-        # pprint(content, indent=4)
-
+        # print the word we looked up
         self.color.print(record.word, 'yellow')
 
         # print basic_words
@@ -142,8 +167,7 @@ class iTaigiDict(DictBase):
             self.color.print(basic_word['pronounce'], 'lwhite')
 
             if self.args.verbose:
-                # TODO: print sentences
-                pass
+                self._show_word_sentences(basic_word)
 
         if content['related_words']:
             print()
@@ -154,5 +178,4 @@ class iTaigiDict(DictBase):
                 self.color.print(related_word['pronounce'], 'lwhite')
 
                 if self.args.verbose:
-                    # TODO: print sentences
-                    pass
+                    self._show_word_sentences(basic_word)
