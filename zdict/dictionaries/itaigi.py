@@ -148,18 +148,24 @@ class iTaigiDict(DictBase):
             self.color.print(word['sentences']['chinese'], indent=6)
 
         if word['sentences']['taiwanese']:
-            self.color.print(word['sentences']['taiwanese'], indent=6)
+            self.color.print(word['sentences']['taiwanese'], color='lwhite', indent=6)
 
         if word['sentences']['mandarin']:
-            self.color.print(word['sentences']['mandarin'], indent=6)
+            self.color.print(word['sentences']['mandarin'], color='lyellow', indent=6)
 
         print()
 
     def show(self, record: Record):
+        '''
+        color set:
+            - mandarin: lyellow
+            - chinese: normal
+            - taiwanese: lwhite
+        '''
         content = json.loads(record.content)
 
         # print the word we looked up
-        self.color.print(record.word, 'yellow')
+        self.color.print(record.word, 'lyellow')
 
         # print basic_words
         for basic_word in content['basic_words']:
