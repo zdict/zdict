@@ -38,7 +38,10 @@ class iTaigiDict(DictBase):
         return pronounce
 
     def _get_word_sentences(self, text, pronounce) -> dict:
-        API = "https://xn--fsqx9h.xn--v0qr21b.xn--kpry57d/%E7%9C%8B/?%E6%BC%A2%E5%AD%97={text}&%E8%87%BA%E7%BE%85={pronounce}"
+        API = (
+            "https://xn--fsqx9h.xn--v0qr21b.xn--kpry57d/%E7%9C%8B/"
+            "?%E6%BC%A2%E5%AD%97={text}&%E8%87%BA%E7%BE%85={pronounce}"
+        )
         url = API.format(text=text, pronounce=pronounce)
 
         try:
@@ -148,10 +151,14 @@ class iTaigiDict(DictBase):
             self.color.print(word['sentences']['chinese'], indent=6)
 
         if word['sentences']['taiwanese']:
-            self.color.print(word['sentences']['taiwanese'], color='lwhite', indent=6)
+            self.color.print(
+                word['sentences']['taiwanese'], color='lwhite', indent=6,
+            )
 
         if word['sentences']['mandarin']:
-            self.color.print(word['sentences']['mandarin'], color='lyellow', indent=6)
+            self.color.print(
+                word['sentences']['mandarin'], color='lyellow', indent=6,
+            )
 
         print()
 
