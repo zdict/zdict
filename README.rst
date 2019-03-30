@@ -88,7 +88,7 @@ Usage
 ::
 
     usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt spanish,yandex,moe,moe-taiwanese,yahoo,wiktionary,urban,jisho,oxford,all]
+                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all]
                  [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
                  [word [word ...]]
 
@@ -108,7 +108,7 @@ Usage
                             the number of CPUs in the system.
       -sp, --show-provider  Show the dictionary provider of the queried word
       -su, --show-url       Show the url of the queried word
-      -dt spanish,yandex,moe,moe-taiwanese,yahoo,wiktionary,urban,jisho,oxford,all, --dict spanish,yandex,moe,moe-taiwanese,yahoo,wiktionary,urban,jisho,oxford,all
+      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all
                             Must be seperated by comma and no spaces after each
                             comma. Choose the dictionary you want. (default:
                             yahoo) Use 'all' for qureying all dictionaries. If
@@ -201,6 +201,14 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 .. image:: https://i.imgur.com/5OzIFU3.png
 
 .. image:: https://i.imgur.com/UO5nQjU.png
+
+
+`iTaigi-愛台語 <https://itaigi.tw/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://user-images.githubusercontent.com/1645228/55276638-07bf6f00-5331-11e9-990c-648595295e29.jpg
+
+.. image:: https://user-images.githubusercontent.com/1645228/55276640-0a21c900-5331-11e9-957f-af81259c8680.jpg
 
 
 Development & Contributing
