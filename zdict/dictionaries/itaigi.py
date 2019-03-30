@@ -159,7 +159,7 @@ class iTaigiDict(DictBase):
                 word['sentences']['taiwanese'], color='lwhite', indent=6,
             )
 
-        print()
+        self.color.print()
 
     def show(self, record: Record):
         '''
@@ -182,7 +182,7 @@ class iTaigiDict(DictBase):
                 self._show_word_sentences(basic_word)
 
         if content['related_words']:
-            print()
+            self.color.print()
             self.color.print("相關字詞", 'lred', indent=2)
             # print related_words
             for related_word in content['related_words']:
