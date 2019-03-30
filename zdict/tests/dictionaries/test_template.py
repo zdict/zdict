@@ -18,13 +18,24 @@ class TestTemplateDict:
 
         # You may want to change words to some certain test cases.
         cls.words = ['style', 'metadata']
+
+        # Setup normal query data
+        cls.dict.args.verbose = False
         cls.records = [cls.dict.query(word) for word in cls.words]
+
+        # Setup verbose query data
+        cls.dict.args.verbose = True
+        cls.verbose_records = [cls.dict.query(word) for word in cls.words]
+
+        # Change back to default verbose config
+        cls.dict.args.verbose = False
 
     @classmethod
     def teardown_class(cls):
         del cls.dict
         del cls.words
         del cls.records
+        del cls.verbose_records
 
     def test_provider(self):
         # Change `template` to the provider of the new dict and delete this comment
@@ -50,7 +61,7 @@ class TestTemplateDict:
         # god bless this method, hope that it do not raise any exception
         self.dict.args.verbose = True
 
-        for record in self.records:
+        for record in self.verbose_records:
             self.dict.show(record)
 
     # Change `template` to `{newdict}` for the line below and delete this comment
@@ -76,7 +87,7 @@ class TestTemplateDict:
             self.dict.query(word)
             Record.assert_called_with(
                 word=word,
-                content=self.records[i].content,
+                content=self.verbose_records[i].content,
                 # Change `template` to `{newdict}` for the line below and delete this comment
                 source='template',
             )
