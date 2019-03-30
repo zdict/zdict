@@ -190,4 +190,4 @@ class iTaigiDict(DictBase):
                 self.color.print(related_word['pronounce'], 'lwhite')
 
                 if self.args.verbose:
-                    self._show_word_sentences(basic_word)
+                    self._show_word_sentences(related_word)
