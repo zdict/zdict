@@ -50,6 +50,11 @@ class iTaigiDict(DictBase):
             return {}
 
         try:
+            mandarin_sentence = _["例句"][0]["華語"]
+        except Exception:
+            mandarin_sentence = None
+
+        try:
             chinese_sentence = _["例句"][0]["漢字"]
         except Exception:
             chinese_sentence = None
@@ -59,15 +64,10 @@ class iTaigiDict(DictBase):
         except Exception:
             taiwanese_sentence = None
 
-        try:
-            mandarin_sentence = _["例句"][0]["華語"]
-        except Exception:
-            mandarin_sentence = None
-
         d = {
+            'mandarin': mandarin_sentence,
             'chinese': chinese_sentence,
             'taiwanese': taiwanese_sentence,
-            'mandarin': mandarin_sentence,
         }
         return d
 
@@ -147,17 +147,16 @@ class iTaigiDict(DictBase):
 
         self.color.print('例句', color='lred', indent=4)
 
+        if word['sentences']['mandarin']:
+            self.color.print(
+                word['sentences']['mandarin'], color='lyellow', indent=6,
+            )
         if word['sentences']['chinese']:
             self.color.print(word['sentences']['chinese'], indent=6)
 
         if word['sentences']['taiwanese']:
             self.color.print(
                 word['sentences']['taiwanese'], color='lwhite', indent=6,
-            )
-
-        if word['sentences']['mandarin']:
-            self.color.print(
-                word['sentences']['mandarin'], color='lyellow', indent=6,
             )
 
         print()
