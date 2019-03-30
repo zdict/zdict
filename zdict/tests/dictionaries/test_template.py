@@ -1,3 +1,4 @@
+'''
 from pytest import raises
 from unittest.mock import Mock, patch
 
@@ -14,6 +15,8 @@ class TestTemplateDict:
     def setup_class(cls):
         # Change `Template` to the name of the new dict and delete this comment
         cls.dict = TemplateDict(get_args())
+
+        # You may want to change words to some certain test cases.
         cls.words = ['style', 'metadata']
         cls.records = [cls.dict.query(word) for word in cls.words]
 
@@ -33,7 +36,7 @@ class TestTemplateDict:
 
     def test__get_url(self):
         # Change url for the new dict and delete this comment
-        url = 'https://tw.dictionary.yahoo.com/dictionary?p=test'
+        url = 'https://tw.dictionary.search.yahoo.com/search?p=test'
         assert url == self.dict._get_url('test')
 
     def test_show(self):
@@ -79,9 +82,10 @@ class TestTemplateDict:
             )
 
     def test_query_not_found(self):
-        self.dict._get_raw = Mock(return_value='{"data": []}')
+        # Trigger NotFoundError intentionally and see if it works.
+        self.dict._get_raw = Mock(return_value='None')
         with raises(NotFoundError):
             self.dict.query(self.words[0])
-        self.dict._get_raw.assert_called_with(self.words[0])
 
     # Add other test functions for private functions of the new dictionary class
+'''
