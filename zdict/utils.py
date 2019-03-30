@@ -61,7 +61,7 @@ class Color(metaclass=ColorConst):
         cls._force_color = force_color
 
     @classmethod
-    def format(self, s, color='org', indent=0):
+    def format(self, s='', color='org', indent=0):
         '''
         :type s: str
         :param s: message
@@ -71,9 +71,6 @@ class Color(metaclass=ColorConst):
 
             If stdout isn't a tty, the color option will be ignored.
         '''
-        if s is None:
-            return
-
         colorize = self._force_color or sys.stdout.isatty()
 
         return '{indent}{color}{s}{org}'.format(
