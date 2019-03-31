@@ -75,10 +75,9 @@ class iTaigiDict(DictBase):
         webpage = self._get_raw(word)
         soup = BeautifulSoup(webpage, "html.parser")
         response = json.loads(soup.text)
-        content = {}
 
         # Not Found
-        if not response["列表"]:
+        if not response.get("列表"):
             raise NotFoundError(word)
 
         # Show Chinese word from iTaigi in stead of user input if possible
@@ -87,34 +86,36 @@ class iTaigiDict(DictBase):
         except Exception:
             pass
 
+        content = {}
+
         # Fetch basic words with text, pronounce and sentence
         try:
             basic_words = response["列表"][0]["新詞文本"]
         except Exception:
             raise
+        else:
+            content['basic_words'] = []
+            for basic_word in basic_words:
+                d = {}
 
-        content['basic_words'] = []
-        for basic_word in basic_words:
-            d = {}
+                text = self._get_word_text(basic_word)
+                d['text'] = text
 
-            text = self._get_word_text(basic_word)
-            d['text'] = text
+                pronounce = self._get_word_pronounce(basic_word)
+                d['pronounce'] = pronounce
 
-            pronounce = self._get_word_pronounce(basic_word)
-            d['pronounce'] = pronounce
+                if self.args.verbose:
+                    sentences = self._get_word_sentences(text, pronounce)
+                    d['sentences'] = sentences
 
-            if self.args.verbose:
-                sentences = self._get_word_sentences(text, pronounce)
-                d['sentences'] = sentences
+                content['basic_words'].append(d)
 
-            content['basic_words'].append(d)
-
-        if response["其他建議"]:
-            try:
-                related_words = response["其他建議"]
-            except Exception:
-                raise
-
+        # Fetch related words
+        try:
+            related_words = response["其他建議"]
+        except Exception:
+            raise
+        else:
             content['related_words'] = []
             for related_word in related_words:
                 d = {}
@@ -131,6 +132,7 @@ class iTaigiDict(DictBase):
 
                 content['related_words'].append(d)
 
+        # Save content with word and provider.
         record = Record(
             word=word,
             content=json.dumps(content),
@@ -169,22 +171,25 @@ class iTaigiDict(DictBase):
             - taiwanese: lwhite
         '''
         content = json.loads(record.content)
+        print(content)
 
         # print the word we looked up
         self.color.print(record.word, 'lyellow')
 
         # print basic_words
-        for basic_word in content['basic_words']:
-            self.color.print(basic_word['text'], end=' ', indent=2)
-            self.color.print(basic_word['pronounce'], 'lwhite')
+        if content.get('basic_words'):
+            for basic_word in content['basic_words']:
+                self.color.print(basic_word['text'], end=' ', indent=2)
+                self.color.print(basic_word['pronounce'], 'lwhite')
 
-            if self.args.verbose:
-                self._show_word_sentences(basic_word)
+                if self.args.verbose:
+                    self._show_word_sentences(basic_word)
 
-        if content['related_words']:
+        # print related_words if possible
+        if content.get('related_words'):
             self.color.print()
             self.color.print("相關字詞", 'lred', indent=2)
-            # print related_words
+
             for related_word in content['related_words']:
                 self.color.print(related_word['text'], end=' ', indent=4)
                 self.color.print(related_word['pronounce'], 'lwhite')

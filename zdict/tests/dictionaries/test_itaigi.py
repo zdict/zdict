@@ -12,7 +12,7 @@ class TestiTaigiDict:
     def setup_class(cls):
         cls.dict = iTaigiDict(get_args())
 
-        cls.words = ['芭樂']
+        cls.words = ['芭樂', '測試']
 
         # Setup normal query data
         cls.dict.args.verbose = False
