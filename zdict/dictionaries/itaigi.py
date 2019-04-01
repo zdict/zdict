@@ -171,7 +171,6 @@ class iTaigiDict(DictBase):
             - taiwanese: lwhite
         '''
         content = json.loads(record.content)
-        print(content)
 
         # print the word we looked up
         self.color.print(record.word, 'lyellow')
