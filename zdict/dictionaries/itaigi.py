@@ -1,4 +1,5 @@
 import json
+from contextlib import suppress
 
 import requests
 from bs4 import BeautifulSoup
@@ -49,20 +50,17 @@ class iTaigiDict(DictBase):
         except Exception:
             return {}
 
-        try:
+        mandarin_sentence = None
+        with suppress(KeyError, IndexError):
             mandarin_sentence = _["例句"][0]["華語"]
-        except Exception:
-            mandarin_sentence = None
 
-        try:
+        chinese_sentence = None
+        with suppress(KeyError, IndexError):
             chinese_sentence = _["例句"][0]["漢字"]
-        except Exception:
-            chinese_sentence = None
 
-        try:
+        taiwanese_sentence = None
+        with suppress(KeyError, IndexError):
             taiwanese_sentence = _["例句"][0]["臺羅"]
-        except Exception:
-            taiwanese_sentence = None
 
         d = {
             'mandarin': mandarin_sentence,
@@ -81,10 +79,8 @@ class iTaigiDict(DictBase):
             raise NotFoundError(word)
 
         # Show Chinese word from iTaigi in stead of user input if possible
-        try:
+        with suppress(KeyError, IndexError):
             word = response["列表"][0]["外語資料"]
-        except Exception:
-            pass
 
         content = {}
 
