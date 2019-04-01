@@ -206,9 +206,9 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 `iTaigi-愛台語 <https://itaigi.tw/>`_
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. image:: https://user-images.githubusercontent.com/1645228/55276638-07bf6f00-5331-11e9-990c-648595295e29.jpg
+.. image:: https://user-images.githubusercontent.com/1645228/55309799-656acd00-5491-11e9-9d79-4ae578c83f8b.jpg
 
-.. image:: https://user-images.githubusercontent.com/1645228/55276640-0a21c900-5331-11e9-957f-af81259c8680.jpg
+.. image:: https://user-images.githubusercontent.com/1645228/55309820-7582ac80-5491-11e9-998d-51ebfb183375.jpg
 
 
 Development & Contributing
