@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 
 from zdict.exceptions import NotFoundError
 from zdict.zdict import get_args
-
 from zdict.dictionaries.itaigi import iTaigiDict
 
 
