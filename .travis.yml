@@ -8,24 +8,27 @@ jobs:
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.4.8
+          env: PYTHON_VERSION=3.4.9
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.5.5
+          env: PYTHON_VERSION=3.5.6
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.6.4
-
+          env: PYTHON_VERSION=3.6.8
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.7.2
 
 before_install:
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
-    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then source ~/venv/bin/activate; fi
-
     # workaround for Travis CI stdout write error
     # ref: <https://github.com/travis-ci/travis-ci/issues/4704#issuecomment-348435959>
     - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then sh ci/install_python_for_osx.sh; fi
+    - if [ "$TRAVIS_OS_NAME" = "osx" ]; then source ~/venv/bin/activate; fi
+    - python --version  # Check the specifically installed Python version
 
 install:
     - "pip install -U setuptools"   # for upgrade issue with setuptools and CPython 3.6 on Travis CI
