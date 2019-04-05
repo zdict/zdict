@@ -39,7 +39,7 @@ class ColorConst(type):
         http://stackoverflow.com/questions/3155436
         '''
         d = dict(cls.COLOR_LIST)
-        color = color.upper()
+        color = color.upper() if color else 'ORG'
         _color = color if color[0] != 'L' else color[1:]
 
         if _color not in d.keys():
@@ -61,7 +61,7 @@ class Color(metaclass=ColorConst):
         cls._force_color = force_color
 
     @classmethod
-    def format(self, s, color='org', indent=0):
+    def format(self, s='', color='org', indent=0):
         '''
         :type s: str
         :param s: message
@@ -71,9 +71,6 @@ class Color(metaclass=ColorConst):
 
             If stdout isn't a tty, the color option will be ignored.
         '''
-        if s is None:
-            return
-
         colorize = self._force_color or sys.stdout.isatty()
 
         return '{indent}{color}{s}{org}'.format(

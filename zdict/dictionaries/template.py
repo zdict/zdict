@@ -46,7 +46,7 @@ class TemplateDict(DictBase):
 
     def query(self, word: str):
         webpage = self._get_raw(word)
-        data = BeautifulSoup(webpage, "html.parser")
+        soup = BeautifulSoup(webpage, "html.parser")
         content = {}
 
         # Parse `data` and fill the information you need into `content`
@@ -57,6 +57,10 @@ class TemplateDict(DictBase):
         #    raise NotFoundError(word)
         # ```
         # while the word users try to query is not found on this dictionary.
+
+        if self.args.verbose:
+            # For verbose mode
+            pass
 
         record = Record(
             word=word,

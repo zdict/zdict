@@ -28,8 +28,8 @@ class TestColor:
         assert '  test' == self.color.format('test', 'red', indent=2)
         assert isatty.called
 
-    def test_format_none(self):
-        assert self.color.format(None) is None
+    def test_format_default_s(self):
+        assert self.color.format('') == ''
 
     def test_attribute(self):
         self.color.red = '\33[31m'
