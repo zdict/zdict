@@ -1,4 +1,5 @@
 import json
+from random import randint
 
 from zdict.dictionary import DictBase
 from zdict.exceptions import NotFoundError
@@ -23,25 +24,35 @@ class UrbanDict(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        data = content['list'][0]
+        # hybrid way to select showing answers
+        # first 3 answers + random 1 answer from rest of them
+        answers = content['list'][:3]
+        answers_length = len(content['list'])
+        if answers_length > 3:
+            answers.append(content['list'][randint(3, answers_length-1)])
 
-        # print word
-        self.color.print(data.get('word', ''), 'yellow')
+        for data in answers:
+            word = data.get('word', '')
+            if "</h1>" in word:   # there are some wierd case, e.g. "asdasd"
+                continue
 
-        self.color.print(
-            data.get('definition', ''),
-            'org',
-            indent=2,
-        )
+            # print word
+            self.color.print(word, 'yellow')
 
-        for example in data.get('example', '').split('\n'):
             self.color.print(
-                example,
-                'indigo',
+                data.get('definition', ''),
+                'org',
                 indent=2,
             )
 
-        print()
+            for example in data.get('example', '').split('\n'):
+                self.color.print(
+                    example,
+                    'indigo',
+                    indent=2,
+                )
+
+            print()
 
     def query(self, word: str):
         content_str = self._get_raw(word)
