@@ -302,13 +302,13 @@ Stargazers over time
    :target: https://github.com/zdict/zdict/
    
 .. |forks| image:: https://img.shields.io/github/forks/zdict/zdict.svg
-   :target: https://github.com/zdict/zdict/issues
+   :target: https://github.com/zdict/zdict/
    
 .. |contributors| image:: https://img.shields.io/github/contributors/zdict/zdict.svg
-   :target: https://github.com/zdict/zdict/issues
+   :target: https://github.com/zdict/zdict/graphs/contributors
 
 .. |pull requests| image:: https://img.shields.io/github/issues-pr/zdict/zdict.svg
-   :target: https://github.com/zdict/zdict/issues
+   :target: https://github.com/zdict/zdict/pulls
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/issues
