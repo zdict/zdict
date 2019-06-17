@@ -65,6 +65,7 @@ variables:
             pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
+            pip install -r requirements.txt
             pip install -r requirements-test.txt
             pip install coveralls
 
