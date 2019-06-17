@@ -57,7 +57,7 @@ variables:
 
       - restore_cache:
           keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}-{{ checksum "Pipfile" }}
 
       - run:
           name: install dependencies
@@ -65,13 +65,14 @@ variables:
             pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
+            pip install -r requirements.txt
             pip install -r requirements-test.txt
             pip install coveralls
 
       - save_cache:
           paths:
             - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}-{{ checksum "Pipfile" }}
 
       - run:
           name: run tests
@@ -129,7 +130,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}-{{ checksum "Pipfile" }}
 
       - run:
           name: install dependencies
@@ -143,7 +144,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}-{{ checksum "Pipfile" }}
 
 
       - run:
