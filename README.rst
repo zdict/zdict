@@ -2,11 +2,13 @@
 zdict
 ========================================
 
-|issues|
+|license| |version| |python version| |month download|
+
+|stars| |forks| |contributors| |pull requests| |issues|
 
 |travis| |circleci| |coveralls|
 
-|license| |gitter|
+|gitter|
 
 ----
 
@@ -287,6 +289,26 @@ Stargazers over time
 
 |stargazers|
 
+.. |version| image:: https://img.shields.io/pypi/v/zdict.svg
+   :target: https://pypi.org/project/zdict
+   
+.. |python version| image:: https://img.shields.io/pypi/pyversions/zdict.svg
+   :target: https://pypi.org/project/zdict
+
+.. |month download| image:: https://img.shields.io/pypi/dm/zdict.svg
+   :target: https://pypi.org/project/zdict
+
+.. |stars| image:: https://img.shields.io/github/stars/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/
+   
+.. |forks| image:: https://img.shields.io/github/forks/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/issues
+   
+.. |contributors| image:: https://img.shields.io/github/contributors/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/issues
+
+.. |pull requests| image:: https://img.shields.io/github/issues-pr/zdict/zdict.svg
+   :target: https://github.com/zdict/zdict/issues
 
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/issues
