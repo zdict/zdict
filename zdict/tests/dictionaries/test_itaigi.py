@@ -13,6 +13,9 @@ class TestiTaigiDict:
 
         cls.words = ['芭樂', '測試']
 
+        # Set query_timeout from 5 seconds to 60 seconds,
+        # so it won't timeout that often.
+        cls.dict.args.query_timeout = 60
         # Setup normal query data
         cls.dict.args.verbose = False
         cls.records = [cls.dict.query(word) for word in cls.words]
