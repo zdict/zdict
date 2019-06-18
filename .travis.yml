@@ -8,10 +8,6 @@ jobs:
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.4.9
-        - stage: test
-          os: osx
-          language: generic
           env: PYTHON_VERSION=3.5.6
         - stage: test
           os: osx
