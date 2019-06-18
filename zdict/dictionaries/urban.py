@@ -1,4 +1,5 @@
 import json
+
 from random import randint
 
 from zdict.dictionary import DictBase
