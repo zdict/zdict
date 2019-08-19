@@ -30,11 +30,11 @@ workflows:
             branches:
               ignore: /.*/
 
-  weekly-build:
+  daily-build:
     triggers:
       - schedule:
-          # At 00:00 on Friday.
-          cron: "0 0 * * 5"
+          # At 08:00 UTC+8 everyday.
+          cron: "0 0 * * *"
           filters:
             branches:
               only: master

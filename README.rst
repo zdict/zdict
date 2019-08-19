@@ -12,8 +12,6 @@ zdict
 
 ----
 
-*Note: This project is working in progress.*
-
 zdict is a CLI dictionary framework mainly focus on any kind of online dictionary.
 This project originally forked from https://github.com/chenpc/ydict, which is a CLI tool for the Yahoo! online dictionary.
 After heavily refactoring the original project including:
@@ -291,7 +289,7 @@ Stargazers over time
 
 .. |version| image:: https://img.shields.io/pypi/v/zdict.svg
    :target: https://pypi.org/project/zdict
-   
+
 .. |python version| image:: https://img.shields.io/pypi/pyversions/zdict.svg
    :target: https://pypi.org/project/zdict
 
@@ -300,10 +298,10 @@ Stargazers over time
 
 .. |stars| image:: https://img.shields.io/github/stars/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/
-   
+
 .. |forks| image:: https://img.shields.io/github/forks/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/
-   
+
 .. |contributors| image:: https://img.shields.io/github/contributors/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/graphs/contributors
 
