@@ -8,6 +8,8 @@ zdict
 
 |travis| |circleci| |coveralls|
 
+|docker automated build| |docker build status|
+
 |gitter|
 
 ----
@@ -329,3 +331,9 @@ Stargazers over time
 
 .. |stargazers| image:: https://starcharts.herokuapp.com/zdict/zdict.svg
    :target: https://starcharts.herokuapp.com/zdict/zdict
+   
+.. |docker automated build| image:: https://img.shields.io/docker/automated/zdict/zdict
+   :target: https://hub.docker.com/r/zdict/zdict
+
+.. |docker build status| image:: https://img.shields.io/docker/build/zdict/zdict
+   :target: https://hub.docker.com/r/zdict/zdict
