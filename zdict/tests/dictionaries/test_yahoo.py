@@ -10,7 +10,7 @@ class TestyDict:
     @classmethod
     def setup_class(cls):
         cls.dict = YahooDict(get_args())
-        cls.words = ['style', 'metadata']
+        cls.words = ['style', 'metadata', 'apples', 'google', 'hold on']
         cls.records = [cls.dict.query(word) for word in cls.words]
 
     @classmethod
