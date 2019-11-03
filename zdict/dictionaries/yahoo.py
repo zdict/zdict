@@ -233,12 +233,14 @@ class YahooDict(DictBase):
                  'div.dictionaryWordCard > ul > li')
             return list(map(text, d.select(s)))
 
-        node = data.select_one('div#web ol.searchCenterMiddle > li > div')
-        node = node.select(':scope > div')
+        node = data.select_one('div#web ol.searchCenterMiddle')
+        node = node.select('div.sys_dict_word_card > div.grp-main > div')
 
         p = None  # optional
-        if node is None or len(node) <= 2:  # e.g. "fabor"
+        if node is None or len(node) <= 1:  # e.g. "fabor"
             raise NotFoundError(word)
+        elif len(node) == 2:  # e.g. "apples"
+            w, e = node
         elif len(node) == 3:  # e.g. "google"
             _, w, e = node
         elif len(node) == 4:  # e.g. "hold on"
