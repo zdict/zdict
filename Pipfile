@@ -14,7 +14,7 @@ requests = "==2.22.0"
 
 [dev-packages]
 
-coverage = "==4.5.4"
+coverage = "==5.0.3"
 flake8 = "==3.7.9"
 pyjokes = "==0.6.0"
 pytest = "==5.3.0"
