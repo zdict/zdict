@@ -19,7 +19,7 @@ class SpanishDict(DictBase):
     Tested words : ('soy', 'manzana', 'python', 'perdón')
     '''
 
-    API = 'http://www.spanishdict.com/translate/{word}'
+    API = 'https://www.spanishdict.com/translate/{word}'
 
     @property
     def provider(self):
