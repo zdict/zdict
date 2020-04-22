@@ -69,78 +69,93 @@ class SpanishDict(DictBase):
         data = BeautifulSoup(webpage, "html.parser")
         content = {}
 
-        card = data.find('div', attrs={'class': 'card'})
-        entry = card.find(
-            # just get the first one
-            attrs={'class': 'dictionary-entry'}
+        # word can be existing in both English & Spanish
+        card = (
+            data.find('div', attrs={'id': 'dictionary-neodict-en'})
+            or data.find('div', attrs={'id': 'dictionary-neodict-es'})
         )
-
-        if not entry:
+        if card is None:
             raise NotFoundError(word)
 
-        content['explains'] = []
-
-        # word can be existing in both English & Spanish
-        word_element = (
-            card.find(attrs={'id': 'headword-en'})
-            or card.find(attrs={'id': 'headword-es'})
-        )
+        word_element = card.find('span', attrs={'class': 'WGK1YbP8'})
         if word_element is None:
             raise NotFoundError(word)
         content['word'] = word_element.text
 
-        pattern1 = {'class': 'dictionary-neodict-indent-1'}
-        pattern2 = {'class': 'dictionary-neodict-indent-2'}
-        pattern3 = {'class': 'dictionary-neodict-indent-3'}
-        pattern_order = {'class': 'dictionary-neodict-translation'}
-        pattern_example = {'class': 'dictionary-neodict-example'}
-        pattern1_en = {'class': 'dictionary-neoharrap-indent-1'}
-        pattern2_en = {'class': 'dictionary-neoharrap-indent-2'}
-        pattern_order_en = {'class': 'dictionary-neoharrap-translation'}
+        '''
+        COPULAR VERB  # speech_pattern
+            # categories_card_pattern
+            1. (used to express a permanent quality)  # category_text_pattern
+                a. ser  # explanation_order_pattern, explanation_text_pattern
+                    # example_card_pattern
+                    The ocean is blue.
+                    El océano es azul.
+            2. (used to express a temporary state)
+                a. estar
+                    I'm not in a good mood today.
+                    Hoy no estoy de buen humor.
 
-        speeches = card.find_all(attrs={'class': 'part_of_speech'})
+                    The sky is cloudy.
+                    El cielo está nublado.
+        ... (Another speech pattern if it has.)
+        '''
+        speech_pattern = {'class': '_2xs-UBSR'}
 
-        for (speech, category) in zip(
-            speeches,
-            entry.find_all(attrs=pattern1) or entry.find_all(attrs=pattern1_en)
-        ):
+        categories_card_pattern = {'class': 'FyTYrC-y'}
+        category_text_pattern = {'class': '_1vspKqMZ'}
+
+        explanation_order_pattern = {'class': '_1TgBOcUi'}
+        explanation_text_pattern = {'class': 'C2TP2MvR'}
+
+        example_card_pattern = {'class': 'FyTYrC-y'}
+
+        # Start to grab
+        content['explains'] = []
+        speech = card.find(attrs=speech_pattern)
+        while speech:
             result = []
-            content['explains'].append([speech.text, result])
-            context = category.find(attrs={'class': 'context'}).text
-            explains = []
+            speech_text_element = speech.find(['a', 'span'])
+            content['explains'].append([speech_text_element.text, result])
 
-            for explain in (category.find_all(attrs=pattern2) or
-                            category.find_all(attrs=pattern2_en)):
+            categories_card = speech.find(attrs=categories_card_pattern)
+            for category in categories_card.children:
+                category_text_element = category.find(attrs=category_text_pattern)
+                category_text = category_text_element.text
 
-                orders = (explain.find_all(attrs=pattern_order) or
-                          explain.find_all(attrs=pattern_order_en))
+                explains = []
+                explanation_card = category.find(attrs=example_card_pattern)
+                for explanation in explanation_card.children:
+                    explanation_orders = explanation.find_all('span', explanation_order_pattern)
+                    explanation_texts = explanation.find_all('a', explanation_text_pattern)
+                    indices = []
+                    if explanation_orders:
+                        for explanation_order, explanation_text in zip(explanation_orders, explanation_texts):
+                            indices.append(
+                                "{}{}".format(
+                                    explanation_order.text.strip(),
+                                    explanation_text.text.strip()
+                                )
+                            )
+                    else:
+                        continue
 
-                if orders:
-                    # e.g.
-                    #
-                    #   ('a. forgiveness', 'b. pardon (law)')
-                    #
-                    indices = tuple(
-                        map(
-                            lambda x: x.text.replace('\xa0', ' ').strip(),
-                            orders
-                        )
-                    )
-                else:
-                    continue
+                    examples = explanation.find_all(attrs=example_card_pattern)
+                    for (example, index) in zip(examples, indices):
+                        t = example.find_all()
+                        # Should be only 4 elements: [(whole sentence), text, —,  text]
+                        '''
+                        When it's Spanish => English, it will show Spanish first.
+                        When it's English => Spanish, it will show English first.
+                        So, the variables below are  not definitely.
+                        '''
+                        (spanish, english) = (t[1].text, t[3].text)
+                        explains.append((index, spanish, english))
 
-                examples = explain.find_all(attrs=pattern3)
-
-                for (example, index) in zip(examples, indices):
-                    t = tuple(example.find(attrs=pattern_example))
-                    (spanish, english) = (t[0].text, t[2].text)
-                    explains.append((index, spanish, english))
-
-                if (not examples) and (len(indices) > 0):
-                    for index in indices:
-                        explains.append((index,))
-
-            result.append([context, explains])
+                    if (not examples) and (len(indices) > 0):
+                        for index in indices:
+                            explains.append((index,))
+                result.append([category_text, explains])
+            speech = speech.next_sibling
 
         record = Record(
             word=word,
