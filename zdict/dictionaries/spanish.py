@@ -105,7 +105,7 @@ class SpanishDict(DictBase):
         category_text_pattern = {'class': '_1vspKqMZ'}
 
         explanation_order_pattern = {'class': '_1TgBOcUi'}
-        explanation_text_pattern = {'class': 'C2TP2MvR'}
+        explanation_text_pattern = {'class': ['C2TP2MvR', '_1KZoU2hp']}
 
         example_card_pattern = {'class': 'FyTYrC-y'}
 
@@ -126,7 +126,10 @@ class SpanishDict(DictBase):
                 explanation_card = category.find(attrs=example_card_pattern)
                 for explanation in explanation_card.children:
                     explanation_orders = explanation.find_all('span', explanation_order_pattern)
-                    explanation_texts = explanation.find_all('a', explanation_text_pattern)
+                    explanation_texts = (
+                        explanation.find_all('a', explanation_text_pattern) or
+                        explanation.find_all('span', explanation_text_pattern)
+                    )
                     indices = []
                     if explanation_orders:
                         for explanation_order, explanation_text in zip(explanation_orders, explanation_texts):
