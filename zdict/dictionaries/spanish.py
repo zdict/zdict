@@ -119,20 +119,28 @@ class SpanishDict(DictBase):
 
             categories_card = speech.find(attrs=categories_card_pattern)
             for category in categories_card.children:
-                category_text_element = category.find(attrs=category_text_pattern)
+                category_text_element = category.find(
+                    attrs=category_text_pattern
+                )
                 category_text = category_text_element.text
 
                 explains = []
                 explanation_card = category.find(attrs=example_card_pattern)
                 for explanation in explanation_card.children:
-                    explanation_orders = explanation.find_all('span', explanation_order_pattern)
+                    explanation_orders = explanation.find_all(
+                        'span',
+                        explanation_order_pattern
+                    )
                     explanation_texts = (
                         explanation.find_all('a', explanation_text_pattern) or
                         explanation.find_all('span', explanation_text_pattern)
                     )
                     indices = []
                     if explanation_orders:
-                        for explanation_order, explanation_text in zip(explanation_orders, explanation_texts):
+                        for explanation_order, explanation_text in zip(
+                            explanation_orders,
+                            explanation_texts
+                        ):
                             indices.append(
                                 "{}{}".format(
                                     explanation_order.text.strip(),
@@ -145,10 +153,11 @@ class SpanishDict(DictBase):
                     examples = explanation.find_all(attrs=example_card_pattern)
                     for (example, index) in zip(examples, indices):
                         t = example.find_all()
-                        # Should be only 4 elements: [(whole sentence), text, —,  text]
+                        # Should be only 4 elements
+                        # [(whole sentence), text, —,  text]
                         '''
-                        When it's Spanish => English, it will show Spanish first.
-                        When it's English => Spanish, it will show English first.
+                        When Spanish => English, it will show Spanish first.
+                        When English => Spanish, it will show English first.
                         So, the variables below are  not definitely.
                         '''
                         (spanish, english) = (t[1].text, t[3].text)
