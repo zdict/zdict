@@ -32,10 +32,10 @@ class TestSpanishDict:
         assert self.dict.title == 'SpanishDict'
 
     def test__get_url(self):
-        url = 'http://www.spanishdict.com/translate/{}'.format(self.en_word)
+        url = 'https://www.spanishdict.com/translate/{}'.format(self.en_word)
         assert url == self.dict._get_url(self.en_word)
 
-        url = 'http://www.spanishdict.com/translate/{}'.format(self.es_word)
+        url = 'https://www.spanishdict.com/translate/{}'.format(self.es_word)
         assert url == self.dict._get_url(self.es_word)
 
     def test_show(self):

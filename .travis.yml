@@ -28,7 +28,7 @@ before_install:
 
 install:
     - "pip install -U setuptools"   # for upgrade issue with setuptools and CPython 3.6 on Travis CI
-    - "pip install -U pip"
+    - "pip install -U pip wheel"    # Install wheel for gnureadline which used bdist_wheel on Travis CI with Mac OSX environment.
     - "pip install -U pytest coveralls"
     - "pip install ."
     - "pip freeze"

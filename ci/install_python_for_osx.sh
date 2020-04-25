@@ -5,7 +5,7 @@ set -ev
 curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
 
 # Make it use openssl only
-brew uninstall openssl@1.1
+brew uninstall --ignore-dependencies openssl@1.1
 
 # print openssl path
 brew --prefix openssl
