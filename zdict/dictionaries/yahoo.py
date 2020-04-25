@@ -244,7 +244,7 @@ class YahooDict(DictBase):
         elif len(node) == 3:  # e.g. ?
             w, _, e = node
         elif len(node) == 4:  # e.g. ?
-            w, _, _, e = node
+            w, p, _, e = node
         elif len(node) == 5:   # e.g. "metadata"
             w, p, _, _, e = node
         elif len(node) == 6:
@@ -259,18 +259,20 @@ class YahooDict(DictBase):
 
     def parse_explain(self, data):
         def getitem(node) -> {'type': 'item', 'text': '...'}:
-            s = node.select_one('span')
+            # This method will glitch when there are more the one sentence.
+            s = node.find_all('span')
+            # s should be ['${index}', '${meaning}', '${example_sentence}']
             exp = {
                 'type': 'item',
-                'text': s.text,
+                'text': "{} {}".format(s[0].text, s[1].text),
                 'sentence': [],
             }
 
-            for s in node.select('p'):
+            for sentence in s[2:]:
                 sentence = list(
                     map(
                         lambda x: ('b', x.text) if x.name == 'b' else str(x),
-                        s.span.contents
+                        sentence.contents
                     )
                 )
                 if isinstance(sentence[-1], str):
@@ -282,17 +284,19 @@ class YahooDict(DictBase):
             return exp
 
         ret = []
-        nodes = data.select('div.tab-content-explanation ul li')
-
-        for node in nodes:
-            if re.match(r'\d', node.text.strip()):
-                exp = getitem(node)
-            else:
-                exp = {
-                    'type': 'PoS',  # part of speech
-                    'text': node.text.strip(),
-                }
-            ret.append(exp)
+        explanation_content_node = data.select('div.tab-content-explanation')
+        for explanations_node in explanation_content_node:
+            for node in explanations_node.children:
+                if re.match(r'\d', node.text.strip()):
+                    for n in node.find_all('li'):
+                        exp = getitem(n)
+                        ret.append(exp)
+                else:
+                    exp = {
+                        'type': 'PoS',  # part of speech
+                        'text': node.text.strip(),
+                    }
+                    ret.append(exp)
 
         return ret
 
