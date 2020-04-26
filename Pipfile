@@ -7,14 +7,14 @@ name = "pypi"
 
 [packages]
 
-beautifulsoup4 = "==4.8.1"
+beautifulsoup4 = "==4.9.0"
 peewee = "==3.11.2"
 requests = "==2.23.0"
 
 
 [dev-packages]
 
-coverage = "==4.5.4"
+coverage = "==5.1"
 flake8 = "==3.7.9"
 pyjokes = "==0.6.0"
 pytest = "==5.4.1"
