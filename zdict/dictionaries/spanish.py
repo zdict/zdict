@@ -34,60 +34,62 @@ class SpanishDict(DictBase):
 
     def show(self, record: Record):
         content = json.loads(record.content)
-
         self.color.print(content['word'], 'yellow')
 
         explains = content.get('explains')
-
         for data in explains:
 
             self.color.print(data[0], 'lwhite')     # speech
 
             for explain in data[1]:
                 self.color.print(explain[0], 'lred')    # category
-                for sentence in explain[1]:
-                    self.color.print(
-                        '{text}'.format(text=sentence[0]),
+                for t in explain[1]:
+                    # t = (index, (sentence, sentence, ...))
+                    self.color.print(  # index
+                        '{text}'.format(text=t[0]),
                         'org',
                         indent=2
                     )
-                    if len(sentence) > 2:
-                        self.color.print(
-                            '{text}'.format(text=sentence[1]),
-                            'lindigo',
-                            indent=4
-                        )
-                        self.color.print(
-                            '{text}'.format(text=sentence[2]),
-                            'indigo',
-                            indent=4
-                        )
+                    if len(t) > 1:
+                        for sentence in t[1]:
+                            # sentence = (spanish, english)
+                            self.color.print(
+                                '{text}'.format(text=sentence[0]),
+                                'lindigo',
+                                indent=4
+                            )
+                            self.color.print(
+                                '{text}'.format(text=sentence[1]),
+                                'indigo',
+                                indent=4
+                            )
         print()
 
     def query(self, word: str):
         webpage = self._get_raw(word)
-        data = BeautifulSoup(webpage, "html.parser")
+        soup = BeautifulSoup(webpage, "html.parser")
         content = {}
 
-        # word can be existing in both English & Spanish
-        card = (
-            data.find('div', attrs={'id': 'dictionary-neodict-en'})
-            or data.find('div', attrs={'id': 'dictionary-neodict-es'})
-        )
+        en_css = "#dictionary-neodict-en"
+        es_css = "#dictionary-neodict-es"
+        card = soup.select_one(en_css) or soup.select_one(es_css)
         if card is None:
             raise NotFoundError(word)
 
-        word_element = card.find('span', attrs={'class': 'WGK1YbP8'})
+        word_css = "div > div:nth-child(1) > span"
+        word_element = card.select_one(word_css)
         if word_element is None:
             raise NotFoundError(word)
         content['word'] = word_element.text
 
         '''
-        COPULAR VERB  # speech_pattern
-            # categories_card_pattern
-            1. (used to express a permanent quality)  # category_text_pattern
-                a. ser  # explanation_order_pattern, explanation_text_pattern
-                    # example_card_pattern
+        COPULAR VERB  # speech
+            # categories_card
+            1. (used to express a permanent quality)  # category_text
+                # explanation
+                a. ser  # index
+                # examples
+                    # example
                     The ocean is blue.
                     El océano es azul.
             2. (used to express a temporary state)
@@ -97,75 +99,54 @@ class SpanishDict(DictBase):
 
                     The sky is cloudy.
                     El cielo está nublado.
-        ... (Another speech pattern if it has.)
+        ... (Another speech if it has.)
         '''
-        speech_pattern = {'class': '_2xs-UBSR'}
-
-        categories_card_pattern = {'class': 'FyTYrC-y'}
-        category_text_pattern = {'class': '_1vspKqMZ'}
-
-        explanation_order_pattern = {'class': '_1TgBOcUi'}
-        explanation_text_pattern = {'class': ['C2TP2MvR', '_1KZoU2hp']}
-
-        example_card_pattern = {'class': 'FyTYrC-y'}
+        speech_pattern = "div > div:nth-child(2)"
+        # "#dictionary-neodict-en > div > div:nth-child(2)"
 
         # Start to grab
         content['explains'] = []
-        speech = card.find(attrs=speech_pattern)
+        speech = card.select_one(speech_pattern)
         while speech:
             result = []
-            speech_text_element = speech.find(['a', 'span'])
+            speech_text, categories_card = speech.children
+            speech_text_element = speech_text.find(['a', 'span'])
             content['explains'].append([speech_text_element.text, result])
 
-            categories_card = speech.find(attrs=categories_card_pattern)
             for category in categories_card.children:
-                category_text_element = category.find(
-                    attrs=category_text_pattern
-                )
+                category_text_element, explanations_card = category.children
                 category_text = category_text_element.text
 
                 explains = []
-                explanation_card = category.find(attrs=example_card_pattern)
-                for explanation in explanation_card.children:
-                    explanation_orders = explanation.find_all(
-                        'span',
-                        explanation_order_pattern
-                    )
-                    explanation_texts = (
-                        explanation.find_all('a', explanation_text_pattern) or
-                        explanation.find_all('span', explanation_text_pattern)
-                    )
-                    indices = []
-                    if explanation_orders:
-                        for explanation_order, explanation_text in zip(
-                            explanation_orders,
-                            explanation_texts
-                        ):
-                            indices.append(
-                                "{}{}".format(
-                                    explanation_order.text.strip(),
-                                    explanation_text.text.strip()
-                                )
-                            )
-                    else:
-                        continue
+                for explanation in explanations_card.children:
+                    for _ in explanation.children:
+                        index_elements, examples = (
+                            _.contents[:-1], _.contents[-1]
+                        )
+                        index = ' '.join(
+                            [
+                                _.text.strip() for _ in index_elements
+                                if _ != ' '
+                            ]
+                        )
 
-                    examples = explanation.find_all(attrs=example_card_pattern)
-                    for (example, index) in zip(examples, indices):
-                        t = example.find_all()
-                        # Should be only 4 elements
-                        # [(whole sentence), text, —,  text]
-                        '''
-                        When Spanish => English, it will show Spanish first.
-                        When English => Spanish, it will show English first.
-                        So, the variables below are  not definitely.
-                        '''
-                        (spanish, english) = (t[1].text, t[3].text)
-                        explains.append((index, spanish, english))
-
-                    if (not examples) and (len(indices) > 0):
-                        for index in indices:
+                        if (not examples) and index:
                             explains.append((index,))
+                            continue
+
+                        sentences = []
+                        for example in examples:
+                            t = example.find_all()
+                            # Should be only 3 elements
+                            # [text, —,  text]
+                            '''
+                            When Spanish => English, it will show Spanish first
+                            When English => Spanish, it will show English first
+                            So, the variables below are not definitely
+                            '''
+                            sentences.append((t[0].text, t[2].text))
+                        explains.append((index, sentences))
+
                 result.append([category_text, explains])
             speech = speech.next_sibling
 
