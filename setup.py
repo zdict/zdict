@@ -4,15 +4,15 @@ import os
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
-try:
-    # for pip >= 10
-    from pip._internal.req import parse_requirements
-except ImportError:
-    # for pip <= 9.0.3
-    from pip.req import parse_requirements
-
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+
+def parse_requirements(filepath):
+    """ load requirements from a pip requirements file. """
+    with open(filepath) as f:
+        lines = (line.strip() for line in f)
+        return [line for line in lines if line and not line.startswith('#')]
 
 
 def get_zdict_version():
@@ -28,14 +28,13 @@ def get_zdict_version():
 
 def get_test_req():
     test_requirements = parse_requirements(
-        os.path.join(ROOT_DIR, 'requirements-test.txt'), session=False
+        os.path.join(ROOT_DIR, 'requirements-test.txt')
     )
-    test_requires = [str(tr.req) for tr in test_requirements]
 
     if not sys.platform.startswith('freebsd'):
-        test_requires.append('gnureadline==6.3.3')
+        test_requirements.append('gnureadline==6.3.3')
 
-    return test_requires
+    return test_requirements
 
 
 version = get_zdict_version()
@@ -61,18 +60,17 @@ class PyTest(TestCommand):
 
 
 install_requirements = parse_requirements(
-    os.path.join(ROOT_DIR, 'requirements.txt'), session=False
+    os.path.join(ROOT_DIR, 'requirements.txt')
 )
-install_requires = [str(ir.req) for ir in install_requirements]
 
 if sys.platform == 'darwin' and sys.version_info <= (3, 5):
-    install_requires.append('gnureadline==6.3.3')
+    install_requirements.append('gnureadline==6.3.3')
 
 
 setup(
     packages=find_packages(exclude=['scripts']),
     scripts=['scripts/zdict'],
-    install_requires=install_requires,
+    install_requires=install_requirements,
     tests_require=get_test_req(),
     cmdclass={'test': PyTest},
 
