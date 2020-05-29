@@ -3,4 +3,4 @@ flake8==3.7.9
 pyjokes==0.6.0
 pytest==5.4.2
 pytest-cov==2.8.1
-pytest-flake8==1.0.5
+pytest-flake8==1.0.6
