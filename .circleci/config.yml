@@ -56,9 +56,9 @@ variables:
       - run:
           name: install dependencies
           command: |
-            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
+            pip install -U pip
             pip install -r requirements.txt
             pip install -r requirements-test.txt
             pip install coveralls
@@ -124,9 +124,9 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip install --user -U pip
             python3 -m venv venv
             . venv/bin/activate
+            pip install -U pip
             pip install -r requirements-test.txt
             pip install twine
 
