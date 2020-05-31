@@ -258,7 +258,7 @@ class YahooDict(DictBase):
         }
 
     def parse_explain(self, data):
-        def getitem(node) -> {'type': 'item', 'text': '...'}:
+        def getitem(node):
             # This method will glitch when there are more the one sentence.
             s = node.find_all('span')
             # s should be ['${index}', '${meaning}', '${example_sentence}']
