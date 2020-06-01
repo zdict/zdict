@@ -16,8 +16,8 @@ brew uninstall --ignore-dependencies openssl@1.1
 # print openssl path
 brew --prefix openssl
 
-# Install specific version of Python via pyenv
-~/.pyenv/bin/pyenv install -v $PYTHON_VERSION
+# Install specific version of Python via pyenv if it hasn't be installed.
+~/.pyenv/bin/pyenv install --skip-existing -v $PYTHON_VERSION
 
 # Create venv with the specific Python version
 ~/.pyenv/versions/$PYTHON_VERSION/bin/python3 -m venv ~/venv
