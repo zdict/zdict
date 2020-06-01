@@ -2,7 +2,13 @@
 
 set -ev
 
-curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+# if $HOME/.pyenv is empty, remove it so it can be installed by pyenv-installer
+# because Travis CI cache will create $HOME/.pyenv,
+# but pyenv-installer won't install if $HOME/.pyenv exists even if it's empty.
+if [ -z "$(ls -A $HOME/.pyenv)" ]; then
+    rmdir $HOME/.pyenv;
+    curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash;
+fi
 
 # Make it use openssl only
 brew uninstall --ignore-dependencies openssl@1.1

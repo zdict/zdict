@@ -1,4 +1,9 @@
 language: python
+cache:
+    directories:
+        - $HOME/.pyenv
+        - $HOME/venv
+
 
 jobs:
     fast_finish: true
