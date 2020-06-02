@@ -282,6 +282,8 @@ Related Projects
     * A vim plugin integrates with zdict.
 * `zdict.sh <https://github.com/zdict/zdict.sh>`_
     * A collection of shell completion scripts for zdict.
+* `zdict_jupyter <https://github.com/zdict/zdict_jupyter>`_
+    * Use zdict in Jupyter Notebook.
 
 
 Stargazers over time
@@ -331,7 +333,7 @@ Stargazers over time
 
 .. |stargazers| image:: https://starcharts.herokuapp.com/zdict/zdict.svg
    :target: https://starcharts.herokuapp.com/zdict/zdict
-   
+
 .. |docker automated build| image:: https://img.shields.io/docker/automated/zdict/zdict
    :target: https://hub.docker.com/r/zdict/zdict
 
