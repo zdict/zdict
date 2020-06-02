@@ -39,6 +39,7 @@ install:
     - pip freeze
 
 script:
+    - pip install -r requirements-test.txt
     - make test
 
 after_success:
