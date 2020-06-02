@@ -39,7 +39,7 @@ install:
     - pip freeze
 
 script:
-    - python setup.py test
+    - make test
 
 after_success:
     - coveralls

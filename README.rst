@@ -228,16 +228,19 @@ If you use `virtualenv`, you may want to create a new enviroment for `zdict`::
 
 Once you installed it with the command above,
 just execute `zdict` after modification.
-Don't need to install it again.
+No need to install it again.
+
+Install the packages for testing::
+
+    $ pip install pytest pytest-cov coverage
 
 We use ``py.test``::
 
-    $ pip install pytest pytest-cov coverage
-    $ python setup.py test
+    $ py.test
 
 or::
 
-    $ py.test
+    $ make test
 
 After runing testing, we will get a coverage report in html.
 We can browse around it::
@@ -254,11 +257,11 @@ Debugging
 
 ``py.test`` can prompt ``pdb`` shell when your test case failed::
 
-    $ python setup.py test -a "--pdb"
+    $ py.test --pdb
 
 or::
 
-    $ py.test --pdb
+    $ make test-with-pdb
 
 
 Bug Report

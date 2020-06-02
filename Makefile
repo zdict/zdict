@@ -27,7 +27,10 @@ clean: clean-pyc clean-vim-swap-files
 	rm -rf build dist htmlcov .coverage* .cache .eggs
 
 test:
-	python setup.py test
+	py.test
+
+test-with-pdb:
+	py.test --pdb
 
 # Make docker-zdict don't complain about no make rules for apple, bird, ...
 %:

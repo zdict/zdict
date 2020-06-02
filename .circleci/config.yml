@@ -72,7 +72,7 @@ variables:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py test
+            make test
 
       - store_test_results:
           path: test-reports
