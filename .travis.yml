@@ -39,7 +39,15 @@ install:
     - pip freeze
 
 script:
-    - python setup.py test
+    - pip install -r requirements-test.txt
+    - make test
+
+before_cache:
+    # Remove __pycahce__ dirs and *.pyc, *.pyo files before uploading cache.
+    # Which will changes between every single builds.
+    # This could make Travis CI don't upload cache every time.
+    - python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('$HOME/venv').rglob('*.py[co]')]"
+    - python3 -Bc "import pathlib; [p.rmdir() for p in pathlib.Path('$HOME/venv').rglob('__pycache__')]"
 
 after_success:
     - coveralls

@@ -2,7 +2,6 @@ import sys
 import os
 
 from setuptools import find_packages, setup
-from setuptools.command.test import test as TestCommand
 
 
 ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -40,25 +39,6 @@ def get_test_req():
 version = get_zdict_version()
 
 
-class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        self.pytest_args = []
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
-
 install_requirements = parse_requirements(
     os.path.join(ROOT_DIR, 'requirements.txt')
 )
@@ -72,7 +52,6 @@ setup(
     scripts=['scripts/zdict'],
     install_requires=install_requirements,
     tests_require=get_test_req(),
-    cmdclass={'test': PyTest},
 
     name='zdict',
     version=version,

@@ -1,4 +1,4 @@
-# eython CircleCI 2.0 configuration file
+# Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
@@ -72,7 +72,7 @@ variables:
           name: run tests
           command: |
             . venv/bin/activate
-            python setup.py test
+            make test
 
       - store_test_results:
           path: test-reports
