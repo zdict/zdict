@@ -22,6 +22,10 @@ jobs:
           os: osx
           language: generic
           env: PYTHON_VERSION=3.7.2
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.8.2
 
 before_install:
     # workaround for Travis CI stdout write error
