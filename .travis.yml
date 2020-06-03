@@ -10,14 +10,12 @@ jobs:
     include:
         # Python runtime is not yet available on OS X
         # https://github.com/travis-ci/travis-ci/issues/2312
+        # Newer Python version should be place at first to make it build earlier.
+        # Because when you add new Python version, it takes time for installing pyenv due to there is no cache for pyenv.
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.5.6
-        - stage: test
-          os: osx
-          language: generic
-          env: PYTHON_VERSION=3.6.8
+          env: PYTHON_VERSION=3.8.2
         - stage: test
           os: osx
           language: generic
@@ -25,7 +23,11 @@ jobs:
         - stage: test
           os: osx
           language: generic
-          env: PYTHON_VERSION=3.8.2
+          env: PYTHON_VERSION=3.6.8
+        - stage: test
+          os: osx
+          language: generic
+          env: PYTHON_VERSION=3.5.6
 
 before_install:
     # workaround for Travis CI stdout write error
