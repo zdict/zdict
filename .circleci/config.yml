@@ -7,6 +7,10 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
+      - linux-python-3.8:
+          filters:
+            tags:
+              only: /.*/
       - linux-python-3.7:
           filters:
             tags:
@@ -21,6 +25,7 @@ workflows:
               only: /.*/
       - deploy:
           requires:
+            - linux-python-3.8
             - linux-python-3.7
             - linux-python-3.6
             - linux-python-3.5
@@ -39,6 +44,7 @@ workflows:
             branches:
               only: master
     jobs:
+      - linux-python-3.8
       - linux-python-3.7
       - linux-python-3.6
       - linux-python-3.5
@@ -92,6 +98,11 @@ variables:
 
 jobs:
   # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  linux-python-3.8:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
   linux-python-3.7:
     <<: *test-template
     docker:
