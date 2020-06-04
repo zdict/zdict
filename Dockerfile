@@ -1,4 +1,4 @@
-FROM python:3.6.5-alpine
+FROM python:3.8-alpine
 
 WORKDIR /srv/work/
 ADD . /srv/work/
