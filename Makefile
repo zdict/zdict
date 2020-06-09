@@ -26,6 +26,8 @@ clean-vim-swap-files:
 clean: clean-pyc clean-vim-swap-files
 	rm -rf build dist htmlcov .coverage* .cache .eggs
 
+install-test-deps:
+	pip install -r requirements-test.txt
 test:
 	py.test
 

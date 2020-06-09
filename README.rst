@@ -232,9 +232,13 @@ No need to install it again.
 
 Install the packages for testing::
 
-    $ pip install pytest pytest-cov coverage
+    $ pip install -r requirements-test.txt
 
-We use ``py.test``::
+or::
+
+    $ make install-test-deps
+
+Use the command below to execute the tests::
 
     $ py.test
 
