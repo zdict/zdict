@@ -12,6 +12,10 @@ zdict
 
 |gitter|
 
+|pyup status| 
+
+**[ ~ Dependencies scanned by PyUp.io ~ ]**
+
 ----
 
 zdict is a CLI dictionary framework mainly focus on any kind of online dictionary.
@@ -346,3 +350,7 @@ Stargazers over time
 
 .. |docker build status| image:: https://img.shields.io/docker/build/zdict/zdict
    :target: https://hub.docker.com/r/zdict/zdict
+
+.. |pyup status| image:: https://pyup.io/repos/github/zdict/zdict/shield.svg
+   :target: https://pyup.io/repos/github/zdict/zdict/
+   :alt: pyup.io badge
