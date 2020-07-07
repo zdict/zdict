@@ -26,7 +26,7 @@ class NaerDict(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        self.color.print("Query: {}".format(content["title"]), "lyellow")
+        self.color.print("{}".format(content["title"]), "lyellow")
         print()
 
         for index, source in enumerate(content["sources"]):
