@@ -14,7 +14,7 @@ class NaerDict(DictBase):
 
     @property
     def provider(self):
-        return "NAER"
+        return "naer"
 
     @property
     def title(self):
