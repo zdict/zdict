@@ -49,10 +49,14 @@ class NaerDict(DictBase):
         data = {"title": word, "sources": defaultdict(list)}
         soup = BeautifulSoup(content, "html.parser")
         for tr in soup.find_all("tr", {"class": "dash"}):
-            source = tr.find("td", attrs={"class": "sourceW"}).find("a").text.strip()
+            source = (
+                tr.find("td", attrs={"class": "sourceW"}).find("a").text
+            ).strip()
             en = tr.find("td", attrs={"class": "ennameW"}).text.strip()
             zhtw = tr.find("td", attrs={"class": "zhtwnameW"}).text.strip()
             data["sources"][source].append((en, zhtw))
 
-        record = Record(word=word, content=json.dumps(data), source=self.provider)
+        record = Record(
+            word=word, content=json.dumps(data), source=self.provider
+        )
         return record
