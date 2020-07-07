@@ -143,13 +143,19 @@ class DictBase(metaclass=abc.ABCMeta):
             print()
         except Exception:
             import traceback
+
+            print('='*80)
             traceback.print_exc()
-            url = "https://github.com/zdict/zdict/issues"
             print()
-            print("We have problem for this word 😢")
-            print("Please report this word to {}".format(url))
-            print("Dictionary: {}".format(self.title))
+            print("Dictionary: {} ({})".format(self.title, self.provider))
             print("Word: '{}'".format(word))
+            print('='*80)
+            print()
+
+            url = "https://github.com/zdict/zdict/issues"
+            print("Houston, we got a problem 😢")
+            print("Please report the error message above to {}".format(url))
+
             import sys
             sys.exit(1)
         else:

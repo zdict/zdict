@@ -1,11 +1,11 @@
 import json
-
+import requests
 from collections import defaultdict
 
 from bs4 import BeautifulSoup
 
 from zdict.dictionary import DictBase
-from zdict.exceptions import QueryError, NotFoundError
+from zdict.exceptions import NotFoundError
 from zdict.models import Record
 
 
@@ -14,11 +14,11 @@ class NaerDict(DictBase):
 
     @property
     def provider(self):
-        return "NAER"
+        return "naer"
 
     @property
     def title(self):
-        return "國家教育研究院"
+        return "國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網"
 
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
@@ -26,7 +26,7 @@ class NaerDict(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        self.color.print("Query: {}".format(content["title"]), "lyellow")
+        self.color.print("{}".format(content["title"]), "lyellow")
         print()
 
         for index, source in enumerate(content["sources"]):
@@ -41,10 +41,8 @@ class NaerDict(DictBase):
                     self.color.print(en, indent=5)
 
     def query(self, word: str):
-        try:
-            content = self._get_raw(word, verify=False)
-        except QueryError as exception:
-            raise NotFoundError(exception.word)
+        requests.packages.urllib3.disable_warnings()
+        content = self._get_raw(word, verify=False)
 
         data = {"title": word, "sources": defaultdict(list)}
         soup = BeautifulSoup(content, "html.parser")
@@ -55,6 +53,9 @@ class NaerDict(DictBase):
             en = tr.find("td", attrs={"class": "ennameW"}).text.strip()
             zhtw = tr.find("td", attrs={"class": "zhtwnameW"}).text.strip()
             data["sources"][source].append((en, zhtw))
+
+        if len(data["sources"]) == 0:
+            raise NotFoundError(word)
 
         record = Record(
             word=word, content=json.dumps(data), source=self.provider
