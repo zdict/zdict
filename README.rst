@@ -218,7 +218,7 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 
 
 `國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網 <https://terms.naer.edu.tw/>`_
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. image:: https://user-images.githubusercontent.com/1645228/86770837-e6951480-c083-11ea-95f2-51b1e6f7e04f.jpg
 
