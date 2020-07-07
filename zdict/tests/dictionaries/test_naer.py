@@ -31,6 +31,7 @@ class TestNaerDict:
     def teardown_class(cls):
         del cls.dict
         del cls.words
+        del cls.not_found_word
         del cls.records
         del cls.verbose_records
 

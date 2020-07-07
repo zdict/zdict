@@ -80,6 +80,10 @@ variables:
           name: run tests
           command: |
             . venv/bin/activate
+            # The website of NaerDict use TLSv1.0
+            # The MinProtocol of TLS on CircleCI is v1.2
+            # If we don't do this, testings for NaerDict will fail on CircleCI
+            sudo sed -i -E 's/MinProtocol[=\ ]+.*/MinProtocol = TLSv1.0/g' /etc/ssl/openssl.cnf
             make test
 
       - store_test_results:
