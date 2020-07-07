@@ -1,5 +1,5 @@
 import json
-
+import requests
 from collections import defaultdict
 
 from bs4 import BeautifulSoup
@@ -41,6 +41,7 @@ class NaerDict(DictBase):
                     self.color.print(en, indent=5)
 
     def query(self, word: str):
+        requests.packages.urllib3.disable_warnings()
         try:
             content = self._get_raw(word, verify=False)
         except QueryError as exception:
