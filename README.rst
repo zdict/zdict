@@ -12,7 +12,7 @@ zdict
 
 |gitter|
 
-|pyup status| 
+|pyup status|
 
 **[ ~ Dependencies scanned by PyUp.io ~ ]**
 
@@ -94,7 +94,7 @@ Usage
 ::
 
     usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all]
+                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all]
                  [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
                  [word [word ...]]
 
@@ -114,7 +114,7 @@ Usage
                             the number of CPUs in the system.
       -sp, --show-provider  Show the dictionary provider of the queried word
       -su, --show-url       Show the url of the queried word
-      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,wiktionary,urban,yandex,all
+      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all
                             Must be seperated by comma and no spaces after each
                             comma. Choose the dictionary you want. (default:
                             yahoo) Use 'all' for qureying all dictionaries. If
@@ -216,6 +216,13 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 
 .. image:: https://user-images.githubusercontent.com/1645228/55309820-7582ac80-5491-11e9-998d-51ebfb183375.jpg
 
+
+`國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網 <https://terms.naer.edu.tw/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://user-images.githubusercontent.com/1645228/86770837-e6951480-c083-11ea-95f2-51b1e6f7e04f.jpg
+
+.. image:: https://user-images.githubusercontent.com/1645228/86770828-e432ba80-c083-11ea-813a-e357f213826a.jpg
 
 Development & Contributing
 ---------------------------
