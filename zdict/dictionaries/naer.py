@@ -56,6 +56,9 @@ class NaerDict(DictBase):
             zhtw = tr.find("td", attrs={"class": "zhtwnameW"}).text.strip()
             data["sources"][source].append((en, zhtw))
 
+        if len(data["sources"]) == 0:
+            raise NotFoundError(word)
+
         record = Record(
             word=word, content=json.dumps(data), source=self.provider
         )
