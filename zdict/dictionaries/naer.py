@@ -5,7 +5,7 @@ from collections import defaultdict
 from bs4 import BeautifulSoup
 
 from zdict.dictionary import DictBase
-from zdict.exceptions import QueryError, NotFoundError
+from zdict.exceptions import NotFoundError
 from zdict.models import Record
 
 
@@ -42,10 +42,7 @@ class NaerDict(DictBase):
 
     def query(self, word: str):
         requests.packages.urllib3.disable_warnings()
-        try:
-            content = self._get_raw(word, verify=False)
-        except QueryError as exception:
-            raise NotFoundError(exception.word)
+        content = self._get_raw(word, verify=False)
 
         data = {"title": word, "sources": defaultdict(list)}
         soup = BeautifulSoup(content, "html.parser")
