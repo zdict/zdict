@@ -18,7 +18,7 @@ class NaerDict(DictBase):
 
     @property
     def title(self):
-        return "國家教育研究院"
+        return "國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網"
 
     def _get_url(self, word) -> str:
         return self.API.format(word=word)
