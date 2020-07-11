@@ -64,7 +64,7 @@ setup(
                       'wdv4758h@gmail.com'),
     url='https://github.com/zdict/zdict',
     keywords="cli, dictionary, framework",
-    description="The last dictionary framework you need. (?)",
+    description="The last online dictionary framework you need. (?)",
     long_description=open("README.rst", encoding='utf-8').read(),
     download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(
         version
