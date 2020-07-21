@@ -1,6 +1,7 @@
-import random
 import json
+import random
 import requests
+
 from collections import defaultdict
 
 from bs4 import BeautifulSoup
@@ -12,8 +13,8 @@ from zdict.models import Record
 
 class ApcDict(DictBase):
     BASE_URL = "https://e-dictionary.apc.gov.tw"
-    POST_API = "https://e-dictionary.apc.gov.tw/index.aspx/_crossTribes"
-    API = "https://e-dictionary.apc.gov.tw/search/list.htm"
+    POST_API = "{}/index.aspx/_crossTribes".format(BASE_URL)
+    API = "{}/search/list.htm".format(BASE_URL)
 
     # Ref:
     #   http://ilrdc.tw/research/athousand/area16.php
