@@ -106,6 +106,13 @@ class iTaigiDict(DictBase):
 
                 content['basic_words'].append(d)
 
+            # Fix issue-452 for iTaigi testings
+            # iTaigi returns basic_words in random order.
+            # Since we store basic_words in a list,
+            # We have to sort it before saving into database
+            # or the unit-testings would fail.
+            content['basic_words'].sort(key=lambda word: word['text'])
+
         # Fetch related words
         try:
             related_words = response["其他建議"]
