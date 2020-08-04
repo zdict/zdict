@@ -46,11 +46,11 @@ class MoeDict(DictBase):
             print()
 
             # print explain
-            for count, explain in enumerate(word.get('definitions', '')):
+            for count, explain in enumerate(word.get('definitions', ''), 1):
 
                 self.color.print(
                     '{order}. {text}'.format(
-                        order=count + 1,
+                        order=count,
                         text=explain.get('def', '')
                     ),
                 )
@@ -161,9 +161,9 @@ class MoeDictTaiwanese(DictBase):
             print()
 
             # print explain
-            for count, explain in enumerate(word.get('d', '')):
+            for count, explain in enumerate(word.get('d', ''), start=1):
 
-                self.color.print('{order}. '.format(order=count + 1), end='')
+                self.color.print('{order}. '.format(order=count), end='')
                 type = clean(explain.get('type', ''))
                 if type:
                     self.color.print(
