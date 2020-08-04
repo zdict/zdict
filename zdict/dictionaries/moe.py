@@ -1,5 +1,6 @@
 import json
 import unicodedata  # to detect Unicode category
+from collections import OrderedDict
 
 from zdict.dictionary import DictBase
 from zdict.exceptions import QueryError, NotFoundError
@@ -43,47 +44,69 @@ class MoeDict(DictBase):
                     end=' ',
                 )
             print()
-            print()
 
-            # print explain
-            for count, explain in enumerate(word.get('definitions', ''), 1):
+            # Gather definitions with same type
+            # in the same key-value of a dictionary.
+            # Use OrderedDict to remain the original order from API.
+            definitions = OrderedDict()
+            for definition in word.get('definitions'):
+                definitions.setdefault(
+                    definition.get('type', ''),
+                    []
+                ).append(definition)
 
-                self.color.print(
-                    '{order}. {text}'.format(
-                        order=count,
-                        text=explain.get('def', '')
-                    ),
-                )
-
-                if explain.get('synonyms'):
+            # print definition
+            for word_type, word_definitions in definitions.items():
+                if word_type:
                     self.color.print(
-                        '同義詞: {text}'.format(text=explain['synonyms']),
-                        'magenta',
-                        indent=2,
+                        '{text}'.format(text=word_type),
+                        'red',
                     )
+                for count, explain in enumerate(word_definitions, 1):
+                    if explain.get('link'):
+                        self.color.print(
+                            '{text}'.format(text=explain['link'][0]),
+                            indent=2,
+                        )
 
-                if explain.get('antonyms'):
-                    self.color.print(
-                        '反義詞: {text}'.format(text=explain['antonyms']),
-                        'magenta',
-                        indent=2,
-                    )
+                    if explain.get('def'):
+                        self.color.print(
+                            '{order}. {text}'.format(
+                                order=count,
+                                text=explain['def'],
+                            ),
+                            indent=2,
+                        )
 
-                for example in explain.get('example', ''):
-                    self.color.print(
-                        example,
-                        'indigo',
-                        indent=2,
-                    )
+                    if explain.get('synonyms'):
+                        self.color.print(
+                            '同義詞: {text}'.format(text=explain['synonyms']),
+                            'magenta',
+                            indent=4,
+                        )
 
-                for quote in explain.get('quote', ''):
-                    self.color.print(
-                        '[引用] {text}'.format(text=quote),
-                        'green',
-                        indent=2,
-                    )
+                    if explain.get('antonyms'):
+                        self.color.print(
+                            '反義詞: {text}'.format(text=explain['antonyms']),
+                            'magenta',
+                            indent=4,
+                        )
 
-                print()
+                    for example in explain.get('example', ''):
+                        self.color.print(
+                            example,
+                            'indigo',
+                            indent=4,
+                        )
+
+                    for quote in explain.get('quote', ''):
+                        self.color.print(
+                            '[引用] {text}'.format(text=quote),
+                            'green',
+                            indent=4,
+                        )
+
+                    print()
 
     def query(self, word: str):
         try:
