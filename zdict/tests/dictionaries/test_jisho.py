@@ -29,7 +29,7 @@ class TestJishoDict:
 
     def test__get_url(self):
         url = (
-            'http://jisho.org/api/v1/search/words?keyword={}'
+            'https://jisho.org/api/v1/search/words?keyword={}'
         ).format(self.word)
         assert url == self.dict._get_url(self.word)
 

@@ -8,7 +8,7 @@ from zdict.models import Record
 class JishoDict(DictBase):
 
     HOMEPAGE_URL = "https://jisho.org/"
-    API = 'http://jisho.org/api/v1/search/words?keyword={word}'
+    API = 'https://jisho.org/api/v1/search/words?keyword={word}'
 
     @property
     def provider(self):
