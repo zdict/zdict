@@ -10,6 +10,7 @@ from zdict.models import Record
 
 
 class NaerDict(DictBase):
+    HOMEPAGE_URL = "https://terms.naer.edu.tw/"
     API = "https://terms.naer.edu.tw/search?q={word}&field=ti&match=smart"
 
     @property

@@ -20,8 +20,7 @@ class YandexDict(DictBase):
 
     """
 
-    # Change the url below to the API url of the new dictionary.
-    # Need to keep the `{word}` for `_get_url()` usage.
+    HOMEPAGE_URL = "https://translate.yandex.com/"
     # TODO: support different translate direction
     # TODO: use Dictionary API
     API = 'https://translate.yandex.net/api/v1.5/tr.json/translate?' \

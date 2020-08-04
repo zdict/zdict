@@ -10,6 +10,11 @@ from zdict.models import Record
 # Change `Template` to the name of new dictionary. like xxxDict.
 class TemplateDict(DictBase):
 
+    # Change the HOMEPAGE_URL to the online dictionary you want to add.
+    # This will be showed when using `zdict --list-dicts` to help users
+    # find out the dictionary they might need.
+    HOMEPAGE_URL = "https://tw.dictionary.yahoo.com/"
+
     # Change the url below to the API url of the new dictionary.
     # Need to keep the `{word}` for `_get_url()` usage.
     API = 'https://tw.dictionary.search.yahoo.com/search?p={word}'

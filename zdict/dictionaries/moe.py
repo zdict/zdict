@@ -8,6 +8,7 @@ from zdict.models import Record
 
 class MoeDict(DictBase):
 
+    HOMEPAGE_URL = "https://www.moedict.tw/"
     API = 'https://www.moedict.tw/uni/{word}'
 
     @property
@@ -122,6 +123,7 @@ def clean(data, clean_cf=False):
 
 class MoeDictTaiwanese(DictBase):
 
+    HOMEPAGE_URL = "https://www.moedict.tw/"
     API = 'https://www.moedict.tw/t/{word}.json'
 
     @property

@@ -7,6 +7,7 @@ from zdict.models import Record
 
 class UrbanDict(DictBase):
 
+    HOMEPAGE_URL = "https://www.urbandictionary.com/"
     API = 'http://api.urbandictionary.com/v0/define?term={word}'
 
     @property
