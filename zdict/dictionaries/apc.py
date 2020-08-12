@@ -82,7 +82,10 @@ class ApcDict(DictBase):
         for index, source in enumerate(content["exact_sources"]):
             self.color.print("{:-2d}. ".format(index + 1), end="")
             self.color.print(source, "lred", end=": ")
-            self.color.print(content["exact_sources"][source]["title"], "lindigo")
+            self.color.print(
+                content["exact_sources"][source]["title"],
+                "lindigo",
+            )
             for i, d in enumerate(content["exact_sources"][source]["defs"]):
                 self.color.print("{i:-2d}. {d}".format(i=i + 1, d=d), indent=4)
 
@@ -102,7 +105,10 @@ class ApcDict(DictBase):
             for word in content["fuzzy_sources"][source]:
                 self.color.print(word["title"], "lindigo", indent=5)
                 for i, d in enumerate(word["defs"]):
-                    self.color.print("{i:-2d}. {d}".format(i=i + 1, d=d), indent=6)
+                    self.color.print(
+                        "{i:-2d}. {d}".format(i=i + 1, d=d),
+                        indent=6,
+                    )
             print()
         if not content["fuzzy_sources"]:
             print()
@@ -110,7 +116,14 @@ class ApcDict(DictBase):
             print()
 
     def query(self, word: str):
-        r = requests.post(self.POST_API, json={"c": "1", "t": "all", "q": word})
+        r = requests.post(
+            self.POST_API,
+            json={
+                "c": "1",
+                "t": "all",
+                "q": word,
+            },
+        )
         content = self._get_raw(word, cookies=r.cookies)
 
         data = {
@@ -137,7 +150,10 @@ class ApcDict(DictBase):
                     if d:
                         defs.append(d.find_all("span")[-1].text.strip())
 
-                link = self.BASE_URL + div.find("a", {"class": "btn-more"})["href"]
+                link = (
+                    self.BASE_URL
+                    + div.find("a", {"class": "btn-more"})["href"]
+                )
                 data["exact_sources"][source] = {
                     "title": title,
                     "defs": defs,
@@ -172,5 +188,9 @@ class ApcDict(DictBase):
         if not exact and not fuzzy:
             raise NotFoundError(word)
 
-        record = Record(word=word, content=json.dumps(data), source=self.provider)
+        record = Record(
+            word=word,
+            content=json.dumps(data),
+            source=self.provider,
+        )
         return record

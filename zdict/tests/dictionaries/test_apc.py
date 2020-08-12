@@ -74,7 +74,9 @@ class TestApcDict:
         for i, word in enumerate(self.words):
             self.dict.query(word)
             Record.assert_called_with(
-                word=word, content=self.verbose_records[i].content, source="apc",
+                word=word,
+                content=self.verbose_records[i].content,
+                source="apc",
             )
 
     def test_query_not_found(self):
