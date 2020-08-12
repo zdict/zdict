@@ -224,6 +224,15 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 
 .. image:: https://user-images.githubusercontent.com/1645228/86770828-e432ba80-c083-11ea-813a-e357f213826a.jpg
 
+
+`原住民族語言線上詞典 <https://e-dictionary.apc.gov.tw/>`_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. image:: https://user-images.githubusercontent.com/1645228/89984560-2b782080-dcac-11ea-8183-acfbd45f799b.jpg
+
+.. image:: https://user-images.githubusercontent.com/1645228/89984570-2e731100-dcac-11ea-9a09-de09e7631402.jpg
+
+
 Development & Contributing
 ---------------------------
 
