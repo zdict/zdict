@@ -11,6 +11,7 @@ from zdict.models import Record
 
 class iTaigiDict(DictBase):
 
+    HOMEPAGE_URL = "https://itaigi.tw/"
     API = 'https://itaigi.tw/平臺項目列表/揣列表?關鍵字={word}'
 
     @property

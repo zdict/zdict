@@ -9,6 +9,7 @@ from zdict.models import Record
 
 class WiktionaryDict(DictBase):
 
+    HOMEPAGE_URL = "https://en.wiktionary.org/"
     API = 'https://en.wiktionary.org/api/rest_v1/page/definition/{word}'
 
     @property

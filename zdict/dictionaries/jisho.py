@@ -7,9 +7,8 @@ from zdict.models import Record
 
 class JishoDict(DictBase):
 
-    # Change the url below to the API url of the new dictionary.
-    # Need to keep the `{word}` for `_get_url()` usage.
-    API = 'http://jisho.org/api/v1/search/words?keyword={word}'
+    HOMEPAGE_URL = "https://jisho.org/"
+    API = 'https://jisho.org/api/v1/search/words?keyword={word}'
 
     @property
     def provider(self):

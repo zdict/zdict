@@ -17,6 +17,7 @@ class OxfordDictionary(DictBase):
 
     KEY_FILE = os.path.join(BASE_DIR, 'oxford.key')
 
+    HOMEPAGE_URL = "https://oxforddictionaries.com/"
     API = 'https://od-api.oxforddictionaries.com/api/v2/entries/en/{word}'
 
     # https://developer.oxforddictionaries.com/documentation/response-codes

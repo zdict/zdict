@@ -21,6 +21,7 @@ def foreach(f: type(lambda: None), i: iter) -> None:
 
 class YahooDict(DictBase):
 
+    HOMEPAGE_URL = "https://tw.dictionary.yahoo.com/"
     API = 'https://tw.dictionary.yahoo.com/dictionary?p={word}'
 
     @property

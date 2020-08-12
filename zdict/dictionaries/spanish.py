@@ -19,6 +19,7 @@ class SpanishDict(DictBase):
     Tested words : ('soy', 'manzana', 'python', 'perdón')
     '''
 
+    HOMEPAGE_URL = "https://www.spanishdict.com/"
     API = 'https://www.spanishdict.com/translate/{word}'
 
     @property

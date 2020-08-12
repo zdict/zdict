@@ -272,14 +272,12 @@ def interactive_mode(args):
 
 def execute_zdict(args):
     if args.list_dicts:
-        for provider in sorted(
-            dictionary_map,
-            key=lambda x: {'yahoo': 0, 'pyjokes': 2}.get(x, 1)
-        ):
+        for provider in sorted(dictionary_map):
             print(
-                '{}: {}'.format(
+                '{}: {}\n{}\n'.format(
                     provider,
-                    dictionary_map[provider](args).title
+                    dictionary_map[provider](args).title,
+                    dictionary_map[provider](args).HOMEPAGE_URL,
                 )
             )
         exit()
