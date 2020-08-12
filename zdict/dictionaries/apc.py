@@ -1,5 +1,4 @@
 import json
-import random
 import requests
 
 from collections import defaultdict
@@ -16,6 +15,7 @@ class ApcDict(DictBase):
     POST_API = "{}/index.aspx/_crossTribes".format(BASE_URL)
     API = "{}/search/list.htm".format(BASE_URL)
 
+    '''
     # Ref:
     #   http://ilrdc.tw/research/athousand/area16.php
     #   原住民族語言研究中心 - 16族族語學習詞表
@@ -51,6 +51,7 @@ class ApcDict(DictBase):
         "uka'a",  # 拉阿魯哇語
         "'akia",  # 卡那卡那富語
     ]
+    '''
 
     @property
     def provider(self):
@@ -82,10 +83,7 @@ class ApcDict(DictBase):
             print()
         if not content["exact_sources"]:
             print()
-            self.color.print(
-                random.choice(self.NOT_FOUND_WORD_INDIGENOUS), "red", indent=4, end="",
-            )
-            self.color.print(" - 無精確搜尋結果", "green")
+            self.color.print("無精確搜尋結果", "green")
             print()
 
         self.color.print("模糊搜尋結果", "lmagenta")
@@ -100,10 +98,7 @@ class ApcDict(DictBase):
             print()
         if not content["fuzzy_sources"]:
             print()
-            self.color.print(
-                random.choice(self.NOT_FOUND_WORD_INDIGENOUS), "red", indent=4, end="",
-            )
-            self.color.print(" - 無模糊搜尋結果", "green")
+            self.color.print("無模糊搜尋結果", "green")
             print()
 
     def query(self, word: str):
