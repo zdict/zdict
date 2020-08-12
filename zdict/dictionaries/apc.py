@@ -12,6 +12,14 @@ from zdict.models import Record
 
 class ApcDict(DictBase):
     BASE_URL = "https://e-dictionary.apc.gov.tw"
+
+    # To get the result of APC online dictionary
+    # We have to send a POST request to the POST_API first
+    # (with the word we want to query in the JSON payload)
+    # Then, the webpage will save result in the cookies
+    # we use the cookies to request the API with GET
+    # It will shows the result.
+    # Then, we parse the webpage.
     POST_API = "{}/index.aspx/_crossTribes".format(BASE_URL)
     API = "{}/search/list.htm".format(BASE_URL)
 
