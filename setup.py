@@ -71,7 +71,7 @@ setup(
     ),
     platforms=['Linux', 'Mac'],
     license="GPL3",
-    python_requires=">=3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    python_requires=">=3.6",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Console",
@@ -82,10 +82,10 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS :: MacOS X",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Utilities",
     ],
 )
