@@ -94,7 +94,7 @@ Usage
 ::
 
     usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all]
+                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all]
                  [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
                  [word [word ...]]
 
@@ -114,7 +114,7 @@ Usage
                             the number of CPUs in the system.
       -sp, --show-provider  Show the dictionary provider of the queried word
       -su, --show-url       Show the url of the queried word
-      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all
+      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all
                             Must be seperated by comma and no spaces after each
                             comma. Choose the dictionary you want. (default:
                             yahoo) Use 'all' for qureying all dictionaries. If
