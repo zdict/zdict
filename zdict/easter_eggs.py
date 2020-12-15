@@ -1,5 +1,3 @@
-import os
-import sys
 import re
 import random
 import importlib
@@ -10,10 +8,6 @@ from zdict.utils import Color
 
 
 def import_pyjokes_module():
-    v = os.environ.get('VIRTUAL_ENV', None)
-    if v:
-        sys.path = [v + '/lib/python3.5/site-packages'] + sys.path
-
     if importlib.util.find_spec('pyjokes'):
         return importlib.import_module('pyjokes')
 
