@@ -6,7 +6,7 @@ zdict
 
 |stars| |forks| |contributors| |pull requests| |issues|
 
-|travis| |circleci| |coveralls|
+|github_actions| |circleci| |coveralls|
 
 |docker automated build| |docker build status|
 
@@ -342,8 +342,8 @@ Stargazers over time
 .. |issues| image:: https://img.shields.io/github/issues/zdict/zdict.svg
    :target: https://github.com/zdict/zdict/issues
 
-.. |travis| image:: https://api.travis-ci.org/zdict/zdict.svg?branch=master
-   :target: https://travis-ci.org/zdict/zdict
+.. |github_actions| image:: https://github.com/zdict/zdict/workflows/macOS%20testings/badge.svg
+   :target: https://github.com/zdict/zdict/actions
 
 .. |circleci| image:: https://circleci.com/gh/zdict/zdict.svg?style=svg
    :target: https://circleci.com/gh/zdict/zdict
