@@ -1,0 +1,85 @@
+name: macOS testings
+
+on: [push, pull_request, workflow_dispatch]
+# workflow_dispatch is for manually trigger:
+# https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+
+
+# <https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python#starting-with-the-python-workflow-template>
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+      # Prevent from cancelling rest of jobs in matrix when one of them is failed.
+      fail-fast: false
+    env:
+      # Python 3.6 & 3.7 on macOS will crash during the unittest with multiproccessing if we don't add this envvar.
+      # <https://bugs.python.org/issue24273#msg243963>
+      # This will make requests bypass the proxy on all hosts.
+      # <https://stackoverflow.com/a/53047403/4324558>
+      no_proxy: '*'
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Configure pip caching
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-python-${{ matrix.python-version }}-${{ hashFiles('requirements.txt', 'requirements-test.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-python-${{ matrix.python-version }}-
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+
+    - name: Install Python dependencies
+      run: |
+        pip install .
+        pip install -r requirements-test.txt
+        pip freeze
+
+    - name: Test
+      run: |
+        make test
+
+    # For coveralls parallel mode: <https://github.com/coveralls-clients/coveralls-python/blob/458e22defbdeaf86458cccf315eee5000bf97689/docs/usage/configuration.rst#configuration>
+    - name: Send coverage to coveralls if above steps are all successful
+      if: ${{ success() }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        pip install -U coveralls
+        COVERALLS_PARALLEL=true coveralls
+
+# coveralls-finish will always run after all matrix builds are finished.
+# Regardless if they are succeeded or failed
+# <https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds>
+  coveralls-finish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Configure pip caching
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-python-3-coveralls
+
+    - name: Make coveralls merged parallel coverage results
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        pip install -U coveralls
+        coveralls --finish
