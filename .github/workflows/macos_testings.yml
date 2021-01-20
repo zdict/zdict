@@ -54,9 +54,12 @@ jobs:
       if: ${{ success() }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        COVERALLS_SERVICE_NAME: github-actions
+        COVERALLS_PARALLEL: true
       run: |
         pip install -U coveralls
-        COVERALLS_PARALLEL=true coveralls
+        coveralls
 
 # coveralls-finish will always run after all matrix builds are finished.
 # Regardless if they are succeeded or failed
@@ -80,6 +83,7 @@ jobs:
     - name: Make coveralls merged parallel coverage results
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_SERVICE_NAME: github-actions
       run: |
         pip install -U coveralls
         coveralls --finish
