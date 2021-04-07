@@ -1,5 +1,38 @@
 # Changelog
 
+## [3.8.2](https://github.com/zdict/zdict/tree/3.8.2) (2020-12-15)
+
+[Full Changelog](https://github.com/zdict/zdict/compare/3.8.1...3.8.2)
+
+## [3.8.1](https://github.com/zdict/zdict/tree/3.8.1) (2020-12-15)
+
+[Full Changelog](https://github.com/zdict/zdict/compare/3.8.0...3.8.1)
+
+## [3.8.0](https://github.com/zdict/zdict/tree/3.8.0) (2020-12-15)
+
+[Full Changelog](https://github.com/zdict/zdict/compare/3.7.0...3.8.0)
+
+**Closed issues:**
+
+- Change CI from Travis CI and CircleCI to GitHub Actions [\#441](https://github.com/zdict/zdict/issues/441)
+- Move macOS related testings from Travis CI to GitHub Actions [\#467](https://github.com/zdict/zdict/issues/467)
+
+**Merged pull requests:**
+
+- Update peewee to 3.14.0 [\#464](https://github.com/zdict/zdict/pull/464) ([pyup-bot](https://github.com/pyup-bot))
+- Update pytest to 6.1.2 [\#463](https://github.com/zdict/zdict/pull/463) ([pyup-bot](https://github.com/pyup-bot))
+- Update pytest to 6.1.1 [\#462](https://github.com/zdict/zdict/pull/462) ([pyup-bot](https://github.com/pyup-bot))
+- Update beautifulsoup4 to 4.9.3 [\#461](https://github.com/zdict/zdict/pull/461) ([pyup-bot](https://github.com/pyup-bot))
+- Update flake8 to 3.8.4 [\#460](https://github.com/zdict/zdict/pull/460) ([pyup-bot](https://github.com/pyup-bot))
+- Update beautifulsoup4 to 4.9.2 [\#459](https://github.com/zdict/zdict/pull/459) ([pyup-bot](https://github.com/pyup-bot))
+- Update pytest to 6.1.0 [\#458](https://github.com/zdict/zdict/pull/458) ([pyup-bot](https://github.com/pyup-bot))
+- Update coverage to 5.3 [\#457](https://github.com/zdict/zdict/pull/457) ([pyup-bot](https://github.com/pyup-bot))
+- Update pytest to 6.0.2 [\#456](https://github.com/zdict/zdict/pull/456) ([pyup-bot](https://github.com/pyup-bot))
+- Update pytest-cov to 2.10.1 [\#455](https://github.com/zdict/zdict/pull/455) ([pyup-bot](https://github.com/pyup-bot))
+- \[\#467\] Move macOS related testings from Travis CI to GitHub Actions [\#468](https://github.com/zdict/zdict/pull/468) ([M157q](https://github.com/M157q))
+- Update pytest to 6.2.0 [\#466](https://github.com/zdict/zdict/pull/466) ([pyup-bot](https://github.com/pyup-bot))
+- Update requests to 2.25.0 [\#465](https://github.com/zdict/zdict/pull/465) ([pyup-bot](https://github.com/pyup-bot))
+
 ## [3.7.0](https://github.com/zdict/zdict/tree/3.7.0) (2020-08-12)
 
 [Full Changelog](https://github.com/zdict/zdict/compare/3.6.2...3.7.0)
@@ -209,8 +242,8 @@
 - Update coverage to 4.5.4 [\#363](https://github.com/zdict/zdict/pull/363) ([pyup-bot](https://github.com/pyup-bot))
 - Update beautifulsoup4 to 4.8.0 [\#362](https://github.com/zdict/zdict/pull/362) ([pyup-bot](https://github.com/pyup-bot))
 - Update pytest to 5.0.1 [\#361](https://github.com/zdict/zdict/pull/361) ([pyup-bot](https://github.com/pyup-bot))
+- Update flake8 to 3.7.8 [\#360](https://github.com/zdict/zdict/pull/360) ([pyup-bot](https://github.com/pyup-bot))
 - Update pytest to 5.0.0 [\#359](https://github.com/zdict/zdict/pull/359) ([pyup-bot](https://github.com/pyup-bot))
-- Update certifi to 2019.6.16 [\#356](https://github.com/zdict/zdict/pull/356) ([pyup-bot](https://github.com/pyup-bot))
 
 ## [3.0.2](https://github.com/zdict/zdict/tree/3.0.2) (2019-06-20)
 
@@ -246,7 +279,7 @@
 
 **Merged pull requests:**
 
-- Update flake8 to 3.7.8 [\#360](https://github.com/zdict/zdict/pull/360) ([pyup-bot](https://github.com/pyup-bot))
+- Update certifi to 2019.6.16 [\#356](https://github.com/zdict/zdict/pull/356) ([pyup-bot](https://github.com/pyup-bot))
 - Update pytest to 4.6.3 [\#355](https://github.com/zdict/zdict/pull/355) ([pyup-bot](https://github.com/pyup-bot))
 - Update peewee to 3.9.6 [\#354](https://github.com/zdict/zdict/pull/354) ([pyup-bot](https://github.com/pyup-bot))
 - Update pluggy to 0.12.0 [\#351](https://github.com/zdict/zdict/pull/351) ([pyup-bot](https://github.com/pyup-bot))
@@ -579,6 +612,7 @@
 - Update coverage to 4.4.2 [\#143](https://github.com/zdict/zdict/pull/143) ([pyup-bot](https://github.com/pyup-bot))
 - Update peewee to 2.10.2 [\#138](https://github.com/zdict/zdict/pull/138) ([pyup-bot](https://github.com/pyup-bot))
 - Update pytest to 3.2.3 [\#137](https://github.com/zdict/zdict/pull/137) ([pyup-bot](https://github.com/pyup-bot))
+- Add pipenv data [\#135](https://github.com/zdict/zdict/pull/135) ([wdv4758h](https://github.com/wdv4758h))
 - Modify the part related to docker in README for issue-98 [\#133](https://github.com/zdict/zdict/pull/133) ([M157q](https://github.com/M157q))
 - \[\#98\] Install `locales` for using `locale-gen` for Docker [\#132](https://github.com/zdict/zdict/pull/132) ([M157q](https://github.com/M157q))
 - \[\#130\] Pinned versions of packages in requirements [\#131](https://github.com/zdict/zdict/pull/131) ([M157q](https://github.com/M157q))
@@ -593,7 +627,6 @@
 
 **Merged pull requests:**
 
-- Add pipenv data [\#135](https://github.com/zdict/zdict/pull/135) ([wdv4758h](https://github.com/wdv4758h))
 - \[zdict-0.10.0\] [\#129](https://github.com/zdict/zdict/pull/129) ([wdv4758h](https://github.com/wdv4758h))
 - Upgrade all dependencies and CPython version [\#128](https://github.com/zdict/zdict/pull/128) ([wdv4758h](https://github.com/wdv4758h))
 - Add Yandex Translate API support [\#127](https://github.com/zdict/zdict/pull/127) ([wdv4758h](https://github.com/wdv4758h))
@@ -761,7 +794,6 @@
 - \[testing\] skip gnureadline testing on freebsd [\#74](https://github.com/zdict/zdict/pull/74) ([iblis17](https://github.com/iblis17))
 - \[travis\] change coveralls client [\#72](https://github.com/zdict/zdict/pull/72) ([iblis17](https://github.com/iblis17))
 - Issue 69 [\#70](https://github.com/zdict/zdict/pull/70) ([iblis17](https://github.com/iblis17))
-- Add a Gitter chat badge to README.rst [\#15](https://github.com/zdict/zdict/pull/15) ([gitter-badger](https://github.com/gitter-badger))
 
 ## [v0.0.6](https://github.com/zdict/zdict/tree/v0.0.6) (2015-10-19)
 
