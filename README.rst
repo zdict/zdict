@@ -93,44 +93,44 @@ Usage
 
 ::
 
-    usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
-                 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all]
-                 [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
-                 [word [word ...]]
+	usage: zdict [-h] [-v] [-d] [-t QUERY_TIMEOUT] [-j [JOBS]] [-sp] [-su]
+				 [-dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all]
+				 [-ld] [-V] [-c] [--dump [PATTERN]] [-D]
+				 [word [word ...]]
 
-    positional arguments:
-      word                  Words for searching its translation
+	positional arguments:
+	  word                  Words for searching its translation
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      -v, --version         show program's version number and exit
-      -d, --disable-db-cache
-                            Temporarily not using the result from db cache. (still
-                            save the result into db)
-      -t QUERY_TIMEOUT, --query-timeout QUERY_TIMEOUT
-                            Set timeout for every query. default is 5 seconds.
-      -j [JOBS], --jobs [JOBS]
-                            Allow N jobs at once. Do not pass any argument to use
-                            the number of CPUs in the system.
-      -sp, --show-provider  Show the dictionary provider of the queried word
-      -su, --show-url       Show the url of the queried word
-      -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,apc,wiktionary,urban,yandex,all
-                            Must be seperated by comma and no spaces after each
-                            comma. Choose the dictionary you want. (default:
-                            yahoo) Use 'all' for qureying all dictionaries. If
-                            'all' or more than 1 dictionaries been chosen, --show-
-                            provider will be set to True in order to provide more
-                            understandable output.
-      -ld, --list-dicts     Show currently supported dictionaries.
-      -V, --verbose         Show more information for the queried word. (If the
-                            chosen dictionary have implemented verbose related
-                            functions)
-      -c, --force-color     Force color printing (zdict automatically disable
-                            color printing when output is not a tty, use this
-                            option to force color printing)
-      --dump [PATTERN]      Dump the querying history, can be filtered with regex
-      -D, --debug           Print raw html prettified by BeautifulSoup for
-                            debugging.
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -v, --version         show program's version number and exit
+	  -d, --disable-db-cache
+							Temporarily not using the result from db cache. (still
+							save the result into db)
+	  -t QUERY_TIMEOUT, --query-timeout QUERY_TIMEOUT
+							Set timeout for every query. default is 5 seconds.
+	  -j [JOBS], --jobs [JOBS]
+							Allow N jobs at once. Do not pass any argument to use
+							the number of CPUs in the system.
+	  -sp, --show-provider  Show the dictionary provider of the queried word
+	  -su, --show-url       Show the url of the queried word
+	  -dt itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all, --dict itaigi,moe,moe-taiwanese,spanish,oxford,jisho,yahoo,naer,wiktionary,urban,yandex,all
+							Must be seperated by comma and no spaces after each
+							comma. Choose the dictionary you want. (default:
+							yahoo) Use 'all' for qureying all dictionaries. If
+							'all' or more than 1 dictionaries been chosen, --show-
+							provider will be set to True in order to provide more
+							understandable output.
+	  -ld, --list-dicts     Show currently supported dictionaries.
+	  -V, --verbose         Show more information for the queried word. (If the
+							chosen dictionary have implemented verbose related
+							functions)
+	  -c, --force-color     Force color printing (zdict automatically disable
+							color printing when output is not a tty, use this
+							option to force color printing)
+	  --dump [PATTERN]      Dump the querying history, can be filtered with regex
+	  -D, --debug           Print raw html prettified by BeautifulSoup for
+							debugging.
 
 
 Screenshots
@@ -223,14 +223,6 @@ To use this source, you should first `apply <https://developer.oxforddictionarie
 .. image:: https://user-images.githubusercontent.com/1645228/86770837-e6951480-c083-11ea-95f2-51b1e6f7e04f.jpg
 
 .. image:: https://user-images.githubusercontent.com/1645228/86770828-e432ba80-c083-11ea-813a-e357f213826a.jpg
-
-
-`原住民族語言線上詞典 <https://e-dictionary.apc.gov.tw/>`_
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. image:: https://user-images.githubusercontent.com/1645228/89984560-2b782080-dcac-11ea-8183-acfbd45f799b.jpg
-
-.. image:: https://user-images.githubusercontent.com/1645228/89984570-2e731100-dcac-11ea-9a09-de09e7631402.jpg
 
 
 Development & Contributing
