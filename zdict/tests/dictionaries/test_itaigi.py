@@ -1,3 +1,4 @@
+import time
 from pytest import raises
 from unittest.mock import Mock, patch
 
@@ -18,11 +19,35 @@ class TestiTaigiDict:
         cls.dict.args.query_timeout = 60
         # Setup normal query data
         cls.dict.args.verbose = False
-        cls.records = [cls.dict.query(word) for word in cls.words]
+        cls.records = []
+        for word in cls.words:
+            record = None
+            while True:
+                try:
+                    record = cls.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    cls.records.append(record)
+                    break
 
         # Setup verbose query data
         cls.dict.args.verbose = True
-        cls.verbose_records = [cls.dict.query(word) for word in cls.words]
+        cls.verbose_records = []
+        for word in cls.words:
+            record = None
+            while True:
+                try:
+                    record = cls.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    cls.verbose_records.append(record)
+                    break
 
         # Change back to default verbose config
         cls.dict.args.verbose = False
@@ -64,24 +89,40 @@ class TestiTaigiDict:
         self.dict.args.verbose = False
 
         for i, word in enumerate(self.words):
-            self.dict.query(word)
-            Record.assert_called_with(
-                word=word,
-                content=self.records[i].content,
-                source='itaigi',
-            )
+            while True:
+                try:
+                    self.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    Record.assert_called_with(
+                        word=word,
+                        content=self.records[i].content,
+                        source='itaigi',
+                    )
+                    break
 
     @patch('zdict.dictionaries.itaigi.Record')
     def test_query_verbose(self, Record):
         self.dict.args.verbose = True
 
         for i, word in enumerate(self.words):
-            self.dict.query(word)
-            Record.assert_called_with(
-                word=word,
-                content=self.verbose_records[i].content,
-                source='itaigi',
-            )
+            while True:
+                try:
+                    self.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    Record.assert_called_with(
+                        word=word,
+                        content=self.verbose_records[i].content,
+                        source='itaigi',
+                    )
+                    break
 
     def test_query_not_found(self):
         self.dict._get_raw = Mock(return_value='{"列表": []}')
