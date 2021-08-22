@@ -305,10 +305,6 @@ Related Projects
     * Use zdict in Jupyter Notebook.
 
 
-Stargazers over time
----------------------
-
-|stargazers|
 
 .. |version| image:: https://img.shields.io/pypi/v/zdict.svg
    :target: https://pypi.org/project/zdict
@@ -349,9 +345,6 @@ Stargazers over time
 
 .. |coveralls| image:: https://coveralls.io/repos/zdict/zdict/badge.svg
    :target: https://coveralls.io/github/zdict/zdict
-
-.. |stargazers| image:: https://starcharts.herokuapp.com/zdict/zdict.svg
-   :target: https://starcharts.herokuapp.com/zdict/zdict
 
 .. |docker automated build| image:: https://img.shields.io/docker/automated/zdict/zdict
    :target: https://hub.docker.com/r/zdict/zdict
