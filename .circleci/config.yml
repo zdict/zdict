@@ -199,7 +199,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
             if [ ! -z "$CIRCLE_TAG" ]; then
                 docker push ${IMAGE_NAME}:${CIRCLE_TAG}
