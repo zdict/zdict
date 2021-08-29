@@ -11,19 +11,27 @@ workflows:
       - linux-python-3_9:
           filters:
             tags:
-              only: /.*/
+              ignore: /.*/
+            branches:
+              only: master
       - linux-python-3_8:
           filters:
             tags:
-              only: /.*/
+              ignore: /.*/
+            branches:
+              only: master
       - linux-python-3_7:
           filters:
             tags:
-              only: /.*/
+              ignore: /.*/
+            branches:
+              only: master
       - linux-python-3_6:
           filters:
             tags:
-              only: /.*/
+              ignore: /.*/
+            branches:
+              only: master
       - dockerhub-push:
           requires:
             - linux-python-3_9
@@ -32,7 +40,9 @@ workflows:
             - linux-python-3_6
           filters:
             tags:
-              only: /.*/
+              ignore: /.*/
+            branches:
+              only: master
 
   release:
     jobs:
