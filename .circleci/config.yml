@@ -204,11 +204,14 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
+            # If it's a release, push the version tag as docker image tag to docker hub
             if [ ! -z "$CIRCLE_TAG" ]; then
+                docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:${CIRCLE_TAG}
                 docker push ${IMAGE_NAME}:${CIRCLE_TAG}
-            else
-                docker push ${IMAGE_NAME}:latest
             fi
+
+            # Default just push to latest image
+            docker push ${IMAGE_NAME}:latest
 
   # Deploy to PyPI if semvar git tag pushed
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
