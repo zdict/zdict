@@ -24,6 +24,15 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - dockerhub-push:
+          requires:
+            - linux-python-3_9
+            - linux-python-3_8
+            - linux-python-3_7
+            - linux-python-3_6
+          filters:
+            tags:
+              only: /.*/
 
   release:
     jobs:
@@ -46,6 +55,17 @@ workflows:
             branches:
               ignore: /.*/
       - linux-python-3_6:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - dockerhub-push:
+          requires:
+            - linux-python-3_9
+            - linux-python-3_8
+            - linux-python-3_7
+            - linux-python-3_6
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
@@ -166,6 +186,25 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.6
+
+  # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
+  dockerhub-push:
+    environment:
+      IMAGE_NAME: zdict/zdict
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+            if [ ! -z "$CIRCLE_TAG" ]; then
+                docker push ${IMAGE_NAME}:${CIRCLE_TAG}
+            else
+                docker push ${IMAGE_NAME}:latest
 
   # Deploy to PyPI if semvar git tag pushed
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
