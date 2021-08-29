@@ -6,7 +6,7 @@ version: 2.1
 
 workflows:
   version: 2
-  build-test-deploy:
+  main:
     jobs:
       - linux-python-3_9:
           filters:
@@ -24,7 +24,34 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - deploy:
+
+  release:
+    jobs:
+      - linux-python-3_9:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - linux-python-3_8:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - linux-python-3_7:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - linux-python-3_6:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
+      - pypi-deploy:
           requires:
             - linux-python-3_9
             - linux-python-3_8
@@ -142,7 +169,7 @@ jobs:
 
   # Deploy to PyPI if semvar git tag pushed
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
-  deploy:
+  pypi-deploy:
     docker:
       # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
       - image: circleci/python:3.6
