@@ -205,6 +205,7 @@ jobs:
                 docker push ${IMAGE_NAME}:${CIRCLE_TAG}
             else
                 docker push ${IMAGE_NAME}:latest
+            fi
 
   # Deploy to PyPI if semvar git tag pushed
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
