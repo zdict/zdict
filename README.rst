@@ -349,7 +349,7 @@ Related Projects
 .. |docker automated build| image:: https://img.shields.io/docker/automated/zdict/zdict
    :target: https://hub.docker.com/r/zdict/zdict
 
-.. |docker build status| image:: https://img.shields.io/docker/build/zdict/zdict
+.. |docker build status| image:: https://img.shields.io/docker/cloud/build/zdict/zdict
    :target: https://hub.docker.com/r/zdict/zdict
 
 .. |pyup status| image:: https://pyup.io/repos/github/zdict/zdict/shield.svg
