@@ -1,10 +1,31 @@
+import json
 import time
 from pytest import raises
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from zdict.exceptions import NotFoundError
 from zdict.zdict import get_args
 from zdict.dictionaries.itaigi import iTaigiDict
+
+
+def _filter_pronounce(d: dict) -> dict:
+    new_d = {}
+    for k, v in d.items():
+        # iTaigiDict sometimes return one item of result
+        # with same meaning but different pronounce
+        # which will make this unittest randomly fail.
+        if k == "pronounce":
+            continue
+
+        if isinstance(v, dict):
+            new_d[k] = _filter_pronounce(v)
+        elif isinstance(v, tuple):
+            new_d[k] = tuple(_filter_pronounce(_) for _ in v)
+        elif isinstance(v, list):
+            new_d[k] = list(_filter_pronounce(_) for _ in v)
+        else:
+            new_d[k] = v
+    return new_d
 
 
 class TestiTaigiDict:
@@ -84,43 +105,49 @@ class TestiTaigiDict:
         for record in self.verbose_records:
             self.dict.show(record)
 
-    @patch('zdict.dictionaries.itaigi.Record')
-    def test_query_normal(self, Record):
+    def test_query_normal(self):
         self.dict.args.verbose = False
 
+        query_record = None
         for i, word in enumerate(self.words):
             while True:
                 try:
-                    self.dict.query(word)
+                    query_record = self.dict.query(word)
                 except Exception:
                     # prevent itaigi API 500 error
                     time.sleep(5)
                     continue
                 else:
-                    Record.assert_called_with(
-                        word=word,
-                        content=self.records[i].content,
-                        source='itaigi',
+                    assert (
+                        _filter_pronounce(
+                            json.loads(query_record.content)
+                        ) ==
+                        _filter_pronounce(
+                            json.loads(self.records[i].content)
+                        )
                     )
                     break
 
-    @patch('zdict.dictionaries.itaigi.Record')
-    def test_query_verbose(self, Record):
+    def test_query_verbose(self):
         self.dict.args.verbose = True
 
+        verbose_query_record = None
         for i, word in enumerate(self.words):
             while True:
                 try:
-                    self.dict.query(word)
+                    verbose_query_record = self.dict.query(word)
                 except Exception:
                     # prevent itaigi API 500 error
                     time.sleep(5)
                     continue
                 else:
-                    Record.assert_called_with(
-                        word=word,
-                        content=self.verbose_records[i].content,
-                        source='itaigi',
+                    assert (
+                        _filter_pronounce(
+                            json.loads(verbose_query_record.content)
+                        ) ==
+                        _filter_pronounce(
+                            json.loads(self.verbose_records[i].content)
+                        )
                     )
                     break
 
