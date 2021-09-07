@@ -11,11 +11,18 @@ from zdict.dictionaries.itaigi import iTaigiDict
 def _filter_pronounce(d: dict) -> dict:
     new_d = {}
     for k, v in d.items():
+        # iTaigiDict sometimes return one item of result
+        # with same meaning but different pronounce
+        # which will make this unittest randomly fail.
         if k == "pronounce":
             continue
 
         if isinstance(v, dict):
             new_d[k] = _filter_pronounce(v)
+        elif isinstance(v, tuple):
+            new_d[k] = tuple(_filter_pronounce(_) for _ in v)
+        elif isinstance(v, list):
+            new_d[k] = list(_filter_pronounce(_) for _ in v)
         else:
             new_d[k] = v
     return new_d
