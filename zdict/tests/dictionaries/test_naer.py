@@ -16,6 +16,10 @@ class TestNaerDict:
         cls.words = ['西爾河', 'spring mass']
         cls.not_found_word = 'dsafwwe'
 
+        # Set query_timeout from 5 seconds to 60 seconds,
+        # so it won't timeout that often.
+        cls.dict.args.query_timeout = 60
+
         # Setup normal query data
         cls.dict.args.verbose = False
         cls.records = [cls.dict.query(word) for word in cls.words]
