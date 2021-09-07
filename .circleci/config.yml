@@ -262,4 +262,5 @@ jobs:
           name: upload to pypi
           command: |
             . venv/bin/activate
+            twine check dist/*
             twine upload dist/*

@@ -66,6 +66,7 @@ setup(
     keywords="cli, dictionary, framework",
     description="The last online dictionary framework you need. (?)",
     long_description=open("README.rst", encoding='utf-8').read(),
+    long_description_content_type="text/x-rst",
     download_url="https://github.com/zdict/zdict/archive/v{}.zip".format(
         version
     ),
