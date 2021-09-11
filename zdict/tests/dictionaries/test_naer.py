@@ -1,5 +1,7 @@
+import time
+
 from pytest import raises
-from unittest.mock import patch
+from unittest.mock import Mock
 
 from zdict.exceptions import NotFoundError
 from zdict.zdict import get_args
@@ -16,17 +18,43 @@ class TestNaerDict:
         cls.words = ['西爾河', 'spring mass']
         cls.not_found_word = 'dsafwwe'
 
-        # Set query_timeout from 5 seconds to 60 seconds,
+        # Set query_timeout from 5 seconds to 120 seconds,
         # so it won't timeout that often.
-        cls.dict.args.query_timeout = 60
+        cls.dict.args.query_timeout = 120
 
         # Setup normal query data
         cls.dict.args.verbose = False
+        cls.records = []
+        for word in cls.words:
+            record = None
+            while True:
+                try:
+                    record = cls.dict.query(word)
+                except Exception:
+                    # prevent API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    cls.records.append(record)
+                    break
+
         cls.records = [cls.dict.query(word) for word in cls.words]
 
         # Setup verbose query data
         cls.dict.args.verbose = True
-        cls.verbose_records = [cls.dict.query(word) for word in cls.words]
+        cls.verbose_records = []
+        for word in cls.words:
+            record = None
+            while True:
+                try:
+                    record = cls.dict.query(word)
+                except Exception:
+                    # prevent API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    cls.verbose_records.append(record)
+                    break
 
         # Change back to default verbose config
         cls.dict.args.verbose = False
@@ -43,7 +71,9 @@ class TestNaerDict:
         assert self.dict.provider == 'naer'
 
     def test_title(self):
-        assert self.dict.title == '國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網'
+        assert self.dict.title == (
+            '國家教育研究院 - 雙語詞彙、學術名詞暨辭書資訊網'
+        )
 
     def test__get_url(self):
         url = 'https://terms.naer.edu.tw/search?q=test&field=ti&match=smart'
@@ -61,31 +91,44 @@ class TestNaerDict:
         for record in self.verbose_records:
             self.dict.show(record)
 
-    @patch('zdict.dictionaries.naer.Record')
-    def test_query_normal(self, Record):
+    def test_query_normal(self):
         self.dict.args.verbose = False
 
+        query_record = None
         for i, word in enumerate(self.words):
-            self.dict.query(word)
-            Record.assert_called_with(
-                word=word,
-                content=self.records[i].content,
-                source='naer',
-            )
+            while True:
+                try:
+                    query_record = self.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    assert query_record.content == self.records[i].content
+                    break
 
-    @patch('zdict.dictionaries.naer.Record')
-    def test_query_verbose(self, Record):
+    def test_query_verbose(self):
         self.dict.args.verbose = True
 
+        query_record = None
         for i, word in enumerate(self.words):
-            self.dict.query(word)
-            Record.assert_called_with(
-                word=word,
-                content=self.verbose_records[i].content,
-                source='naer',
-            )
+            while True:
+                try:
+                    query_record = self.dict.query(word)
+                except Exception:
+                    # prevent itaigi API 500 error
+                    time.sleep(5)
+                    continue
+                else:
+                    assert (
+                        query_record.content
+                        ==
+                        self.verbose_records[i].content
+                    )
+                    break
 
     def test_query_not_found(self):
         # Trigger NotFoundError intentionally and see if it works.
+        self.dict._get_raw = Mock(return_value='')
         with raises(NotFoundError):
             self.dict.query(self.not_found_word)
