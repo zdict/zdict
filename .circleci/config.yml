@@ -4,9 +4,6 @@
 #
 version: 2.1
 
-orbs:
-  coveralls: coveralls/coveralls@1.0.6
-
 workflows:
   version: 2
   main:
@@ -24,15 +21,6 @@ workflows:
             tags:
               ignore: /.*/
       - linux-python-3_6:
-          filters:
-            tags:
-              ignore: /.*/
-      - send-coveralls:
-          requires:
-            - linux-python-3_9
-            - linux-python-3_8
-            - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               ignore: /.*/
@@ -74,17 +62,6 @@ workflows:
               only: /[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
-      - send-coveralls:
-          requires:
-            - linux-python-3_9
-            - linux-python-3_8
-            - linux-python-3_7
-            - linux-python-3_6
-          filters:
-            tags:
-              only: /[0-9]+(\.[0-9]+)*/
-            branches:
-              ignore: /.*/
       - dockerhub-push:
           requires:
             - linux-python-3_9
@@ -121,12 +98,6 @@ workflows:
       - linux-python-3_8
       - linux-python-3_7
       - linux-python-3_6
-      - send-coveralls
-          requires:
-            - linux-python-3_9
-            - linux-python-3_8
-            - linux-python-3_7
-            - linux-python-3_6
 
 # https://circleci.com/blog/managing-secrets-when-you-have-pull-requests-from-outside-contributors/
 commands:
@@ -183,15 +154,18 @@ variables:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
       - store_artifacts:
           path: htmlcov
           destination: htmlcov
 
       - early_return_for_forked_pull_requests
-      
-      - coveralls/upload:
-          parallel: true
-          flag_name: ${CIRCLE_JOB}
+
+      - run:
+          name: send coverage to coveralls
+          command: |
+            . venv/bin/activate
+            coveralls
 
 jobs:
   # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
@@ -199,38 +173,21 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.9
-    environment:
-      COVERALLS_PARALLEL: true
 
   linux-python-3_8:
     <<: *test-template
     docker:
       - image: circleci/python:3.8
-    environment:
-      COVERALLS_PARALLEL: true
 
   linux-python-3_7:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
-    environment:
-      COVERALLS_PARALLEL: true
 
   linux-python-3_6:
     <<: *test-template
     docker:
       - image: circleci/python:3.6
-    environment:
-      COVERALLS_PARALLEL: true
-   
-  # https://docs.coveralls.io/parallel-build-webhook
-  # https://circleci.com/developer/orbs/orb/coveralls/coveralls#usage-coveralls_parallel
-  send-coveralls:
-    docker:
-      - image: 'cimg/base:2021.04'
-    steps:
-      - coveralls/upload:
-          parallel_finished: true
 
   # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
   dockerhub-push:
