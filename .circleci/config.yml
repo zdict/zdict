@@ -122,6 +122,11 @@ workflows:
       - linux-python-3_7
       - linux-python-3_6
       - send-coveralls
+          requires:
+            - linux-python-3_9
+            - linux-python-3_8
+            - linux-python-3_7
+            - linux-python-3_6
 
 # https://circleci.com/blog/managing-secrets-when-you-have-pull-requests-from-outside-contributors/
 commands:
