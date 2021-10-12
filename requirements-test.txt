@@ -1,4 +1,4 @@
-coverage==6.0.1
+coverage==6.0.2
 flake8==4.0.1
 pyjokes==0.6.0
 pytest==6.2.5
