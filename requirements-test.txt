@@ -1,5 +1,5 @@
 coverage==6.0.1
-flake8==3.9.2
+flake8==4.0.1
 pyjokes==0.6.0
 pytest==6.2.5
 pytest-cov==3.0.0
