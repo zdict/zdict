@@ -1,5 +1,7 @@
+import json
+from unittest.mock import Mock
+
 from pytest import raises
-from unittest.mock import Mock, patch
 
 from zdict.dictionaries.jisho import JishoDict
 from zdict.exceptions import NotFoundError
@@ -43,25 +45,35 @@ class TestJishoDict:
         self.dict.args.verbose = True
         self.dict.show(self.record)
 
-    @patch('zdict.dictionaries.jisho.Record')
-    def test_query_normal(self, Record):
+    def test_query_normal(self):
         self.dict.args.verbose = False
-        self.dict.query(self.word)
-        Record.assert_called_with(
-            word=self.word,
-            content=self.record.content,
-            source=self.source,
-        )
+        record = self.dict.query(self.word)
 
-    @patch('zdict.dictionaries.jisho.Record')
-    def test_query_verbose(self, Record):
-        self.dict.args.verbose = True
-        self.dict.query(self.word)
-        Record.assert_called_with(
-            word=self.word,
-            content=self.record.content,
-            source=self.source,
+        cls_record_content_dict = json.loads(self.record.content)
+        cls_record_content_dict['data'].sort(
+            key=lambda datum: datum.get('slug')
         )
+        record_content_dict = json.loads(record.content)
+        record_content_dict['data'].sort(key=lambda datum: datum.get('slug'))
+
+        assert record_content_dict == cls_record_content_dict
+        assert record.word == self.word
+        assert record.source == self.source
+
+    def test_query_verbose(self):
+        self.dict.args.verbose = True
+        record = self.dict.query(self.word)
+
+        cls_record_content_dict = json.loads(self.record.content)
+        cls_record_content_dict['data'].sort(
+            key=lambda datum: datum.get('slug')
+        )
+        record_content_dict = json.loads(record.content)
+        record_content_dict['data'].sort(key=lambda datum: datum.get('slug'))
+        assert record_content_dict == cls_record_content_dict
+
+        assert record.word == self.word
+        assert record.source == self.source
 
     def test_query_not_found(self):
         self.dict._get_raw = Mock(return_value='{"data": []}')
