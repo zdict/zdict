@@ -1,7 +1,7 @@
 import os
 
 
-VERSION = '4.0.3'
+VERSION = '4.0.5'
 
 BASE_DIR_NAME = '.zdict'
 BASE_DIR = os.path.join(os.path.expanduser("~"), BASE_DIR_NAME)
