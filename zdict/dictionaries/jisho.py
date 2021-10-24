@@ -25,7 +25,11 @@ class JishoDict(DictBase):
     def show(self, record: Record):
         content = json.loads(record.content)
 
-        for data in content['data']:
+        for i, data in enumerate(content['data']):
+            # empty line separation
+            if i:
+                print()
+
             # print word
             reading = data['japanese'][0].get('reading', '')
             word = data['japanese'][0].get('word', '')
@@ -35,7 +39,6 @@ class JishoDict(DictBase):
 
             if word:
                 self.color.print(word, 'yellow')
-            print()
 
             for idx, sense in enumerate(data['senses'], 1):
 
