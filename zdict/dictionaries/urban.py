@@ -29,11 +29,8 @@ class UrbanDict(DictBase):
         # print word
         self.color.print(data.get('word', ''), 'yellow')
 
-        self.color.print(
-            data.get('definition', ''),
-            'org',
-            indent=2,
-        )
+        for line in data.get('definition', '').splitlines():
+            self.color.print(line, 'org', indent=2)
 
         for example in data.get('example', '').split('\n'):
             self.color.print(
