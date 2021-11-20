@@ -232,7 +232,7 @@ Testing
 ^^^^^^^^
 
 During development, you can install our project as *editable*.
-If you use `virtualenv`, you may want to create a new enviroment for `zdict`::
+If you use `virtualenv`, you may want to create a new environment for `zdict`::
 
     $ git clone https://github.com/zdict/zdict.git
     $ cd zdict
