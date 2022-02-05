@@ -1,6 +1,6 @@
 coverage==6.2
 flake8==4.0.1
 pyjokes==0.6.0
-pytest==6.2.5
+pytest==7.0.0
 pytest-cov==3.0.0
 pytest-flake8==1.0.7
