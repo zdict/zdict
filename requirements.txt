@@ -1,3 +1,3 @@
-beautifulsoup4==4.11.0
+beautifulsoup4==4.11.1
 peewee==3.14.10
 requests==2.27.0
