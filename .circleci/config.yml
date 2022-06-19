@@ -8,6 +8,10 @@ workflows:
   version: 2
   main:
     jobs:
+      - linux-python-3_10:
+          filters:
+            tags:
+              ignore: /.*/
       - linux-python-3_9:
           filters:
             tags:
@@ -22,6 +26,7 @@ workflows:
               ignore: /.*/
       - dockerhub-push:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
@@ -33,6 +38,12 @@ workflows:
 
   release:
     jobs:
+      - linux-python-3_10:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
       - linux-python-3_9:
           filters:
             tags:
@@ -53,6 +64,7 @@ workflows:
               ignore: /.*/
       - dockerhub-push:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
@@ -63,6 +75,7 @@ workflows:
               ignore: /.*/
       - pypi-deploy:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
@@ -81,6 +94,7 @@ workflows:
             branches:
               only: master
     jobs:
+      - linux-python-3_10
       - linux-python-3_9
       - linux-python-3_8
       - linux-python-3_7
@@ -155,6 +169,11 @@ variables:
 
 jobs:
   # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  linux-python-3_10:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.10
+
   linux-python-3_9:
     <<: *test-template
     docker:
