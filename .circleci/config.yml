@@ -120,24 +120,32 @@ variables:
     steps:
       - checkout
 
+      - run: python --version
+
       - restore_cache:
-          keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+        # **
+        # restores saved dependency cache
+        # if the Branch key template or requirements.txt files
+        # have not changed since the previous run
+        # **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
 
       - run:
           name: install dependencies
           command: |
-            python -m venv venv
+            python3 -m venv venv
             . venv/bin/activate
+
             pip install -U pip
             pip install -r requirements.txt
             pip install -r requirements-test.txt
             pip install coveralls
 
       - save_cache:
+        # ** special step to save dependency cache **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+            - "venv"
 
       - run:
           name: run tests
@@ -225,23 +233,30 @@ jobs:
     steps:
       - checkout
 
+      - run: python --version
+
       - restore_cache:
-          keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+        # **
+        # restores saved dependency cache
+        # if the Branch key template or requirements.txt files
+        # have not changed since the previous run
+        # **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
 
       - run:
           name: install dependencies
           command: |
-            python -m venv venv
+            python3 -m venv venv
             . venv/bin/activate
+
             pip install -U pip
             pip install twine
 
       - save_cache:
+        # ** special step to save dependency cache **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
-
+            - "venv"
 
       - run:
           name: init .pypirc
