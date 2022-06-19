@@ -55,10 +55,10 @@ setup(
 
     name='zdict',
     version=version,
-    author='Shun-Yi Jheng',
-    author_email='M157q.tw@gmail.com',
-    maintainer='Shun-Yi Jheng, Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
-    maintainer_email=('M157q.tw@gmail.com,'
+    author='Frank Zheng',
+    author_email='github@m157q.tw',
+    maintainer='Frank Zheng, Iblis Lin, Chang-Yen Chih, Chiu-Hsiang Hsu',
+    maintainer_email=('github@m157q.tw'
                       'e196819@hotmail.com,'
                       'michael66230@gmail.com,'
                       'wdv4758h@gmail.com'),
