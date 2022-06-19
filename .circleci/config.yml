@@ -133,9 +133,6 @@ variables:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-
             pip install -U pip
             pip install -r requirements.txt
             pip install -r requirements-test.txt
@@ -145,12 +142,11 @@ variables:
         # ** special step to save dependency cache **
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - "venv"
+            - "~/.cache/pip"
 
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
             # The website of NaerDict use TLSv1.0
             # The MinProtocol of TLS on CircleCI is v1.2
             # If we don't do this, testings for NaerDict will fail on CircleCI
@@ -172,7 +168,6 @@ variables:
       - run:
           name: send coverage to coveralls
           command: |
-            . venv/bin/activate
             coveralls
 
 jobs:
@@ -246,9 +241,6 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-
             pip install -U pip
             pip install twine
 
@@ -256,7 +248,7 @@ jobs:
         # ** special step to save dependency cache **
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - "venv"
+            - "~/.cache/pip"
 
       - run:
           name: init .pypirc
@@ -268,13 +260,11 @@ jobs:
       - run:
           name: create packages
           command: |
-            . venv/bin/activate
             pip install wheel
             python setup.py sdist bdist_wheel
 
       - run:
           name: upload to pypi
           command: |
-            . venv/bin/activate
             twine check dist/*
             twine upload dist/*
