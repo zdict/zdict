@@ -176,21 +176,25 @@ jobs:
     <<: *test-template
     docker:
       - image: cimg/python:3.10
+    resource_class: large
 
   linux-python-3_9:
     <<: *test-template
     docker:
       - image: cimg/python:3.9
+    resource_class: large
 
   linux-python-3_8:
     <<: *test-template
     docker:
       - image: cimg/python:3.8
+    resource_class: large
 
   linux-python-3_7:
     <<: *test-template
     docker:
       - image: cimg/python:3.7
+    resource_class: large
 
   # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
   dockerhub-push:
@@ -198,6 +202,7 @@ jobs:
       IMAGE_NAME: zdict/zdict
     docker:
       - image: circleci/buildpack-deps:stretch
+    resource_class: large
     steps:
       - checkout
       - setup_remote_docker
@@ -225,6 +230,7 @@ jobs:
       # Available CircleCI Python images: https://hub.docker.com/r/cimg/python/tags/
       - image: cimg/python:3.10
     working_directory: ~/repo
+    resource_class: large
     steps:
       - checkout
 
