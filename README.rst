@@ -73,20 +73,20 @@ How to run the zdict docker image
 .. code-block:: sh
 
     # Run interactive mode
-    docker run -it --rm zdict/zdict         # latest commit
-    docker run -it --rm zdict/zdict:release # latest release
-    docker run -it --rm zdict/zdict:v0.10.0 # use zdict v0.10.0
-    docker run -it --rm zdict/zdict:$tag    # with specific tag
+    docker run -it --rm --platform=linux/amd64 zdict/zdict         # latest commit
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:release # latest release
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:v0.10.0 # use zdict v0.10.0
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:$tag    # with specific tag
 
     # Run normal mode
-    docker run -it --rm zdict/zdict apple bird         # latest commit
-    docker run -it --rm zdict/zdict:release apple bird # latest release
-    docker run -it --rm zdict/zdict:v0.10.0 apple bird # use zdict v0.10.0
-    docker run -it --rm zdict/zdict:$tag apple bird    # with specific tag
+    docker run -it --rm --platform=linux/amd64 zdict/zdict apple bird         # latest commit
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:release apple bird # latest release
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:v0.10.0 apple bird # use zdict v0.10.0
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:$tag apple bird    # with specific tag
 
     # You can also add the options while using docker run either interactive mode or normal mode
-    docker run -it --rm zdict/zdict:v0.10.0 -dt moe    # use moe dict in interactive mode
-    docker run -it --rm zdict/zdict:v0.10.0 -dt moe 哈 # use moe dict in normal mode
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:v0.10.0 -dt moe    # use moe dict in interactive mode
+    docker run -it --rm --platform=linux/amd64 zdict/zdict:v0.10.0 -dt moe 哈 # use moe dict in normal mode
 
 Usage
 ------------------------------
