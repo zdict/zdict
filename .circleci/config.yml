@@ -20,16 +20,11 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-      - linux-python-3_6:
-          filters:
-            tags:
-              ignore: /.*/
       - dockerhub-push:
           requires:
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               ignore: /.*/
@@ -56,18 +51,11 @@ workflows:
               only: /[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
-      - linux-python-3_6:
-          filters:
-            tags:
-              only: /[0-9]+(\.[0-9]+)*/
-            branches:
-              ignore: /.*/
       - dockerhub-push:
           requires:
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
@@ -78,7 +66,6 @@ workflows:
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
@@ -97,7 +84,6 @@ workflows:
       - linux-python-3_9
       - linux-python-3_8
       - linux-python-3_7
-      - linux-python-3_6
 
 # https://circleci.com/blog/managing-secrets-when-you-have-pull-requests-from-outside-contributors/
 commands:
@@ -184,11 +170,6 @@ jobs:
     docker:
       - image: circleci/python:3.7
 
-  linux-python-3_6:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
-
   # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
   dockerhub-push:
     environment:
@@ -220,7 +201,7 @@ jobs:
   pypi-deploy:
     docker:
       # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
-      - image: circleci/python:3.6
+      - image: cimg/python:3.10
     working_directory: ~/repo
     steps:
       - checkout
