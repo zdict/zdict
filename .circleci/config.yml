@@ -168,26 +168,26 @@ variables:
             coveralls
 
 jobs:
-  # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  # Available CircleCI Python images: https://hub.docker.com/r/cimg/python/tags/
   linux-python-3_10:
     <<: *test-template
     docker:
-      - image: circleci/python:3.10
+      - image: cimg/python:3.10
 
   linux-python-3_9:
     <<: *test-template
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
 
   linux-python-3_8:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
 
   linux-python-3_7:
     <<: *test-template
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
 
   # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
   dockerhub-push:
@@ -219,7 +219,7 @@ jobs:
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
   pypi-deploy:
     docker:
-      # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+      # Available CircleCI Python images: https://hub.docker.com/r/cimg/python/tags/
       - image: cimg/python:3.10
     working_directory: ~/repo
     steps:
