@@ -8,6 +8,10 @@ workflows:
   version: 2
   main:
     jobs:
+      - linux-python-3_10:
+          filters:
+            tags:
+              ignore: /.*/
       - linux-python-3_9:
           filters:
             tags:
@@ -20,16 +24,12 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-      - linux-python-3_6:
-          filters:
-            tags:
-              ignore: /.*/
       - dockerhub-push:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               ignore: /.*/
@@ -38,6 +38,12 @@ workflows:
 
   release:
     jobs:
+      - linux-python-3_10:
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
       - linux-python-3_9:
           filters:
             tags:
@@ -56,18 +62,12 @@ workflows:
               only: /[0-9]+(\.[0-9]+)*/
             branches:
               ignore: /.*/
-      - linux-python-3_6:
-          filters:
-            tags:
-              only: /[0-9]+(\.[0-9]+)*/
-            branches:
-              ignore: /.*/
       - dockerhub-push:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
@@ -75,10 +75,10 @@ workflows:
               ignore: /.*/
       - pypi-deploy:
           requires:
+            - linux-python-3_10
             - linux-python-3_9
             - linux-python-3_8
             - linux-python-3_7
-            - linux-python-3_6
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
@@ -94,10 +94,10 @@ workflows:
             branches:
               only: master
     jobs:
+      - linux-python-3_10
       - linux-python-3_9
       - linux-python-3_8
       - linux-python-3_7
-      - linux-python-3_6
 
 # https://circleci.com/blog/managing-secrets-when-you-have-pull-requests-from-outside-contributors/
 commands:
@@ -120,29 +120,33 @@ variables:
     steps:
       - checkout
 
+      - run: python --version
+
       - restore_cache:
-          keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+        # **
+        # restores saved dependency cache
+        # if the Branch key template or requirements.txt files
+        # have not changed since the previous run
+        # **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
 
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
             pip install -U pip
             pip install -r requirements.txt
             pip install -r requirements-test.txt
             pip install coveralls
 
       - save_cache:
+        # ** special step to save dependency cache **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+            - "~/.cache/pip"
 
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
             # The website of NaerDict use TLSv1.0
             # The MinProtocol of TLS on CircleCI is v1.2
             # If we don't do this, testings for NaerDict will fail on CircleCI
@@ -164,30 +168,33 @@ variables:
       - run:
           name: send coverage to coveralls
           command: |
-            . venv/bin/activate
             coveralls
 
 jobs:
-  # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
+  # Available CircleCI Python images: https://hub.docker.com/r/cimg/python/tags/
+  linux-python-3_10:
+    <<: *test-template
+    docker:
+      - image: cimg/python:3.10
+    resource_class: large
+
   linux-python-3_9:
     <<: *test-template
     docker:
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
+    resource_class: large
 
   linux-python-3_8:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
+    resource_class: large
 
   linux-python-3_7:
     <<: *test-template
     docker:
-      - image: circleci/python:3.7
-
-  linux-python-3_6:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.7
+    resource_class: large
 
   # https://circleci.com/blog/using-circleci-workflows-to-replicate-docker-hub-automated-builds/
   dockerhub-push:
@@ -195,6 +202,7 @@ jobs:
       IMAGE_NAME: zdict/zdict
     docker:
       - image: circleci/buildpack-deps:stretch
+    resource_class: large
     steps:
       - checkout
       - setup_remote_docker
@@ -219,29 +227,34 @@ jobs:
   # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
   pypi-deploy:
     docker:
-      # Available CircleCI Python images: https://hub.docker.com/r/circleci/python/tags/
-      - image: circleci/python:3.6
+      # Available CircleCI Python images: https://hub.docker.com/r/cimg/python/tags/
+      - image: cimg/python:3.10
     working_directory: ~/repo
+    resource_class: large
     steps:
       - checkout
 
+      - run: python --version
+
       - restore_cache:
-          keys:
-          - pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
+        # **
+        # restores saved dependency cache
+        # if the Branch key template or requirements.txt files
+        # have not changed since the previous run
+        # **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
 
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
             pip install -U pip
             pip install twine
 
       - save_cache:
+        # ** special step to save dependency cache **
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "requirements-test.txt" }}
           paths:
-            - ./venv
-          key: pip-cache-{{ arch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-test.txt" }}-{{ checksum "requirements.txt" }}
-
+            - "~/.cache/pip"
 
       - run:
           name: init .pypirc
@@ -253,13 +266,11 @@ jobs:
       - run:
           name: create packages
           command: |
-            . venv/bin/activate
             pip install wheel
             python setup.py sdist bdist_wheel
 
       - run:
           name: upload to pypi
           command: |
-            . venv/bin/activate
             twine check dist/*
             twine upload dist/*
