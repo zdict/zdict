@@ -3,10 +3,10 @@
 docker-zdict:
 	# Let users can use `make docker-zdict apple bird`
 	# https://stackoverflow.com/questions/6273608
-	@docker run -it --rm zdict/zdict $(filter-out $@,$(MAKECMDGOALS))
+	@docker run -it --rm --platform=linux/amd64 zdict/zdict $(filter-out $@,$(MAKECMDGOALS))
 
 docker-run:
-	@docker run -it --entrypoint=/bin/bash --rm zdict/zdict
+	@docker run -it --entrypoint=/bin/sh --rm --platform=linux/amd64 zdict/zdict
 
 docker-pull:
 	@docker pull zdict/zdict
