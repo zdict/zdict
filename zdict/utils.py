@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 from zdict import constants
 
@@ -81,9 +82,40 @@ class Color(metaclass=ColorConst):
         )
 
     @classmethod
+    def format_highlight(self, s='', grp_regex=r'.*', color_bg='org', color_h='org', indent=0):
+        '''
+        :type s: str
+        :param s: message
+        :param: grp_regex: replacement-regex with group 1 being the text to be retained and highlighted
+        :param color_bg: predefined color name, e,g,: red, RED.
+            Using 'l' prefix for bright color, e.g.: lred, lwhite.
+            It's case-insensitive.
+
+            If stdout isn't a tty, the color option will be ignored.
+        :param color_h: color to be used for highlighting
+        '''
+        colorize = self._force_color or sys.stdout.isatty()
+        return self.format(
+            re.sub(
+                grp_regex,
+                r'{color1}\g<1>{org}{color2}'.format(
+                    color1=getattr(self, color_h, '') if colorize else '',
+                    org=self.ORG if colorize else '',
+                    color2=getattr(self, color_bg, '') if colorize else ''
+                ),
+                s
+            ), 
+            color_bg,
+            indent
+        )
+
+    @classmethod
     def print(self, *args, end='\n', **kwargs):
         print(self.format(*args, **kwargs), end=end)
 
+    @classmethod
+    def print_with_highlight(self, *args, end='\n', **kwargs):
+        print(self.format_highlight(*args, **kwargs), end=end)
 
 def import_readline():
     if sys.platform == 'darwin' and sys.version_info <= (3, 5):
