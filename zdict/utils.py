@@ -100,7 +100,7 @@ class Color(metaclass=ColorConst):
         return self.format(
             re.sub(
                 grp_regex,
-                r'{color1}\g<1>{org}{color2}'.format(
+                r'{org}{color1}\g<1>{org}{color2}'.format(
                     color1=getattr(self, color_h, '') if colorize else '',
                     org=self.ORG if colorize else '',
                     color2=getattr(self, color_bg, '') if colorize else ''
