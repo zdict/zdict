@@ -17,7 +17,10 @@ class YandexDictResp1Res:
     def print_using_color(self, color: Color):
         def print_translation(tr):
             color.print(tr['text'], 'lred', end=' ')
-            color.print('(%s)' % tr['pos']['text'])
+            if 'pos' in tr:
+                color.print('(%s)' % tr['pos']['text'])
+            else:
+                print()
 
         def print_examples(ex):
             def print_example_sentence(s, indent=0):
@@ -29,12 +32,13 @@ class YandexDictResp1Res:
             print_example_sentence('┌ %s' % ex['src'], 1)
             print_example_sentence('└ %s' % ex['dst'], 1)
         r = self.content
-        tr = r['translation']
+        tr = r['translation'] if 'translation' in r else None
         if not tr or 'text' not in tr:
             print()
             return
         print_translation(tr)
-        for ex in random.sample(r['examples'], min(3, len(r['examples']))):
+        exs = r['examples'] if 'examples' in r else []
+        for ex in random.sample(exs, min(3, len(exs))):
             print_examples(ex)
         color.print()
 
